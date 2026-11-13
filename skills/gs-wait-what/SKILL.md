@@ -1,0 +1,14 @@
+---
+name: gs-wait-what
+description: "Stop. That last message did not land: re-pitch it in plain language, with the context I'm missing."
+disable-model-invocation: true
+---
+
+Your last message did not land. Say it again so that it does.
+
+- Start with one or two sentences of context: what we are working on, and where you have got to.
+- Then restate the message, shorter and simpler, like one person talking to another.
+- Use plain words and short sentences, with one idea in each. Drop the jargon. If you cannot avoid a technical term, say what it means.
+- Use one word for one thing, and keep using that word.
+- If the repo has a glossary, such as `GLOSSARY.md`, use its terms.
+- Restate only. Do not add new findings or new work.
