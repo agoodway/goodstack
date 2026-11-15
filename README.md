@@ -10,7 +10,7 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 
 ### Review and ship
 
-- `gs-review` reviews a change for what will break in production. Specialist reviewers raise findings, and a second model tries to refute each one.
+- `gs-review` reviews a change for what will break in production. Specialist reviewers raise findings, and a second model tries to refute each one. A project can shape its own reviews with an optional `REVIEW.md`.
 - `gs-review-pr-reply` posts a `gs-review` report to the current branch's pull request as one GitHub review.
 - `gs-git-commit` commits the current changes with conventional messages. It skips secrets and generated files, and it adds no AI attribution.
 - `gs-pull-request` opens a draft GitHub pull request. The description says what changed, how it works, what was run, and what could break.

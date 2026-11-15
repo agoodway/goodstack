@@ -55,6 +55,16 @@ Otherwise identify:
 
 If a focus argument was provided, inspect that path unless surrounding context is required.
 
+### Project guidance
+
+A project may keep its own review guidance in a `REVIEW.md`. Look for one:
+
+```bash
+git ls-files --full-name --cached --others --exclude-standard --with-tree=[base] ':(top,glob)**/REVIEW.md'
+```
+
+No output means the project has none: continue to Phase 2. Otherwise read [references/review-md.md](references/review-md.md) and apply it before Phase 2. It changes the changed-file list, role selection, the QA execution commands, the scope packet, and the report's Evidence.
+
 ## Second opinion
 
 Fresh Eyes (Phase 2) and verification (Phase 4) run on a model other than the host when one is reachable. Determine the host from explicit system or runtime identity, such as the system prompt or `CLAUDECODE=1` in a Claude Code session; do not infer it only from which tools or commands are installed. Choose the provider once per review, then use a new stateless session for each pass.
@@ -230,7 +240,7 @@ Roles: [list] · Second opinion: [provider label]
 - **What changed:** choose the view with the `gs-show-me` skill when it is installed, and do not write an HTML file. Without it, use a diff sketch of the call tree, file tree, or control flow.
 - **Verdict:** `Don't ship` for a confirmed Blocker or a check this change broke. `Fix first` for any other finding. `Ship` when there are none.
 - **Findings:** Blockers first, numbered consecutively, one entry per finding with every role that raised it on the attribution line. When the fix is larger than a few lines, state it in one sentence instead of a diff. With no findings, the section reads `None above the bar.`
-- **Evidence:** every command QA execution ran, with failures this change caused separated from pre-existing ones. If no checks ran, say why.
+- **Evidence:** every command QA execution ran, with failures this change caused separated from pre-existing ones. If no checks ran, say why. When a `REVIEW.md` was found, add the line review-md.md gives.
 - **Merge Danger:** a one-way door cannot be walked back after it ships (destructive migrations, sent money or messages, published APIs); a two-way door is cheap to roll back. Blast radius is the widest scope a failure of this change could reach.
 
 ## Dry-run selection
