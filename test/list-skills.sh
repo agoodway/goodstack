@@ -329,7 +329,7 @@ for banned in (".scratchpad", "/scratchpad", "scratchpad"):
     if banned in installed_scratch:
         sys.exit(f"installed scratch SKILL.md contains {banned}")
 goodreview_dir = by_name["gs-review"].parent
-for rel in ("references/specialists.md", "references/providers.md"):
+for rel in ("references/specialists.md", "references/providers.md", "references/review-md.md"):
     if not (goodreview_dir / rel).is_file():
         sys.exit(f"installed gs-review missing {rel}")
 
