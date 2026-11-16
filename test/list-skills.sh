@@ -112,6 +112,24 @@ for snippet in (
     if snippet not in blast_readme:
         sys.exit(f"gs-blast-radius README missing {snippet}")
 
+# gs-no-comments is adapted from a pstack skill and agent, so it has no hash pin.
+no_comments_dir = root / "skills" / "gs-no-comments"
+no_comments_license = (no_comments_dir / "LICENSE").read_text()
+if "Copyright (c) 2026 Lauren Tan" not in no_comments_license or "MIT License" not in no_comments_license:
+    sys.exit("gs-no-comments LICENSE missing the pstack MIT notice")
+no_comments_readme = (no_comments_dir / "README.md").read_text()
+for snippet in (
+    "Lauren Tan",
+    "https://github.com/cursor/plugins",
+    "pstack/skills/no-comments/SKILL.md",
+    "pstack/agents/comment-sicko.md",
+    "bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7",
+):
+    if snippet not in no_comments_readme:
+        sys.exit(f"gs-no-comments README missing {snippet}")
+if not (no_comments_dir / "references" / "comment-sicko.md").is_file():
+    sys.exit("gs-no-comments missing references/comment-sicko.md")
+
 # gs-unslop differs from the pstack original only in its name line, so it has no hash pin.
 unslop_license = (root / "skills" / "gs-unslop" / "LICENSE").read_text()
 if "Copyright (c) 2026 Lauren Tan" not in unslop_license or "MIT License" not in unslop_license:
@@ -127,7 +145,7 @@ for snippet in (
     if snippet not in unslop_readme:
         sys.exit(f"gs-unslop README missing {snippet}")
 
-# gs-deslop differs from the cursor-team-kit original only in its name line, so it has no hash pin.
+# gs-deslop differs from the cursor-team-kit original only in its name and a pointer to gs-no-comments, so it has no hash pin.
 deslop_license = (root / "skills" / "gs-deslop" / "LICENSE").read_text()
 if "Copyright (c) 2026 Cursor" not in deslop_license or "MIT License" not in deslop_license:
     sys.exit("gs-deslop LICENSE missing the Cursor MIT notice")

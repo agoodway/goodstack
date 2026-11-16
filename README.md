@@ -41,6 +41,7 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 
 - `gs-unslop` edits text to remove AI writing patterns.
 - `gs-deslop` removes AI-generated code slop from the branch's diff.
+- `gs-no-comments` deletes nearly every comment in a diff and fixes the code that needed one. It is a deliberate, aggressive pass, where `gs-deslop` is the lighter cleanup.
 - `gs-show-me` explains the current topic with the smallest picture that fits. The picture is a tree, a diagram, a diff, or one HTML file.
 - `gs-wait-what` makes the agent say its last message again in plain language, with the context you are missing.
 
@@ -51,7 +52,7 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 
 ### Who starts a skill
 
-Ten skills run only when you type the command: `gs-arena`, `gs-blast-radius`, `gs-how`, `gs-why`, `gs-reflect`, `gs-sharpen`, `gs-wait-what`, `gs-openspec-ship`, `gs-openspec-to-tickets`, and `gs-openspec-ship-tickets`. The agent can also start the other skills when a request matches their description.
+Eleven skills run only when you type the command: `gs-arena`, `gs-blast-radius`, `gs-how`, `gs-why`, `gs-no-comments`, `gs-reflect`, `gs-sharpen`, `gs-wait-what`, `gs-openspec-ship`, `gs-openspec-to-tickets`, and `gs-openspec-ship-tickets`. The agent can also start the other skills when a request matches their description.
 
 ## Install
 
@@ -89,7 +90,7 @@ Add `-g` to install into your user skill directory.
 
 Eight skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-pr-show-me`, `gs-scratch`, `gs-openspec-ship`, and `gs-openspec-ship-tickets`.
 
-The other fifteen come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
+The other sixteen come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
 
 | Skill | Original | Author | What this repo changed |
 |---|---|---|---|
@@ -97,9 +98,10 @@ The other fifteen come from skills that other people published. The originals ha
 | `gs-how` | `how` in pstack | Lauren Tan | The skill and its prompts run on any harness |
 | `gs-why` | `why` in pstack | Lauren Tan | The skill and its prompts run on any harness |
 | `gs-blast-radius` | `blast-radius` in pstack | Lauren Tan | It works without its companion skills |
+| `gs-no-comments` | `no-comments` and the `comment-sicko` agent in pstack | Lauren Tan | The agent is a reference file in the skill, and the skill works without its companion skills |
 | `gs-sharpen` | `sharpen` in pstack | Lauren Tan | The name |
 | `gs-unslop` | `unslop` in pstack | Lauren Tan | The name, and the agent may start it |
-| `gs-deslop` | `deslop` in cursor-team-kit | Cursor | The name |
+| `gs-deslop` | `deslop` in cursor-team-kit | Cursor | The name, and a pointer to `gs-no-comments` |
 | `gs-show-me` | `show-me` in HumanLayer's skills | HumanLayer | It opens the HTML file on any operating system, and the agent may start it |
 | `gs-pr-comment` | `leaving-pr-comments` in tstack | Theo Browne | Added writing rules and small pictures |
 | `gs-council` | `council` in tstack | Theo Browne | It runs on any harness with subagents, and works with fewer than three providers |
@@ -118,4 +120,4 @@ The original repos are:
 
 ## License
 
-The license is MIT. See `LICENSE`. Each of the fifteen skills above also keeps its original author's MIT notice in its own `LICENSE` file.
+The license is MIT. See `LICENSE`. Each of the sixteen skills above also keeps its original author's MIT notice in its own `LICENSE` file.
