@@ -227,6 +227,20 @@ for required in ("> [!NOTE]", "responding on behalf of", "--body-file"):
     if required not in comment_skill:
         sys.exit(f"gs-pr-comment SKILL.md missing {required}")
 
+council_dir = root / "skills" / "gs-council"
+council_license = (council_dir / "LICENSE").read_text()
+if "Copyright (c) 2026 Theo Browne" not in council_license or "MIT License" not in council_license:
+    sys.exit("gs-council LICENSE missing the tstack MIT notice")
+council_readme = (council_dir / "README.md").read_text()
+for snippet in (
+    "Theo Browne",
+    "https://github.com/t3dotgg/tstack",
+    "skills/council/SKILL.md",
+    "11e37a74d0a6868c121cd0910ab2b3bd9873b92a",
+):
+    if snippet not in council_readme:
+        sys.exit(f"gs-council README missing {snippet}")
+
 reflect_dir = root / "skills" / "gs-reflect"
 reflect_license = (reflect_dir / "LICENSE").read_text()
 for holder in ("Copyright (c) 2026 Lauren Tan", "Copyright (c) 2026 Matt Pocock", "MIT License"):
