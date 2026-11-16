@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Drives `npx skills add` against this repo and checks the twenty-two shipped skills.
+# Drives `npx skills add` against this repo and checks every skill under skills/.
 set -euo pipefail
 
 ROOT=$(cd "$(dirname "$0")/.." && pwd)
@@ -9,15 +9,19 @@ cd "$TMP"
 
 LIST_OUT="$TMP/list.txt"
 INSTALL_OUT="$TMP/install.txt"
+ALL_OUT="$TMP/all.txt"
 
 set +e
 DISABLE_TELEMETRY=1 npx skills add "$ROOT" --list >"$LIST_OUT" 2>&1
 LIST_EXIT=$?
 DISABLE_TELEMETRY=1 npx skills add "$ROOT" --skill gs-scratch --skill gs-review -a claude-code -y --copy >"$INSTALL_OUT" 2>&1
 INSTALL_EXIT=$?
+mkdir "$TMP/all"
+(cd "$TMP/all" && DISABLE_TELEMETRY=1 npx skills add "$ROOT" --skill '*' -a claude-code -y --copy) >"$ALL_OUT" 2>&1
+ALL_EXIT=$?
 set -e
 
-python3 - "$ROOT" "$TMP" "$LIST_OUT" "$INSTALL_OUT" "$LIST_EXIT" "$INSTALL_EXIT" <<'PY'
+python3 - "$ROOT" "$TMP" "$LIST_OUT" "$INSTALL_OUT" "$LIST_EXIT" "$INSTALL_EXIT" "$ALL_OUT" "$ALL_EXIT" <<'PY'
 import hashlib
 import re
 import sys
@@ -29,52 +33,35 @@ list_out = Path(sys.argv[3]).read_text(errors="replace")
 install_out = Path(sys.argv[4]).read_text(errors="replace")
 list_exit = int(sys.argv[5])
 install_exit = int(sys.argv[6])
+all_out = Path(sys.argv[7]).read_text(errors="replace")
+all_exit = int(sys.argv[8])
 
-expected = [
-    "gs-review",
-    "gs-openspec-ship-tickets",
-    "gs-openspec-ship",
-    "gs-openspec-to-tickets",
-    "gs-scratch",
-    "gs-review-pr-reply",
-    "gs-git-commit",
-    "gs-pull-request",
-    "gs-blast-radius",
-    "gs-unslop",
-    "gs-deslop",
-    "gs-how",
-    "gs-why",
-    "gs-arena",
-    "gs-wait-what",
-    "gs-show-me",
-    "gs-pr-comment",
-    "gs-reflect",
-    "gs-sharpen",
-    "gs-prototype",
-    "gs-codebase-design",
-    "gs-pr-show-me",
-]
+# skills/ is the source of truth. Adding a skill directory needs no edit here.
+expected = sorted(p.name for p in (root / "skills").iterdir() if p.is_dir())
 expected_set = set(expected)
 
 if list_exit != 0:
     sys.exit(f"npx skills add --list exited {list_exit}\n{list_out}")
 if install_exit != 0:
     sys.exit(f"npx skills add install exited {install_exit}\n{install_out}")
+if all_exit != 0:
+    sys.exit(f"npx skills add --skill '*' exited {all_exit}\n{all_out}")
 
 clean = re.sub(r"\x1b\[[0-9;?]*[A-Za-z]", "", list_out)
 cli_names = re.findall(r"(?m)^│    ([a-z0-9-]+)$", clean)
 found = re.search(r"Found (\d+) skills", clean)
-if found is None or found.group(1) != "22":
-    sys.exit(f"expected 'Found 22 skills' in list output, got count {found.group(1) if found else None}\n{clean}")
-if set(cli_names) != expected_set or len(cli_names) != 22:
+if found is None or int(found.group(1)) != len(expected):
+    sys.exit(f"expected 'Found {len(expected)} skills' in list output, got count {found.group(1) if found else None}\n{clean}")
+if set(cli_names) != expected_set or len(cli_names) != len(expected):
     sys.exit(f"CLI listed {cli_names}, expected {expected}")
 if "scratchpad" in clean:
     sys.exit("CLI list mentioned scratchpad")
 
 frontmatter = {}
-skill_dirs = [p for p in (root / "skills").iterdir() if p.is_dir()]
-if {p.name for p in skill_dirs} != expected_set:
-    sys.exit(f"skill directories are {[p.name for p in skill_dirs]}")
+skill_dirs = [root / "skills" / name for name in expected]
+for skill_dir in skill_dirs:
+    if not skill_dir.name.startswith("gs-"):
+        sys.exit(f"skill directory {skill_dir.name} does not start with gs-")
 for skill_dir in skill_dirs:
     text = (skill_dir / "SKILL.md").read_text()
     match = re.search(r"(?m)^name:\s*(\S+)\s*$", text)
@@ -318,7 +305,11 @@ for required in ("gs-pull-request", "gs-show-me", "gh pr view", "gh pr diff", "#
     if required not in pr_show:
         sys.exit(f"gs-pr-show-me SKILL.md missing {required}")
 
-installed = list(tmp.rglob("SKILL.md"))
+all_installed = {p.parent.name for p in (tmp / "all").rglob("SKILL.md")}
+if all_installed != expected_set:
+    sys.exit(f"--skill '*' installed {sorted(all_installed)}, expected {expected}")
+
+installed = [p for p in tmp.rglob("SKILL.md") if (tmp / "all") not in p.parents]
 by_name = {p.parent.name: p for p in installed}
 if set(by_name) != {"gs-scratch", "gs-review"}:
     sys.exit(f"install produced {[str(p) for p in installed]}")
@@ -333,33 +324,63 @@ for rel in ("references/specialists.md", "references/providers.md", "references/
     if not (goodreview_dir / rel).is_file():
         sys.exit(f"installed gs-review missing {rel}")
 
-all_twenty_two = (
-    "npx skills add agoodway/goodstack --skill gs-review "
-    "--skill gs-openspec-ship-tickets --skill gs-openspec-ship "
-    "--skill gs-openspec-to-tickets --skill gs-scratch "
-    "--skill gs-review-pr-reply --skill gs-git-commit --skill gs-pull-request "
-    "--skill gs-blast-radius --skill gs-unslop --skill gs-deslop "
-    "--skill gs-how --skill gs-why --skill gs-arena --skill gs-wait-what --skill gs-show-me --skill gs-pr-comment --skill gs-reflect --skill gs-sharpen --skill gs-prototype --skill gs-codebase-design --skill gs-pr-show-me"
+# The root README's Skills section is the one list of skills. It must name every
+# skill directory, and nothing else, so it cannot drift from skills/.
+readme_text = (root / "README.md").read_text()
+skills_section = re.search(r"(?ms)^## Skills\n(.*?)^## ", readme_text)
+if skills_section is None:
+    sys.exit("README.md has no Skills section")
+listed = re.findall(r"(?m)^- `(gs-[a-z0-9-]+)`", skills_section.group(1))
+if sorted(listed) != expected:
+    missing = sorted(expected_set - set(listed))
+    extra = sorted(set(listed) - expected_set)
+    dupes = sorted({n for n in listed if listed.count(n) > 1})
+    sys.exit(f"README.md Skills list is out of sync with skills/: missing {missing}, unknown {extra}, repeated {dupes}")
+
+# No README spells out a skill count for installing everything, and no command
+# names more than one skill. A README that does has to change whenever a skill is added.
+number = (
+    r"(?:\d+|(?:twenty|thirty|forty|fifty|sixty|seventy|eighty|ninety)(?:-[a-z]+)?"
+    r"|one|two|three|four|five|six|seven|eight|nine|ten|eleven|twelve"
+    r"|thirteen|fourteen|fifteen|sixteen|seventeen|eighteen|nineteen)"
 )
-readmes = [root / "README.md", *sorted((root / "skills").glob("*/README.md"))]
-if len(readmes) != 23:
-    sys.exit(f"expected 23 READMEs, found {readmes}")
+total_count = re.compile(rf"(?i)\b(?:all|every|install|publishes)\s+{number}\s+(?:agent\s+)?skills\b")
+readmes = [root / "README.md", *(root / "skills" / name / "README.md" for name in expected)]
 for readme in readmes:
+    if not readme.is_file():
+        sys.exit(f"missing {readme}")
     text = readme.read_text()
-    skill = readme.parent.name if readme.parent.name != root.name else None
+    skill = readme.parent.name if readme.parent != root else None
+    match = total_count.search(text)
+    if match:
+        sys.exit(f"{readme} gives the total skill count: {match.group(0)!r}")
+    for line in text.splitlines():
+        if len(re.findall(r"--skill\b", line)) > 1:
+            sys.exit(f"{readme} has a command that names several skills: {line!r}")
+    flagged = set(re.findall(r"--skill\s+(gs-[a-z0-9-]+)", text))
+    if skill is None:
+        for snippet in (
+            "npx skills add agoodway/goodstack --list",
+            "npx skills add agoodway/goodstack --skill gs-review",
+            "npx skills add agoodway/goodstack --skill '*'",
+            "npx skills add /path/to/goodstack --skill '*'",
+        ):
+            if snippet not in text:
+                sys.exit(f"README.md missing {snippet!r}")
+        if flagged - {"gs-review"}:
+            sys.exit(f"README.md install commands name {sorted(flagged)}; use --skill '*' to install everything")
+        continue
+    if flagged != {skill}:
+        sys.exit(f"{readme} install commands name {sorted(flagged)}; a skill README installs only {skill}")
+    if "--skill '*'" in text or "--all" in text:
+        sys.exit(f"{readme} installs every skill; link to the root README instead")
     for snippet in (
-        "npx skills add agoodway/goodstack --list",
-        all_twenty_two,
-        "npx skills add /path/to/goodstack --list",
+        f"npx skills add agoodway/goodstack --skill {skill}",
+        f"npx skills add /path/to/goodstack --skill {skill}",
+        "https://github.com/agoodway/goodstack#install",
     ):
         if snippet not in text:
             sys.exit(f"{readme} missing {snippet!r}")
-    if skill is None:
-        one = "npx skills add agoodway/goodstack --skill gs-review"
-    else:
-        one = f"npx skills add agoodway/goodstack --skill {skill}"
-    if one not in text:
-        sys.exit(f"{readme} missing {one!r}")
     if skill == "gs-scratch":
         for snippet in (".scratch", "/gs-scratch bootstrap", "/gs-scratch write", "/gs-scratch edit", "/gs-scratch list", "scratchpad", ".scratchpad"):
             if snippet not in text:

@@ -18,11 +18,7 @@ Install this skill into the current project.
 npx skills add agoodway/goodstack --skill gs-openspec-ship
 ```
 
-Install all twenty-two skills.
-
-```bash
-npx skills add agoodway/goodstack --skill gs-review --skill gs-openspec-ship-tickets --skill gs-openspec-ship --skill gs-openspec-to-tickets --skill gs-scratch --skill gs-review-pr-reply --skill gs-git-commit --skill gs-pull-request --skill gs-blast-radius --skill gs-unslop --skill gs-deslop --skill gs-how --skill gs-why --skill gs-arena --skill gs-wait-what --skill gs-show-me --skill gs-pr-comment --skill gs-reflect --skill gs-sharpen --skill gs-prototype --skill gs-codebase-design --skill gs-pr-show-me
-```
+To install every skill in this repo, see [Install](https://github.com/agoodway/goodstack#install) in the root README.
 
 A local checkout uses the directory as the source.
 
