@@ -11,7 +11,8 @@ Lauren Tan wrote this skill and its agent. The original sources are in the pstac
 - Models are chosen in prose. The reference to the `poteto-mode` skill for reasoning level and speed is gone.
 - Step 3 writes a short design sketch in the skill. The original ran the `architect` skill.
 - Step 4 says in one sentence each what the `principle-fix-root-causes` and `principle-redesign-from-first-principles` skills asked for. The original named those skills.
-- `/why` became the `gs-why` skill, used when it is installed. Without it, Comment Sicko reads the symbol's history with `git log -L` and `git blame`.
+- `/why` became a trace of the symbol's history with `git log -L` and `git blame`. When that leaves the history unclear and `gs-why` is installed, the skill asks the user to run `/gs-why`, because `gs-why` is user-started only.
+- In step 2, a keep must prove the keep-list exception it claims. The original asked every keep to prove it is about something we cannot change, which contradicted the keep list for license headers, API docs, and `prettier-ignore`.
 - The scope uses the repository's default branch. The original defaulted to `main`.
 - The skill is named `gs-no-comments`, and its description says the pass is aggressive and points to `gs-deslop` for lighter cleanup.
 
