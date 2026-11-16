@@ -37,12 +37,13 @@ A skill reads the same in Claude Code, Codex, Cursor, Amp, and anything else.
 
 ## Adding, renaming, or removing a skill
 
-The count and the install command are repeated, so one skill touches all of these:
+A new skill touches its own directory and the root `README.md`, and no other skill's files:
 
 1. `skills/gs-<name>/`: `SKILL.md`, `README.md`, and `LICENSE` when derived.
-2. Root `README.md`: the skill's line under Skills, and the licence paragraph when derived.
-3. Every `README.md`: the "Install all <N> skills." sentence and the full `--skill` command under it.
-4. `test/list-skills.sh`: the `expected` list, the three skill counts, the README count, the full install string, and attribution checks for a derived skill.
+2. Root `README.md`: the skill's line under Skills. A skill with `disable-model-invocation: true` also joins the sentence under "Who starts a skill". A derived skill also gets a row under Sources and changes the counts in Sources and License.
+3. `test/list-skills.sh`: attribution checks for a derived skill. The test reads the skill list from `skills/`.
+
+The root README's Skills section is the only list of skills, and the test fails when it differs from `skills/`. The root README installs every skill with `npx skills add agoodway/goodstack --skill '*'` and writes no total count. A skill's `README.md` installs that skill alone and links to the root README's Install section for the rest. The test fails when a skill's `README.md` names another skill in an install command.
 
 ## Writing
 

@@ -1,6 +1,6 @@
 # goodstack
 
-This repo publishes twenty-two agent skills. They review and ship code, explain a codebase, test a design before you build it, and edit prose. Each skill installs on its own with the skills CLI. The source is `agoodway/goodstack`.
+This repo publishes agent skills. They review and ship code, explain a codebase, test a design before you build it, and edit prose. Each skill installs on its own with the skills CLI. The source is `agoodway/goodstack`.
 
 The skills are written to run in Claude Code, Codex, Cursor, Amp, and any other harness that reads skills. Two skills name specific tools for an optional feature, and each says what it does without them. `gs-review` names the Codex, Grok, and Claude tools it can ask for a second opinion. `gs-openspec-ship-tickets` names T3 Code, Amp, and Claude Code for its thread mode.
 
@@ -68,10 +68,10 @@ Install one skill into the current project. This example installs `gs-review`.
 npx skills add agoodway/goodstack --skill gs-review
 ```
 
-Install all twenty-two skills.
+Install every skill in this repo. Quote the `*` so the shell passes it to the CLI unchanged.
 
 ```bash
-npx skills add agoodway/goodstack --skill gs-review --skill gs-openspec-ship-tickets --skill gs-openspec-ship --skill gs-openspec-to-tickets --skill gs-scratch --skill gs-review-pr-reply --skill gs-git-commit --skill gs-pull-request --skill gs-blast-radius --skill gs-unslop --skill gs-deslop --skill gs-how --skill gs-why --skill gs-arena --skill gs-wait-what --skill gs-show-me --skill gs-pr-comment --skill gs-reflect --skill gs-sharpen --skill gs-prototype --skill gs-codebase-design --skill gs-pr-show-me
+npx skills add agoodway/goodstack --skill '*'
 ```
 
 From a local checkout, pass the directory in place of `agoodway/goodstack`.
@@ -79,7 +79,7 @@ From a local checkout, pass the directory in place of `agoodway/goodstack`.
 ```bash
 npx skills add /path/to/goodstack --list
 npx skills add /path/to/goodstack --skill gs-review
-npx skills add /path/to/goodstack --skill gs-review --skill gs-openspec-ship-tickets --skill gs-openspec-ship --skill gs-openspec-to-tickets --skill gs-scratch --skill gs-review-pr-reply --skill gs-git-commit --skill gs-pull-request --skill gs-blast-radius --skill gs-unslop --skill gs-deslop --skill gs-how --skill gs-why --skill gs-arena --skill gs-wait-what --skill gs-show-me --skill gs-pr-comment --skill gs-reflect --skill gs-sharpen --skill gs-prototype --skill gs-codebase-design --skill gs-pr-show-me
+npx skills add /path/to/goodstack --skill '*'
 ```
 
 Add `-g` to install into your user skill directory.
