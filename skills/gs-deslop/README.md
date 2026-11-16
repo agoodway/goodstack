@@ -2,7 +2,10 @@
 
 This skill checks the diff against main and removes AI-generated slop introduced in the branch.
 
-Cursor wrote this skill. The original source is the cursor-team-kit plugin in the [Cursor plugins repository](https://github.com/cursor/plugins/tree/b21ab167c8d6aad6e4d91bc0de429eedd49665ed/cursor-team-kit/skills/deslop), path `cursor-team-kit/skills/deslop`, commit `b21ab167c8d6aad6e4d91bc0de429eedd49665ed`. The license is MIT. Copyright 2026 Cursor. The full notice is `LICENSE` in this directory. Grabbag records that source in [SOURCE.md](https://github.com/themusicman/grabbag/blob/main/skills/deslop/SOURCE.md). The file pulled from [themusicman's grabbag](https://github.com/themusicman/grabbag/blob/main/skills/deslop/SKILL.md) matches that commit, and `SKILL.md` in this directory is that text with one change: the skill is named `gs-deslop`, where the original is `deslop`.
+Cursor wrote this skill. The original source is the cursor-team-kit plugin in the [Cursor plugins repository](https://github.com/cursor/plugins/tree/b21ab167c8d6aad6e4d91bc0de429eedd49665ed/cursor-team-kit/skills/deslop), path `cursor-team-kit/skills/deslop`, commit `b21ab167c8d6aad6e4d91bc0de429eedd49665ed`. The license is MIT. Copyright 2026 Cursor. The full notice is `LICENSE` in this directory. Grabbag records that source in [SOURCE.md](https://github.com/themusicman/grabbag/blob/main/skills/deslop/SOURCE.md). The file pulled from [themusicman's grabbag](https://github.com/themusicman/grabbag/blob/main/skills/deslop/SKILL.md) matches that commit. `SKILL.md` in this directory is that text with these changes:
+
+- The skill is named `gs-deslop`, where the original is `deslop`.
+- The description and the opening paragraph point to `gs-no-comments` as the deeper, opt-in comment pass.
 
 ## Install
 

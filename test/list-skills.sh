@@ -145,7 +145,7 @@ for snippet in (
     if snippet not in unslop_readme:
         sys.exit(f"gs-unslop README missing {snippet}")
 
-# gs-deslop differs from the cursor-team-kit original only in its name line, so it has no hash pin.
+# gs-deslop differs from the cursor-team-kit original only in its name and a pointer to gs-no-comments, so it has no hash pin.
 deslop_license = (root / "skills" / "gs-deslop" / "LICENSE").read_text()
 if "Copyright (c) 2026 Cursor" not in deslop_license or "MIT License" not in deslop_license:
     sys.exit("gs-deslop LICENSE missing the Cursor MIT notice")

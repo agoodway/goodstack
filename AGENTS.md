@@ -37,13 +37,15 @@ A skill reads the same in Claude Code, Codex, Cursor, Amp, and anything else.
 
 ## Adding, renaming, or removing a skill
 
-A new skill touches its own directory and the root `README.md`, and no other skill's files:
+A new skill needs these files:
 
 1. `skills/gs-<name>/`: `SKILL.md`, `README.md`, and `LICENSE` when derived.
 2. Root `README.md`: the skill's line under Skills. A skill with `disable-model-invocation: true` also joins the sentence under "Who starts a skill". A derived skill also gets a row under Sources and changes the counts in Sources and License.
 3. `test/list-skills.sh`: attribution checks for a derived skill. The test reads the skill list from `skills/`.
 
-The root README's Skills section is the only list of skills, and the test fails when it differs from `skills/`. The root README installs every skill with `npx skills add agoodway/goodstack --skill '*'` and writes no total count. A skill's `README.md` installs that skill alone and links to the root README's Install section for the rest. The test fails when a skill's `README.md` names another skill in an install command.
+The root README's Skills section is the only list of skills, and the test fails when it differs from `skills/`. The root README installs every skill with `npx skills add agoodway/goodstack --skill '*'` and writes no total count. A skill's `README.md` gives no skill count and no list of other skills. It installs that skill alone and links to the root README's Install section for the rest. The test fails when a skill's `README.md` names another skill in an install command.
+
+Skills may reference and edit each other when it makes sense, such as a pointer from one skill to a related one.
 
 ## Writing
 

@@ -101,7 +101,7 @@ The other sixteen come from skills that other people published. The originals ha
 | `gs-no-comments` | `no-comments` and the `comment-sicko` agent in pstack | Lauren Tan | The agent is a reference file in the skill, and the skill works without its companion skills |
 | `gs-sharpen` | `sharpen` in pstack | Lauren Tan | The name |
 | `gs-unslop` | `unslop` in pstack | Lauren Tan | The name, and the agent may start it |
-| `gs-deslop` | `deslop` in cursor-team-kit | Cursor | The name |
+| `gs-deslop` | `deslop` in cursor-team-kit | Cursor | The name, and a pointer to `gs-no-comments` |
 | `gs-show-me` | `show-me` in HumanLayer's skills | HumanLayer | It opens the HTML file on any operating system, and the agent may start it |
 | `gs-pr-comment` | `leaving-pr-comments` in tstack | Theo Browne | Added writing rules and small pictures |
 | `gs-council` | `council` in tstack | Theo Browne | It runs on any harness with subagents, and works with fewer than three providers |
