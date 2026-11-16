@@ -2,7 +2,7 @@
 
 This repo publishes agent skills. They review and ship code, explain a codebase, test a design before you build it, and edit prose. Each skill installs on its own with the skills CLI. The source is `agoodway/goodstack`.
 
-The skills are written to run in Claude Code, Codex, Cursor, Amp, and any other harness that reads skills. Two skills name specific tools for an optional feature, and each says what it does without them. `gs-review` names the Codex, Grok, and Claude tools it can ask for a second opinion. `gs-openspec-ship-tickets` names T3 Code, Amp, and Claude Code for its thread mode.
+The skills are written to run in Claude Code, Codex, Cursor, Amp, and any other harness that reads skills. Three skills name specific tools for an optional feature, and each says what it does without them. `gs-review` names the Codex, Grok, and Claude tools it can ask for a second opinion. `gs-openspec-ship-tickets` names T3 Code, Amp, and Claude Code for its thread mode. `gs-council` names the T3 Code tools that can start its delegates.
 
 Every skill name starts with `gs-`, so a skill from this repo never overwrites a same-named skill from another source.
 
@@ -11,6 +11,7 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 ### Review and ship
 
 - `gs-review` reviews a change for what will break in production. Specialist reviewers raise findings, and a second model tries to refute each one. A project can shape its own reviews with an optional `REVIEW.md`.
+- `gs-council` asks three delegates on models from different providers to review the work in parallel. The agent fixes what it agrees with, scores each round, and repeats until they are satisfied.
 - `gs-review-pr-reply` posts a `gs-review` report to the current branch's pull request as one GitHub review.
 - `gs-git-commit` commits the current changes with conventional messages. It skips secrets and generated files, and it adds no AI attribution.
 - `gs-pull-request` opens a draft GitHub pull request. The description says what changed, how it works, what was run, and what could break.
@@ -88,7 +89,7 @@ Add `-g` to install into your user skill directory.
 
 Eight skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-pr-show-me`, `gs-scratch`, `gs-openspec-ship`, and `gs-openspec-ship-tickets`.
 
-The other fourteen come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
+The other fifteen come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
 
 | Skill | Original | Author | What this repo changed |
 |---|---|---|---|
@@ -101,6 +102,7 @@ The other fourteen come from skills that other people published. The originals h
 | `gs-deslop` | `deslop` in cursor-team-kit | Cursor | The name |
 | `gs-show-me` | `show-me` in HumanLayer's skills | HumanLayer | It opens the HTML file on any operating system, and the agent may start it |
 | `gs-pr-comment` | `leaving-pr-comments` in tstack | Theo Browne | Added writing rules and small pictures |
+| `gs-council` | `council` in tstack | Theo Browne | It runs on any harness with subagents, and works with fewer than three providers |
 | `gs-prototype` | `prototype` in Matt Pocock's skills | Matt Pocock | The name |
 | `gs-codebase-design` | `codebase-design` in Matt Pocock's skills | Matt Pocock | One reference file runs without subagents |
 | `gs-openspec-to-tickets` | `to-tickets` in Matt Pocock's skills | Matt Pocock | Rebuilt around OpenSpec changes |
@@ -116,4 +118,4 @@ The original repos are:
 
 ## License
 
-The license is MIT. See `LICENSE`. Each of the fourteen skills above also keeps its original author's MIT notice in its own `LICENSE` file.
+The license is MIT. See `LICENSE`. Each of the fifteen skills above also keeps its original author's MIT notice in its own `LICENSE` file.
