@@ -14,7 +14,7 @@ Maze wrote the skill this one is adapted from. The original source is `prune-tes
 - A new section proves a borderline test guards nothing by breaking the behavior it claims to guard, running it, and undoing the edit by hand. When the suite is slow, the skill does this only for borderline tests.
 - A keep list protects regression tests for fixed bugs, tests of public APIs and external contracts, and tests that guard security or data integrity. When two tests guard the same behavior, the skill keeps the one closest to what callers see.
 - Before it deletes production code, the skill searches the whole repo for other uses. It suggests `gs-blast-radius` for deletions it is unsure of, when that skill is installed.
-- A new section splits large scopes into batches, one file or module at a time. Subagents take batches in parallel when the harness has them. Without them, the batches run one after another in the session.
+- A new section splits large scopes into batches, one file or module at a time. Subagents take batches in parallel when the harness has them, on the models the user names, otherwise the strongest the harness reaches, otherwise the session's model. Two subagents share production code only when neither mutates it. Without them, the batches run one after another in the session.
 - A new last step reports a table of every deleted or rewritten test with its file, name, category, action, and reason. It lists removed production code and the test command, and suggests committing the prune on its own.
 - The "Nothing" example in the original writes `<button>` in inline code, and some renderers show it empty. This version says "a button element" instead.
 

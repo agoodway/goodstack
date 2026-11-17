@@ -67,7 +67,7 @@ Before you delete production code, search the whole repo for every use of it, in
 
 **Large scopes**
 
-Work one file or one module at a time, and run that part's tests after you finish it. When the harness has subagent tools, give each subagent its own files to prune in parallel, and have each one return the same table the report uses below. Keep deleting production code, removing duplicates across batches, and the final test run for yourself. Without subagents, do the same batches one after another in this session.
+Work one file or one module at a time, and run that part's tests after you finish it. When the harness has subagent tools, give each subagent its own files to prune in parallel, and have each one return the same table the report uses below. Run the subagents on the models the user names, otherwise on the strongest model the harness reaches, otherwise on the session's model. Give two subagents the same production code only when neither will mutate it, since one mutation check breaks the other's test run. Keep deleting production code, removing duplicates across batches, and the final test run for yourself. Without subagents, do the same batches one after another in this session.
 
 **3. Verify**
 
