@@ -332,6 +332,19 @@ for rel in ("tracker-github.md", "tracker-linear.md", "tracker-jira.md", "tracke
     if not (tickets_dir / rel).is_file():
         sys.exit(f"gs-openspec-to-tickets missing {rel}")
 
+# gs-prune-tests is adapted from the caldoai original, so it has no hash pin.
+prune_dir = root / "skills" / "gs-prune-tests"
+prune_license = (prune_dir / "LICENSE").read_text()
+if "Copyright (c) 2026 Maze" not in prune_license or "MIT License" not in prune_license:
+    sys.exit("gs-prune-tests LICENSE missing Maze's MIT notice")
+prune_readme = (prune_dir / "README.md").read_text()
+for snippet in ("Maze", "https://github.com/caldoai/skills", "skills/prune-tests/SKILL.md", "bd73b2ea5eb854ab8f0553fb41f77c8786f28f82"):
+    if snippet not in prune_readme:
+        sys.exit(f"gs-prune-tests README missing {snippet}")
+prune_skill = (prune_dir / "SKILL.md").read_text()
+if "argument-hint" in prune_skill or "$ARGUMENTS" in prune_skill:
+    sys.exit("gs-prune-tests SKILL.md takes arguments in prose")
+
 pr_show = (root / "skills" / "gs-pr-show-me" / "SKILL.md").read_text()
 for required in ("gs-pull-request", "gs-show-me", "gh pr view", "gh pr diff", "## Where to look first", "read-only"):
     if required not in pr_show:

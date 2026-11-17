@@ -47,6 +47,7 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 
 ### Housekeeping
 
+- `gs-prune-tests` deletes tests that guard no behavior and rewrites the ones that guard it the wrong way. It keeps regression, contract, and security tests, and the tests must pass before and after.
 - `gs-reflect` reviews a finished session with four reviewers. It routes each lasting lesson to a check, a coding standard, a skill edit, or a pointer in a steering file.
 - `gs-scratch` manages a gitignored `.scratch` directory for temporary project files. The commands are `/gs-scratch bootstrap`, `/gs-scratch write`, `/gs-scratch edit`, and `/gs-scratch list`.
 
@@ -90,7 +91,7 @@ Add `-g` to install into your user skill directory.
 
 Eight skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-pr-show-me`, `gs-scratch`, `gs-openspec-ship`, and `gs-openspec-ship-tickets`.
 
-The other sixteen come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
+The other seventeen come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
 
 | Skill | Original | Author | What this repo changed |
 |---|---|---|---|
@@ -110,6 +111,7 @@ The other sixteen come from skills that other people published. The originals ha
 | `gs-openspec-to-tickets` | `to-tickets` in Matt Pocock's skills | Matt Pocock | Rebuilt around OpenSpec changes |
 | `gs-wait-what` | `bro` in pstack, and `wait-what` in Matt Pocock's skills | Lauren Tan and Matt Pocock | New text that merges both |
 | `gs-reflect` | `reflect` in pstack, and `retro` in Matt Pocock's skills | Lauren Tan and Matt Pocock | `retro` becomes a fourth reviewer, and a lesson can become a check or a coding standard |
+| `gs-prune-tests` | `prune-tests` in Caldo's skills | Maze | Adds a scope, a green baseline, mutation checks, a keep list, batches, and a final report |
 
 The original repos are:
 
@@ -117,7 +119,8 @@ The original repos are:
 - Matt Pocock's skills: https://github.com/mattpocock/skills
 - HumanLayer's skills: https://github.com/humanlayer/skills
 - tstack: https://github.com/t3dotgg/tstack
+- Caldo's skills: https://github.com/caldoai/skills
 
 ## License
 
-The license is MIT. See `LICENSE`. Each of the sixteen skills above also keeps its original author's MIT notice in its own `LICENSE` file.
+The license is MIT. See `LICENSE`. Each of the seventeen skills above also keeps its original author's MIT notice in its own `LICENSE` file.
