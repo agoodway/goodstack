@@ -1,6 +1,6 @@
 ---
 name: gs-pull-request
-description: Open a draft GitHub pull request whose description a reviewer can follow without reading the diff first. Use when the user says "/gs-pull-request" or asks to open a pull request.
+description: Open a draft GitHub pull request whose description a reviewer can follow without reading the diff first. Use when the user says "/gs-pull-request", "/gs-pull-request --approved", or asks to open a pull request.
 ---
 
 # Pull request
@@ -95,7 +95,9 @@ Before the body is final, read it again, including quoted code and command outpu
 
 ## Open it
 
-When a person invoked `/gs-pull-request`, print the title and body and wait for approval. Apply any edits they ask for and show the changed body again.
+Read `--approved` from the request's prose. When the request includes `--approved`, or plainly says the pull request is already approved, skip the print-and-wait step. Open or update the pull request without waiting. The pull request stays a draft unless the user asks for a ready one.
+
+When a person invoked `/gs-pull-request` and the request is not already approved, print the title and body and wait for approval. Apply any edits they ask for and show the changed body again.
 
 When a caller says not to ask, open the pull request without waiting.
 
@@ -119,7 +121,7 @@ The title is a conventional commit subject, `type: what changed`. Types are `fea
 
 Default to a draft. Open a ready pull request only when the user asks.
 
-Print the pull request URL on its own line.
+When the request was already approved, print the title, the body, and the pull request URL. Otherwise print the pull request URL on its own line.
 
 ## Errors
 
