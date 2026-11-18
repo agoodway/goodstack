@@ -34,17 +34,17 @@ N findings were auto-patched. M were patched after user guidance. P were patched
 
 ### Auto-patched
 
-1. **<title>** — `file:line` → <what was changed>
+1. **<title>**, `file:line` → <what was changed>
 
 ### User-guided patches
 
-1. **<title>** — `file:line` → <what was changed> (user chose: <summary>)
+1. **<title>**, `file:line` → <what was changed> (user chose: <summary>)
 
 _Omit this subsection when mode is `auto` and M is 0._
 
 ### Model-recommended patches
 
-1. **<title>** — `file:line` → <what was changed>
+1. **<title>**, `file:line` → <what was changed>
    - **Chose:** <recommended option>
    - **Rationale:** <1–2 sentences>
 
@@ -52,26 +52,26 @@ _Omit this subsection when mode is `ask` and P is 0._
 
 ### Skipped
 
-1. **<title>** — `file:line` → <why skipped; if auto mode, what human input is still needed>
+1. **<title>**, `file:line` → <why skipped; if auto mode, what human input is still needed>
 
 ## Critical
 
 _Only unpatched remaining findings._
 
-1. **<short title>** — `path/to/file:line`
+1. **<short title>**, `path/to/file:line`
    - **Finding:** <what is wrong>
    - **Evidence:** <quote or cite>
    - **Suggested fix:** <concrete action>
 
 ## Warning
 
-1. **<short title>** — `path/to/file:line`
+1. **<short title>**, `path/to/file:line`
    - **Finding:** <what is wrong>
    - **Suggested fix:** <concrete action>
 
 ## Suggestion
 
-1. **<short title>** — `path/to/file:line`
+1. **<short title>**, `path/to/file:line`
    - <what and why>
 
 ## Alignment notes
