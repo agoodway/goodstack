@@ -6,7 +6,12 @@ Auto mode is the default. In auto mode, the skill applies the recommended answer
 
 The skill edits only files inside the change directory: `proposal.md`, `design.md`, `tasks.md`, and the delta specs. It writes its report to `openspec/changes/<change-id>/review-change.md`. It never edits source code, commits, or changes branches.
 
-This skill comes from `.agents/skills/inspector-review-update` in agoodway/goodcases at commit `4f19f0a0b6e5bb52adce386589b03aae0fc06569`, where it was named `inspector-review-update`.
+This skill comes from `.agents/skills/inspector-review-update` in agoodway/goodcases at commit `4f19f0a0b6e5bb52adce386589b03aae0fc06569`, where it was named `inspector-review-update`. Both repos belong to Goodway, so this repo counts the skill as its own. These are the changes from that version:
+
+- The name, triggers, headings, and slash command are now `gs-openspec-review-change`. The legacy `/inspector review-update` entry point is gone, and the report file is `review-change.md`.
+- A table of Claude Code, OpenCode, and Codex tools is replaced with prose that fits any harness. The skill now chooses specialist models in prose and says what to do when the harness has no subagents. The change id and mode come from the request's prose.
+- The rule against filing td issues is gone, and a generic example replaces one about PgFlow.
+- The report template carries the new names.
 
 ## Install
 
