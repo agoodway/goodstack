@@ -43,4 +43,4 @@ Run `/gs-git-commit` first when the working tree is dirty.
 /gs-pull-request
 ```
 
-The skill prints the title and body and waits for approval, then pushes the branch and opens a draft pull request. It updates an existing pull request for the branch instead of opening a second one.
+The skill prints the title and body and waits for approval, then pushes the branch and opens a draft pull request. It updates an existing pull request for the branch instead of opening a second one. A request that includes `--approved`, or plainly says the pull request is already approved, skips that wait, opens or updates the draft, and then prints the title, the body, and the URL.
