@@ -21,6 +21,7 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 ### OpenSpec
 
 - `gs-openspec-ship` takes each named OpenSpec change through apply, verify, review, archive, and commit. It rebases onto the remote's default branch first, and it opens one draft pull request at the end.
+- `gs-openspec-review-change` quick-reviews an OpenSpec change before you build it. It patches the findings with one obvious fix and answers design questions with a recorded recommendation, or asks you each one when you request it.
 - `gs-openspec-to-tickets` breaks OpenSpec changes into tickets that each cut through every layer. It publishes them to GitHub, Linear, Jira, or local markdown.
 - `gs-openspec-ship-tickets` ships those tickets in blocking order, one pipeline per ticket. It archives each finished change and opens one draft pull request.
 
@@ -89,7 +90,7 @@ Add `-g` to install into your user skill directory.
 
 ## Sources
 
-Eight skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-pr-show-me`, `gs-scratch`, `gs-openspec-ship`, and `gs-openspec-ship-tickets`.
+Nine skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-pr-show-me`, `gs-scratch`, `gs-openspec-ship`, `gs-openspec-ship-tickets`, and `gs-openspec-review-change`.
 
 The other seventeen come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
 
