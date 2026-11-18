@@ -350,6 +350,13 @@ for required in ("gs-pull-request", "gs-show-me", "gh pr view", "gh pr diff", "#
     if required not in pr_show:
         sys.exit(f"gs-pr-show-me SKILL.md missing {required}")
 
+qa_skill = (root / "skills" / "gs-qa-scenarios" / "SKILL.md").read_text()
+for required in ("gs-pull-request", "gs-blast-radius", "gs-show-me", "gs-unslop", "## Setup", "## Scenarios", "## Regression checks", "Expected:", "--body-file"):
+    if required not in qa_skill:
+        sys.exit(f"gs-qa-scenarios SKILL.md missing {required}")
+if "$ARGUMENTS" in qa_skill:
+    sys.exit("gs-qa-scenarios SKILL.md takes arguments in prose")
+
 all_installed = {p.parent.name for p in (tmp / "all").rglob("SKILL.md")}
 if all_installed != expected_set:
     sys.exit(f"--skill '*' installed {sorted(all_installed)}, expected {expected}")

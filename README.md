@@ -17,6 +17,7 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 - [`gs-pull-request`](skills/gs-pull-request/README.md) opens a draft GitHub pull request. The description says what changed, how it works, what was run, and what could break.
 - [`gs-pr-comment`](skills/gs-pr-comment/README.md) writes and posts a GitHub comment for you. Each comment opens with a note naming the model and the user it speaks for.
 - [`gs-pr-show-me`](skills/gs-pr-show-me/README.md) explains what an existing pull request changes, in plain language with small pictures. It reads the pull request and posts nothing.
+- [`gs-qa-scenarios`](skills/gs-qa-scenarios/README.md) writes manual QA scenarios for a branch or pull request. Each scenario tells a QA engineer what to test, why, the exact steps, and the result to expect.
 
 ### OpenSpec
 
@@ -90,7 +91,7 @@ Add `-g` to install into your user skill directory.
 
 ## Sources
 
-Nine skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-pr-show-me`, `gs-scratch`, `gs-openspec-ship`, `gs-openspec-ship-tickets`, and `gs-openspec-review-change`.
+Ten skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-pr-show-me`, `gs-qa-scenarios`, `gs-scratch`, `gs-openspec-ship`, `gs-openspec-ship-tickets`, and `gs-openspec-review-change`.
 
 The other seventeen come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
 
