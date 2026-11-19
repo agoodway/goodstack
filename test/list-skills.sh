@@ -396,6 +396,8 @@ for required in (
     "run.md",
     "Never stage or commit anything under `.verify/`",
     "Never edit a scenario to make it pass",
+    "In write and run mode, skip that walk",
+    "> [!NOTE]",
     "**Passed**",
     "**Failed**",
     "**Not run**",

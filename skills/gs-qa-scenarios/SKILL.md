@@ -173,6 +173,8 @@ Before you hand them over, read each scenario as the QA engineer:
 
 When the harness can run the application or drive a browser, walk the Must scenarios yourself. First confirm that the running application is built from `<rev>`, for example by checking that `git rev-parse HEAD` in the checkout it runs from prints the same commit. When you cannot confirm the revision, say so plainly at the top of the output, and mark every scenario not walked. Mark each scenario you walked as walked, and fix any step that did not match. Mark the rest not walked. Do not claim a scenario passes when you did not run it.
 
+In write and run mode, skip that walk and keep this step to reading. Step 7 drives the app, so every scenario runs once, with evidence, and a step that does not match is reported, not fixed.
+
 Remove secrets, tokens, absolute local paths, and private details before you print the result.
 
 In write mode, stop here and go to Sharing.
@@ -194,7 +196,7 @@ In write and run mode, use the scenarios steps 1 to 6 just wrote.
 In run mode, read the scenarios the user names and do not rewrite them:
 
 - A Markdown file: read it from the path the user gives.
-- A pull request comment: run `gh pr view [pr] --comments` and take the latest comment whose body opens with `# QA:`. When several comments could be meant, ask which one.
+- A pull request comment: run `gh pr view [pr] --comments` and take the latest comment that holds a `# QA:` heading. The heading may follow a `> [!NOTE]` attribution, such as the one the `gs-pr-comment` skill adds, and the scenarios start at the heading. When several comments could be meant, ask which one.
 - The chat: take the scenarios from the conversation.
 
 When you find no scenarios in any of these places, say so, and offer write and run mode instead. The title and the line under it name the branch or pull request the scenarios cover. Find its revision, `<rev>`, as step 1 does.
