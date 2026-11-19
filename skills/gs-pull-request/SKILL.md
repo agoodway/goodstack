@@ -80,6 +80,26 @@ Show a before and after when one exists. A screenshot is the right evidence for 
 
 When nothing was run, write `Not run` and name the check that would show the change works. Do not invent output.
 
+#### Verify runs
+
+A project verification skill writes each run to `.verify/<app>/<run-id>/`, with a `run.md` index that names the commit SHA the app was built from. Look for these indexes before writing Evidence.
+
+```bash
+ls .verify/*/*/run.md
+git rev-parse HEAD
+git log -1 --format=%H origin/<base>..HEAD -- <changed files>
+```
+
+A run built from a dirty working tree tested code that no commit holds, so it never applies, whatever its commit. Among clean runs, a run applies when its commit is HEAD. It also applies when its commit is on the branch and comes after the last commit that touched the changed files, so the run built the same code. Check that with `git merge-base --is-ancestor <last-touching-commit> <run-commit>` and `git merge-base --is-ancestor <run-commit> HEAD`. Ignore runs for any other commit, and say nothing about them. When no run applies, leave verify runs out of the description.
+
+When a run applies and its features cover the change, use it in Evidence:
+
+- Say which features the run drove, by feature ID and entry point, and which passed or failed.
+- Inline short text proof from the run's artifacts, such as a command and its output or a response snippet, in a fenced block.
+- List each screenshot by its path under `.verify/`. `gh` cannot upload images from the CLI, so after opening the pull request, tell the user which files to drag into the description. Skip that step when the harness has its own way to upload images to the pull request.
+
+Never commit, stage, or push evidence files. They stay in `.verify/`, which the verification skill keeps in `.gitignore`.
+
 ### What could break
 
 - Door. One-way when merge cannot be walked back, such as a destructive migration, sent mail or money, a published API, or deleted data. Two-way when a revert is enough.

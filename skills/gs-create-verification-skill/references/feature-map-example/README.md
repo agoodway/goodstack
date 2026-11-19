@@ -5,6 +5,7 @@ This directory is the maintained source for verifying the user-facing behavior o
 ## Baseline preconditions
 
 - Launch Notes at `http://127.0.0.1:4173` with a disposable data directory.
+- Set `RUN_ID` to the UTC time and the short commit SHA, such as `20261119T143000Z-a1b2c3d`, and write every artifact under `.verify/notes/$RUN_ID/`. Keep `.verify/` in `.gitignore`.
 - Set `NOTES_DATA_DIR=/tmp/notes-verify-$RUN_ID` so concurrent runs do not share state.
 - Seed notes titled `Quarterly plan` and `Grocery list`.
 - Put `control-notes` and the `notes` CLI on `PATH`.
@@ -26,7 +27,7 @@ This directory is the maintained source for verifying the user-facing behavior o
 - UI proof includes an ARIA snapshot and a screenshot with the app identity visible.
 - CLI proof includes the command, stdout, stderr, and exit code.
 - Mutation proof includes a read-only second view of the stored value.
-- Record the feature ID and entry point used with every artifact.
+- Record the feature ID, entry point, result, and artifact files in `.verify/notes/$RUN_ID/run.md`, under the commit SHA, branch, clean or dirty working tree, time, and outcome of the run.
 - Report an unreachable path with the attempted command and the unmet precondition.
 - Do not report a skipped entry point as verified through a different path.
 

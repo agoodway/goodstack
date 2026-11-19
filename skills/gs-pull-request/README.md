@@ -4,6 +4,8 @@ This skill opens a draft GitHub pull request for the current branch. The descrip
 
 It does not commit. A dirty tree stops the skill and points at `/gs-git-commit`.
 
+When a project verification skill left a run in `.verify/<app>/<run-id>/` for the branch's current code, the Evidence section uses it. It names the features the run drove and what passed, inlines short text proof, and lists screenshots by path. `gh` cannot upload images, so the skill tells you which screenshots to drag into the description. It ignores runs for other commits and runs built from a dirty working tree, and it never commits the evidence.
+
 ## Use cases
 
 - Your branch is committed and you want a draft pull request whose description a reviewer can follow without reading the diff first.
