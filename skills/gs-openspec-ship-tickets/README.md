@@ -8,6 +8,11 @@ Thread mode uses `--threads`. Each ticket runs in a T3 Code child thread that ha
 
 The tracker decides which tickets are done. Supported trackers are GitHub, Linear, Jira, and local markdown. The orchestrator moves tickets to in progress, comments commits and the pull request URL, and labels blocked tickets `needs-info`. Tickets close when the pull request merges.
 
+## Use cases
+
+- You have tickets from `gs-openspec-to-tickets` and want them shipped in blocking order, each one applied, verified, reviewed, and committed.
+- You want independent tickets built in parallel in separate worktrees, threads, or orbs, then combined into one draft pull request.
+
 ## Install
 
 The source is `agoodway/goodstack`. From a local checkout, pass that directory instead of `agoodway/goodstack`.

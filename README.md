@@ -10,47 +10,47 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 
 ### Review and ship
 
-- `gs-review` reviews a change for what will break in production. Specialist reviewers raise findings, and a second model tries to refute each one. A project can shape its own reviews with an optional `REVIEW.md`.
-- `gs-council` asks three delegates on models from different providers to review the work in parallel. The agent fixes what it agrees with, scores each round, and repeats until they are satisfied.
-- `gs-review-pr-reply` posts a `gs-review` report to the current branch's pull request as one GitHub review.
-- `gs-git-commit` commits the current changes with conventional messages. It skips secrets and generated files, and it adds no AI attribution.
-- `gs-pull-request` opens a draft GitHub pull request. The description says what changed, how it works, what was run, and what could break.
-- `gs-pr-comment` writes and posts a GitHub comment for you. Each comment opens with a note naming the model and the user it speaks for.
-- `gs-pr-show-me` explains what an existing pull request changes, in plain language with small pictures. It reads the pull request and posts nothing.
+- [`gs-review`](skills/gs-review/README.md) reviews a change for what will break in production. Specialist reviewers raise findings, and a second model tries to refute each one. A project can shape its own reviews with an optional `REVIEW.md`.
+- [`gs-council`](skills/gs-council/README.md) asks three delegates on models from different providers to review the work in parallel. The agent fixes what it agrees with, scores each round, and repeats until they are satisfied.
+- [`gs-review-pr-reply`](skills/gs-review-pr-reply/README.md) posts a `gs-review` report to the current branch's pull request as one GitHub review.
+- [`gs-git-commit`](skills/gs-git-commit/README.md) commits the current changes with conventional messages. It skips secrets and generated files, and it adds no AI attribution.
+- [`gs-pull-request`](skills/gs-pull-request/README.md) opens a draft GitHub pull request. The description says what changed, how it works, what was run, and what could break.
+- [`gs-pr-comment`](skills/gs-pr-comment/README.md) writes and posts a GitHub comment for you. Each comment opens with a note naming the model and the user it speaks for.
+- [`gs-pr-show-me`](skills/gs-pr-show-me/README.md) explains what an existing pull request changes, in plain language with small pictures. It reads the pull request and posts nothing.
 
 ### OpenSpec
 
-- `gs-openspec-ship` takes each named OpenSpec change through apply, verify, review, archive, and commit. It rebases onto the remote's default branch first, and it opens one draft pull request at the end.
-- `gs-openspec-review-change` quick-reviews an OpenSpec change before you build it. It patches the findings with one obvious fix and answers design questions with a recorded recommendation, or asks you each one when you request it.
-- `gs-openspec-to-tickets` breaks OpenSpec changes into tickets that each cut through every layer. It publishes them to GitHub, Linear, Jira, or local markdown.
-- `gs-openspec-ship-tickets` ships those tickets in blocking order, one pipeline per ticket. It archives each finished change and opens one draft pull request.
+- [`gs-openspec-ship`](skills/gs-openspec-ship/README.md) takes each named OpenSpec change through apply, verify, review, archive, and commit. It rebases onto the remote's default branch first, and it opens one draft pull request at the end.
+- [`gs-openspec-review-change`](skills/gs-openspec-review-change/README.md) quick-reviews an OpenSpec change before you build it. It patches the findings with one obvious fix and answers design questions with a recorded recommendation, or asks you each one when you request it.
+- [`gs-openspec-to-tickets`](skills/gs-openspec-to-tickets/README.md) breaks OpenSpec changes into tickets that each cut through every layer. It publishes them to GitHub, Linear, Jira, or local markdown.
+- [`gs-openspec-ship-tickets`](skills/gs-openspec-ship-tickets/README.md) ships those tickets in blocking order, one pipeline per ticket. It archives each finished change and opens one draft pull request.
 
 ### Understand code
 
-- `gs-how` explains how a subsystem works. It covers the runtime flow and where the code lives.
-- `gs-why` investigates why code is shaped the way it is. It cites what it finds in git history, tickets, docs, and chat.
-- `gs-blast-radius` finds what a change could break outside the diff. It names the one fact the change is safe because of, and it proves that fact by running code.
+- [`gs-how`](skills/gs-how/README.md) explains how a subsystem works. It covers the runtime flow and where the code lives.
+- [`gs-why`](skills/gs-why/README.md) investigates why code is shaped the way it is. It cites what it finds in git history, tickets, docs, and chat.
+- [`gs-blast-radius`](skills/gs-blast-radius/README.md) finds what a change could break outside the diff. It names the one fact the change is safe because of, and it proves that fact by running code.
 
 ### Design
 
-- `gs-arena` runs several attempts at the same task in parallel. It picks one as the base and grafts the strongest parts of the others into it.
-- `gs-prototype` builds a throwaway prototype to answer one design question. Logic gets a clickable HTML file. A screen gets several variants you can switch between.
-- `gs-codebase-design` gives the agent a fixed vocabulary for designing deep modules. It also says how to deepen shallow modules and how to compare interface designs.
-- `gs-sharpen` makes a task deeper, not bigger, and then rewrites your prompt.
+- [`gs-arena`](skills/gs-arena/README.md) runs several attempts at the same task in parallel. It picks one as the base and grafts the strongest parts of the others into it.
+- [`gs-prototype`](skills/gs-prototype/README.md) builds a throwaway prototype to answer one design question. Logic gets a clickable HTML file. A screen gets several variants you can switch between.
+- [`gs-codebase-design`](skills/gs-codebase-design/README.md) gives the agent a fixed vocabulary for designing deep modules. It also says how to deepen shallow modules and how to compare interface designs.
+- [`gs-sharpen`](skills/gs-sharpen/README.md) makes a task deeper, not bigger, and then rewrites your prompt.
 
 ### Write and explain
 
-- `gs-unslop` edits text to remove AI writing patterns.
-- `gs-deslop` removes AI-generated code slop from the branch's diff.
-- `gs-no-comments` deletes nearly every comment in a diff and fixes the code that needed one. It is a deliberate, aggressive pass, where `gs-deslop` is the lighter cleanup.
-- `gs-show-me` explains the current topic with the smallest picture that fits. The picture is a tree, a diagram, a diff, or one HTML file.
-- `gs-wait-what` makes the agent say its last message again in plain language, with the context you are missing.
+- [`gs-unslop`](skills/gs-unslop/README.md) edits text to remove AI writing patterns.
+- [`gs-deslop`](skills/gs-deslop/README.md) removes AI-generated code slop from the branch's diff.
+- [`gs-no-comments`](skills/gs-no-comments/README.md) deletes nearly every comment in a diff and fixes the code that needed one. It is a deliberate, aggressive pass, where `gs-deslop` is the lighter cleanup.
+- [`gs-show-me`](skills/gs-show-me/README.md) explains the current topic with the smallest picture that fits. The picture is a tree, a diagram, a diff, or one HTML file.
+- [`gs-wait-what`](skills/gs-wait-what/README.md) makes the agent say its last message again in plain language, with the context you are missing.
 
 ### Housekeeping
 
-- `gs-prune-tests` deletes tests that guard no behavior and rewrites the ones that guard it the wrong way. It keeps regression, contract, and security tests, and the tests must pass before and after.
-- `gs-reflect` reviews a finished session with four reviewers. It routes each lasting lesson to a check, a coding standard, a skill edit, or a pointer in a steering file.
-- `gs-scratch` manages a gitignored `.scratch` directory for temporary project files. The commands are `/gs-scratch bootstrap`, `/gs-scratch write`, `/gs-scratch edit`, and `/gs-scratch list`.
+- [`gs-prune-tests`](skills/gs-prune-tests/README.md) deletes tests that guard no behavior and rewrites the ones that guard it the wrong way. It keeps regression, contract, and security tests, and the tests must pass before and after.
+- [`gs-reflect`](skills/gs-reflect/README.md) reviews a finished session with four reviewers. It routes each lasting lesson to a check, a coding standard, a skill edit, or a pointer in a steering file.
+- [`gs-scratch`](skills/gs-scratch/README.md) manages a gitignored `.scratch` directory for temporary project files. The commands are `/gs-scratch bootstrap`, `/gs-scratch write`, `/gs-scratch edit`, and `/gs-scratch list`.
 
 ### Who starts a skill
 

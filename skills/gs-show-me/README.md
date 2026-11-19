@@ -2,9 +2,10 @@
 
 This skill explains the current topic visually. It picks the smallest view that makes the point: pseudocode, a call tree, a component tree, a file tree, a Mermaid diagram, a diff, or one focused HTML file.
 
-HumanLayer wrote this skill. The original source is the show-me plugin in the [HumanLayer skills repository](https://github.com/humanlayer/skills/tree/4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329/plugins/show-me/skills/show-me), path `plugins/show-me/skills/show-me`, commit `4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329`. The license is MIT. Copyright 2026 HumanLayer. The full notice is `LICENSE` in this directory. The file was pulled from [themusicman's grabbag](https://github.com/themusicman/grabbag/blob/main/skills/humanlayer/show-me/SKILL.md), which records it as unmodified from that commit.
+## Use cases
 
-`SKILL.md` in this directory is adapted from that text so it runs on any harness and operating system. One part changed: the original opened the HTML file with `Bash(open ...)`, which is Claude Code notation for the macOS `open` command. The skill now uses the harness's preview or browser tool, or the system opener for macOS, Linux, or Windows, and gives the user the path when it cannot open the file. The `disable-model-invocation` line is also removed, so other skills in this repo can tell the agent to use this one, and the description adds when to use the skill. The upstream `agents/openai.yaml` is not included.
+- A prose explanation of some code is not landing, and you want a call tree, a diagram, or a diff instead.
+- You want a sketch of how the parts of a feature connect before you change it.
 
 ## Install
 
@@ -40,3 +41,9 @@ Add `-g` to install into your user skill directory instead of the current projec
 ```
 
 Use it when a diagram or a sketch of the code's shape would explain the topic faster than prose.
+
+## Source
+
+HumanLayer wrote this skill. The original source is the show-me plugin in the [HumanLayer skills repository](https://github.com/humanlayer/skills/tree/4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329/plugins/show-me/skills/show-me), path `plugins/show-me/skills/show-me`, commit `4d69d20f6e9b57b4fcf0d501ccfb1be961f0f329`. The license is MIT. Copyright 2026 HumanLayer. The full notice is `LICENSE` in this directory. The file was pulled from [themusicman's grabbag](https://github.com/themusicman/grabbag/blob/main/skills/humanlayer/show-me/SKILL.md), which records it as unmodified from that commit.
+
+`SKILL.md` in this directory is adapted from that text so it runs on any harness and operating system. One part changed: the original opened the HTML file with `Bash(open ...)`, which is Claude Code notation for the macOS `open` command. The skill now uses the harness's preview or browser tool, or the system opener for macOS, Linux, or Windows, and gives the user the path when it cannot open the file. The `disable-model-invocation` line is also removed, so other skills in this repo can tell the agent to use this one, and the description adds when to use the skill. The upstream `agents/openai.yaml` is not included.

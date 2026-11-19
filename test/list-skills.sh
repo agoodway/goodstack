@@ -375,7 +375,9 @@ readme_text = (root / "README.md").read_text()
 skills_section = re.search(r"(?ms)^## Skills\n(.*?)^## ", readme_text)
 if skills_section is None:
     sys.exit("README.md has no Skills section")
-listed = re.findall(r"(?m)^- `(gs-[a-z0-9-]+)`", skills_section.group(1))
+# Each line links the skill name to its README, so a line whose link is missing
+# or points at another skill counts as missing.
+listed = re.findall(r"(?m)^- \[`(gs-[a-z0-9-]+)`\]\(skills/\1/README\.md\)", skills_section.group(1))
 if sorted(listed) != expected:
     missing = sorted(expected_set - set(listed))
     extra = sorted(set(listed) - expected_set)

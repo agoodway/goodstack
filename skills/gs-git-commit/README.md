@@ -4,6 +4,11 @@ This skill commits the current changes. It writes conventional commit messages, 
 
 It leaves these unstaged: OS and editor junk, build output such as `node_modules/` and `dist/`, logs and temp files, `.env` files other than `.env.sample` and `.env.example`, `credentials.*`, and anything `.gitignore` already covers.
 
+## Use cases
+
+- You finished a change and want it committed with a conventional message and no AI attribution.
+- Your working tree holds `.env` files, build output, or logs, and you want a commit that leaves them out.
+
 ## Install
 
 The source is `agoodway/goodstack`. From a local checkout, pass that directory instead of `agoodway/goodstack`.

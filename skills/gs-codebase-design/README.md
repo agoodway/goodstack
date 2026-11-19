@@ -2,14 +2,11 @@
 
 This skill gives the agent a fixed vocabulary for designing deep modules: a lot of behaviour behind a small interface, placed at a clean seam, and testable through that interface. It defines module, interface, depth, seam, adapter, leverage, and locality, and it says how to deepen shallow modules and how to compare several interface designs.
 
-Matt Pocock wrote this skill. The original source is [mattpocock/skills](https://github.com/mattpocock/skills/tree/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/engineering/codebase-design), path `skills/engineering/codebase-design`, commit `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`. The license is MIT. Copyright 2026 Matt Pocock. The full notice is `LICENSE` in this directory. The files pulled from [themusicman's grabbag](https://github.com/themusicman/grabbag/blob/main/skills/mattpocock/codebase-design/SKILL.md) match that commit.
+## Use cases
 
-`DEEPENING.md` is unchanged. These parts changed:
-
-- `SKILL.md` names the skill `gs-codebase-design`, where the original is `codebase-design`. Its text is unchanged.
-- `DESIGN-IT-TWICE.md` says what to do when the harness has no subagent tools: draft each design in the session, one constraint at a time.
-- `DESIGN-IT-TWICE.md` treats the project's glossary as optional. The original assumed a `GLOSSARY.md`.
-- The upstream `agents/openai.yaml` is not included.
+- You are designing a module's interface and want the agent to reason with fixed terms such as depth, seam, and adapter.
+- You suspect some modules are shallow and want the agent to find where to deepen them.
+- You want to compare several interface designs for the same module before you pick one.
 
 ## Install
 
@@ -45,3 +42,14 @@ Add `-g` to install into your user skill directory instead of the current projec
 ```
 
 The agent can also start it on its own, when you ask it to design or improve a module's interface, find shallow modules to deepen, or decide where a seam goes.
+
+## Source
+
+Matt Pocock wrote this skill. The original source is [mattpocock/skills](https://github.com/mattpocock/skills/tree/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/engineering/codebase-design), path `skills/engineering/codebase-design`, commit `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`. The license is MIT. Copyright 2026 Matt Pocock. The full notice is `LICENSE` in this directory. The files pulled from [themusicman's grabbag](https://github.com/themusicman/grabbag/blob/main/skills/mattpocock/codebase-design/SKILL.md) match that commit.
+
+`DEEPENING.md` is unchanged. These parts changed:
+
+- `SKILL.md` names the skill `gs-codebase-design`, where the original is `codebase-design`. Its text is unchanged.
+- `DESIGN-IT-TWICE.md` says what to do when the harness has no subagent tools: draft each design in the session, one constraint at a time.
+- `DESIGN-IT-TWICE.md` treats the project's glossary as optional. The original assumed a `GLOSSARY.md`.
+- The upstream `agents/openai.yaml` is not included.

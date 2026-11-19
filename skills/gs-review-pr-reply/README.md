@@ -2,6 +2,11 @@
 
 This skill posts a [`gs-review`](../gs-review/README.md) report to the current branch's pull request as one GitHub review. The review has an overview comment with the verdict, and an inline comment on the changed line for each finding.
 
+## Use cases
+
+- You ran `gs-review` and want its findings posted to the branch's pull request as inline comments on the changed lines.
+- You want to post only some findings from a review, such as the blockers, and leave the rest out.
+
 ## Install
 
 The source is `agoodway/goodstack`. From a local checkout, pass that directory instead of `agoodway/goodstack`.

@@ -6,6 +6,12 @@ Auto mode is the default. In auto mode, the skill applies the recommended answer
 
 The skill edits only files inside the change directory: `proposal.md`, `design.md`, `tasks.md`, and the delta specs. It writes its report to `openspec/changes/<change-id>/review-change.md`. It never edits source code, commits, or changes branches.
 
+## Use cases
+
+- You wrote an OpenSpec change and want its structure, its consistency with other specs, and its fit with the codebase checked before anyone builds it.
+- You want the mechanical problems in a change patched and each design question answered with a recorded reason.
+- You want to answer each design question in a change yourself, one at a time.
+
 ## Install
 
 The source is `agoodway/goodstack`. From a local checkout, pass that directory instead of `agoodway/goodstack`.

@@ -41,7 +41,7 @@ Amp shows the model only each skill's `name` and `description`, has no slash com
 
 - Take the text from the original repo at a pinned commit, and compare bytes against it. Grabbag is a pointer to the source, not the source.
 - `LICENSE` in the skill directory carries the copyright holder's MIT notice. A skill merged from two sources carries both lines.
-- `README.md` names the author, repo, path, and commit, then lists every change from the original. A copy that changes only front matter says so.
+- `README.md` names the author, repo, path, and commit, then lists every change from the original. A copy that changes only front matter says so. This text goes in a `## Source` section, the last section of the file, after Install and Usage.
 - Leave out upstream `agents/openai.yaml`.
 
 ## Adding, renaming, or removing a skill
@@ -49,8 +49,10 @@ Amp shows the model only each skill's `name` and `description`, has no slash com
 A new skill needs these files:
 
 1. `skills/gs-<name>/`: `SKILL.md`, `README.md`, and `LICENSE` when derived.
-2. Root `README.md`: the skill's line under Skills. A skill with `disable-model-invocation: true` also joins the sentence under "Who starts a skill". A derived skill also gets a row under Sources and changes the counts in Sources and License.
+2. Root `README.md`: the skill's line under Skills, which opens with the skill name linked to `skills/gs-<name>/README.md`. A skill with `disable-model-invocation: true` also joins the sentence under "Who starts a skill". A derived skill also gets a row under Sources and changes the counts in Sources and License.
 3. `test/list-skills.sh`: attribution checks for a derived skill. The test reads the skill list from `skills/`.
+
+Every skill `README.md` opens with what the skill does. A `## Use cases` section follows, before Install. It lists one to three situations where someone would reach for the skill, one sentence each, taken from what `SKILL.md` does.
 
 The root README's Skills section is the only list of skills, and the test fails when it differs from `skills/`. The root README installs every skill with `npx skills add agoodway/goodstack --skill '*'` and writes no total count. A skill's `README.md` gives no skill count and no list of other skills. It installs that skill alone and links to the root README's Install section for the rest. The test fails when a skill's `README.md` names another skill in an install command.
 
