@@ -32,6 +32,11 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 - [`gs-why`](skills/gs-why/README.md) investigates why code is shaped the way it is. It cites what it finds in git history, tickets, docs, and chat.
 - [`gs-blast-radius`](skills/gs-blast-radius/README.md) finds what a change could break outside the diff. It names the one fact the change is safe because of, and it proves that fact by running code.
 
+### Verify the app
+
+- [`gs-create-verification-skill`](skills/gs-create-verification-skill/README.md) generates a project-local skill that launches the app, drives it the way a user does, and captures evidence. It seeds a feature map and runs the new skill once before handing it over.
+- [`gs-maintain-verification-skill`](skills/gs-maintain-verification-skill/README.md) checks a verification skill and its feature map against the source and the live app. It ships proven corrections in at most one pull request.
+
 ### Design
 
 - [`gs-arena`](skills/gs-arena/README.md) runs several attempts at the same task in parallel. It picks one as the base and grafts the strongest parts of the others into it.
@@ -55,7 +60,7 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 
 ### Who starts a skill
 
-Seven skills run only when you type the command: `gs-arena`, `gs-why`, `gs-no-comments`, `gs-reflect`, `gs-openspec-ship`, `gs-openspec-to-tickets`, and `gs-openspec-ship-tickets`. The agent can also start the other skills when a request matches their description. Amp has no slash commands and ignores the `disable-model-invocation` flag that sets this, so these seven say in their descriptions to run only when you ask for them.
+Nine skills run only when you type the command: `gs-arena`, `gs-why`, `gs-no-comments`, `gs-reflect`, `gs-openspec-ship`, `gs-openspec-to-tickets`, `gs-openspec-ship-tickets`, `gs-create-verification-skill`, and `gs-maintain-verification-skill`. The agent can also start the other skills when a request matches their description. Amp has no slash commands and ignores the `disable-model-invocation` flag that sets this, so these nine say in their descriptions to run only when you ask for them.
 
 ## Install
 
@@ -93,7 +98,7 @@ Add `-g` to install into your user skill directory.
 
 Ten skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-pr-show-me`, `gs-qa-scenarios`, `gs-scratch`, `gs-openspec-ship`, `gs-openspec-ship-tickets`, and `gs-openspec-review-change`.
 
-The other seventeen come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
+The other nineteen come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
 
 | Skill | Original | Author | What this repo changed |
 |---|---|---|---|
@@ -102,6 +107,8 @@ The other seventeen come from skills that other people published. The originals 
 | `gs-why` | `why` in pstack | Lauren Tan | The skill and its prompts run on any harness |
 | `gs-blast-radius` | `blast-radius` in pstack | Lauren Tan | It works without its companion skills |
 | `gs-no-comments` | `no-comments` and the `comment-sicko` agent in pstack | Lauren Tan | The agent is a reference file in the skill, and the skill works without its companion skills |
+| `gs-create-verification-skill` | `create-verification-skill` in pstack | Lauren Tan | The generated skill goes in the current harness's skills directory |
+| `gs-maintain-verification-skill` | `maintain-verification-skill` in pstack | Lauren Tan | It finds the target in any harness's skills directory, and reads features one at a time without subagents |
 | `gs-sharpen` | `sharpen` in pstack | Lauren Tan | The name |
 | `gs-unslop` | `unslop` in pstack | Lauren Tan | The name, and the agent may start it |
 | `gs-deslop` | `deslop` in cursor-team-kit | Cursor | The name, and a pointer to `gs-no-comments` |
@@ -125,4 +132,4 @@ The original repos are:
 
 ## License
 
-The license is MIT. See `LICENSE`. Each of the seventeen skills above also keeps its original author's MIT notice in its own `LICENSE` file.
+The license is MIT. See `LICENSE`. Each of the nineteen skills above also keeps its original author's MIT notice in its own `LICENSE` file.

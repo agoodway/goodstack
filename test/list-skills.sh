@@ -161,7 +161,7 @@ for snippet in (
     if snippet not in deslop_readme:
         sys.exit(f"gs-deslop README missing {snippet}")
 
-# how, why, and arena are adapted from the pstack originals, so they have no hash pin.
+# how, why, arena, and the verification pair are adapted from the pstack originals, so they have no hash pin.
 pstack_skills = {
     "gs-how": (
         "ce649c03ac3b75b6ae80cbd15b7e2c536caedb5a",
@@ -176,6 +176,20 @@ pstack_skills = {
     "gs-arena": (
         "ab1f702ce8e8b6557edb56b09f52cde8bfb83f17",
         "pstack/skills/arena",
+        (),
+    ),
+    "gs-create-verification-skill": (
+        "e58dd043600587dbaf58ba315e7f2b38373eeb43",
+        "pstack/skills/create-verification-skill",
+        (
+            "references/feature-map-example/README.md",
+            "references/feature-map-example/search.md",
+            "references/feature-map-example/create-note.md",
+        ),
+    ),
+    "gs-maintain-verification-skill": (
+        "e58dd043600587dbaf58ba315e7f2b38373eeb43",
+        "pstack/skills/maintain-verification-skill",
         (),
     ),
 }
@@ -349,6 +363,14 @@ pr_show = (root / "skills" / "gs-pr-show-me" / "SKILL.md").read_text()
 for required in ("gs-pull-request", "gs-show-me", "gh pr view", "gh pr diff", "## Where to look first", "read-only"):
     if required not in pr_show:
         sys.exit(f"gs-pr-show-me SKILL.md missing {required}")
+
+# The verification pair must stay harness-neutral and run without subagents.
+create_verify = (root / "skills" / "gs-create-verification-skill" / "SKILL.md").read_text()
+if ".cursor/skills/verify-" in create_verify:
+    sys.exit("gs-create-verification-skill SKILL.md hardcodes .cursor/skills/verify-")
+maintain_verify = (root / "skills" / "gs-maintain-verification-skill" / "SKILL.md").read_text()
+if "When the harness has no subagents" not in maintain_verify:
+    sys.exit("gs-maintain-verification-skill SKILL.md missing the no-subagent fallback")
 
 qa_skill = (root / "skills" / "gs-qa-scenarios" / "SKILL.md").read_text()
 for required in ("gs-pull-request", "gs-blast-radius", "gs-show-me", "gs-unslop", "## Setup", "## Scenarios", "## Regression checks", "Expected:", "--body-file"):
