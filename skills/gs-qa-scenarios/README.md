@@ -2,14 +2,7 @@
 
 This skill writes manual QA scenarios for the changes on a branch or pull request. A QA engineer can follow them in the running application without reading the code. Each scenario says what to test, why it matters, the exact steps, and the result to expect. The output also lists the setup, the regression checks, what a person cannot check by hand, and the questions the developer needs to answer.
 
-This skill is original to this repo. It uses four other skills from this repo:
-
-- [`gs-pull-request`](../gs-pull-request/README.md) supplies the idea of writing for a reader who did not make the change, and of opening with what changed in plain terms.
-- [`gs-blast-radius`](../gs-blast-radius/README.md) supplies the method for finding flows outside the diff that call changed code. Those flows become regression checks.
-- [`gs-show-me`](../gs-show-me/README.md) chooses and draws the pictures, such as a flow of screens or a sketch of a changed form.
-- [`gs-unslop`](../gs-unslop/README.md) edits the prose so each step reads plainly.
-
-When any of these skills is not installed, a short set of fallback rules in this skill applies.
+This skill is original to this repo. It calls other skills from this repo when they are installed, and it follows a short set of fallback rules when they are not.
 
 The skill changes no code. It prints the scenarios in chat, and it saves them to a file or posts them on the pull request only when you ask.
 
