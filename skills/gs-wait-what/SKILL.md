@@ -1,7 +1,6 @@
 ---
 name: gs-wait-what
-description: "Stop. That last message did not land: re-pitch it in plain language, with the context I'm missing."
-disable-model-invocation: true
+description: "Re-explain the last message in plain language with the missing context. Use when the user says wait what, is confused, asks for it plainer, or names gs-wait-what."
 ---
 
 Your last message did not land. Say it again so that it does.

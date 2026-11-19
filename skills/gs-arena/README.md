@@ -10,6 +10,7 @@ Lauren Tan wrote this skill. The original source is the pstack plugin in the [Cu
 - The cross-judge comes from a different provider than the session's own model. When none is reachable the judge is skipped and the skill says so.
 - Cursor Task tool fields and their fallback rules are gone. The skill uses the harness's subagent tools, and stops when there are none.
 - References to the pstack principle skills and `poteto-mode` are replaced by a sentence each saying what they asked for.
+- The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it. It ends by saying to run only when the user asks for an arena.
 
 ## Install
 

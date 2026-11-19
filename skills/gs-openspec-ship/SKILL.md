@@ -1,9 +1,6 @@
 ---
 name: gs-openspec-ship
-description: >
-  Use when the user runs /gs-openspec-ship, says "ship these openspec changes",
-  or asks to implement OpenSpec changes and take them through verify, review,
-  archive, commit, and a draft pull request.
+description: "Take OpenSpec changes through apply, verify, review, archive, and commit, then open one draft pull request. Use when the user says 'ship these openspec changes', asks to implement OpenSpec changes and take them through to a draft pull request, runs /gs-openspec-ship, or names gs-openspec-ship. Only when the user asks for it."
 disable-model-invocation: true
 ---
 

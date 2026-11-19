@@ -1,6 +1,6 @@
 ---
 name: gs-pr-comment
-description: Use whenever leaving a comment on GitHub on the user's behalf. Adds the agent attribution note, writes the comment in plain language, and shows the point with the smallest picture that fits.
+description: "Write and post a pull request or issue comment on GitHub on the user's behalf, with the agent attribution note, plain language, and the smallest picture that shows the point. Use whenever leaving a pull request or issue comment on GitHub for the user, or when the user names gs-pr-comment."
 ---
 
 # PR comment

@@ -58,6 +58,7 @@ Matt Pocock wrote the skill this one is adapted from. The original source is `to
 - The skill is named `gs-openspec-to-tickets`, where the original is `to-tickets`.
 - The input is one or more OpenSpec changes. The original takes a plan, a spec, or the conversation.
 - A new first step drops a change that fails `openspec validate` or that already has a `tickets.md`.
+- The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it. It ends by saying to run only when the user asks for it.
 - The skill finds the tracker itself, from `AGENTS.md` or `CLAUDE.md`, and asks when neither names one. The original relied on `/setup-matt-pocock-skills`.
 - Four new files hold the commands for GitHub, Linear, Jira, and local markdown.
 - The triage labels are written into the skill, and a slice that needs a person gets `ready-for-human`.

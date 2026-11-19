@@ -1,7 +1,6 @@
 ---
 name: gs-how
-description: "Use for \"how does X work\", code walkthroughs before changing something, and placement / ownership / layering questions (\"where should this live\", \"which package owns this\", \"is this the right layer\"). Explains subsystem architecture, runtime flow, onboarding mental models. Use gs-why for motivation."
-disable-model-invocation: true
+description: "Explain subsystem architecture, runtime flow, and onboarding mental models. Use when the user asks how X works, wants a code walkthrough before changing something, asks a placement, ownership, or layering question ('where should this live', 'which package owns this', 'is this the right layer'), or names gs-how. Use gs-why for motivation."
 ---
 
 # How

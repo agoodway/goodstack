@@ -1,7 +1,6 @@
 ---
 name: gs-blast-radius
-description: "Find what a change could break somewhere else before it ships, beyond the diff, and prove the one fact it's safe because of by running real code instead of writing it up. Use for 'blast radius of X', 'what could this break', or reviewing a small diff you don't trust."
-disable-model-invocation: true
+description: "Find what a change could break outside the diff before it ships, name the one fact that makes it safe, and prove that fact by running real code instead of writing it up. Use when the user asks for the blast radius of a change, asks 'what could this break', wants a review of a small diff they don't trust, or names gs-blast-radius."
 ---
 
 # Blast radius

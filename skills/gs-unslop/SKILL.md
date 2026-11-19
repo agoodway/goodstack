@@ -1,6 +1,6 @@
 ---
 name: gs-unslop
-description: Cut AI tells from any writing.
+description: "Cut AI tells from any writing. Use when writing or editing prose, READMEs, pull request descriptions, or commit messages, when the user says unslop, or when the user names gs-unslop."
 ---
 
 # Unslop

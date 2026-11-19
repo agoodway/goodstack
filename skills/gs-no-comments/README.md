@@ -15,6 +15,7 @@ Lauren Tan wrote this skill and its agent. The original sources are in the pstac
 - In step 2, a keep must prove the keep-list exception it claims. The original asked every keep to prove it is about something we cannot change, which contradicted the keep list for license headers, API docs, and `prettier-ignore`.
 - The scope uses the repository's default branch. The original defaulted to `main`.
 - The skill is named `gs-no-comments`, and its description says the pass is aggressive and points to `gs-deslop` for lighter cleanup.
+- The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it. It says never to run unasked.
 
 ## Install
 

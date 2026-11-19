@@ -1,6 +1,6 @@
 ---
 name: gs-openspec-to-tickets
-description: Break one or more OpenSpec changes into tracer-bullet tickets with blocking edges, published to the project's tracker (GitHub, Linear, Jira, or local markdown).
+description: "Break one or more OpenSpec changes into tracer-bullet tickets with blocking edges, published to the project's tracker (GitHub, Linear, Jira, or local markdown). Use when the user asks to turn an OpenSpec change into tickets or issues, runs /gs-openspec-to-tickets, or names gs-openspec-to-tickets. Only when the user asks for it."
 disable-model-invocation: true
 ---
 

@@ -8,6 +8,7 @@ Lauren Tan wrote this skill. The original source is the pstack plugin in the [Cu
 - Cursor Task tool fields and their fallback rules are gone. The skill uses the harness's subagent tools, and does the work in the session when there are none.
 - The reference to the `poteto-mode` skill is gone.
 - The explainer prompt no longer names Cursor's file tools.
+- The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it. The `disable-model-invocation` line is removed, so the agent may start it.
 
 The instructions name the companion `gs-why` skill, which is in this repo.
 

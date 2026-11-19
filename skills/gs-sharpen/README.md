@@ -4,7 +4,7 @@ This skill makes a task deeper, not bigger, and then rewrites your prompt. Befor
 
 Lauren Tan wrote this skill. The original source is the pstack plugin in the [Cursor plugins repository](https://github.com/cursor/plugins/tree/88d47514b82e7c44f00f2b2a72ff6dd12158038c/pstack/skills/sharpen), path `pstack/skills/sharpen`, commit `88d47514b82e7c44f00f2b2a72ff6dd12158038c`. The license is MIT. Copyright 2026 Lauren Tan. The full notice is `LICENSE` in this directory. The file pulled from [themusicman's grabbag](https://github.com/themusicman/grabbag/blob/main/skills/sharpen/SKILL.md) matches that commit.
 
-`SKILL.md` in this directory is that text with one change to its front matter: the skill is named `gs-sharpen`, where the original is `sharpen`, and its description names the `/gs-sharpen` command. The instructions are unchanged. They name no harness, tool, or model, so they needed no other change.
+`SKILL.md` in this directory is that text with two changes to its front matter. The skill is named `gs-sharpen`, where the original is `sharpen`, and its description is rewritten to say what it does and when to use it. The `disable-model-invocation` line is removed, so the agent may start it. The instructions are unchanged. They name no harness, tool, or model, so they needed no other change.
 
 ## Install
 

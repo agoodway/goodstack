@@ -6,6 +6,7 @@ Cursor wrote this skill. The original source is the cursor-team-kit plugin in th
 
 - The skill is named `gs-deslop`, where the original is `deslop`.
 - The description and the opening paragraph point to `gs-no-comments` as the deeper, opt-in comment pass.
+- The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it.
 
 ## Install
 

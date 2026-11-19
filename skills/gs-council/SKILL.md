@@ -1,6 +1,6 @@
 ---
 name: gs-council
-description: Trigger this if the user says 'council'. Brings in three delegates on strong models from different providers to review the work or give feedback in parallel, scores each review round, and fixes the recommendations it agrees with until they are satisfied.
+description: "Bring in three delegates on strong models from different providers to review the work or give feedback in parallel, score each review round, and fix the recommendations it agrees with until they are satisfied. Use when the user says 'council', asks to get a second opinion from other models, or names gs-council. Only when the user asks for a council."
 ---
 
 # Council

@@ -1,13 +1,6 @@
 ---
 name: gs-openspec-review-change
-description: >
-  Quick-review an OpenSpec change, patch the findings that need no human input,
-  then resolve the design-decision findings. Auto mode is the default: it applies
-  the recommended answer to each design question and records why. Ask mode asks
-  the user one question at a time, and runs only when the user asks for it. Use
-  when the user runs /gs-openspec-review-change, says "review and fix the
-  openspec", "patch the change specs", or "auto-fix OpenSpec findings", or wants
-  a review-and-update pass on an OpenSpec change.
+description: "Quick-review an OpenSpec change, patch the findings that need no human input, then resolve the design-decision findings. Use when the user says 'review and fix the openspec', 'patch the change specs', or 'auto-fix OpenSpec findings', wants a review-and-update pass on an OpenSpec change, runs /gs-openspec-review-change, or names gs-openspec-review-change."
 ---
 
 # Review and update an OpenSpec change

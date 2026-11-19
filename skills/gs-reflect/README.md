@@ -18,6 +18,7 @@ These parts differ from the sources:
 - Backlog items are listed for you. `reflect` filed them to a tracker without waiting.
 - The three original reviewer prompts change in one sentence each, which says what counts as a skill the session used. The synthesizer prompt takes four inputs and has the wider routing table.
 - The `agents/openai.yaml` from `retro` is not included.
+- The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it. It ends by saying to run only when the user asks for it.
 
 ## Install
 

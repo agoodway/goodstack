@@ -1,6 +1,6 @@
 ---
 name: gs-reflect
-description: "Review a session with four parallel reviewers, surface durable learnings, and route each one to the cheapest fix in the agent's environment: an automated check, a coding standard, a skill edit, or a pointer in a steering file. Use when the user says reflect, or asks for a retrospective on a session."
+description: "Review a session with four parallel reviewers, surface durable learnings, and route each one to the cheapest fix in the agent's environment: an automated check, a coding standard, a skill edit, or a pointer in a steering file. Use when the user says reflect, asks for a retrospective on a session, or names gs-reflect. Only when the user asks for it."
 disable-model-invocation: true
 ---
 

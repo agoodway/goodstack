@@ -21,6 +21,15 @@ A skill reads the same in Claude Code, Codex, Cursor, Amp, and anything else.
 - Pass text to `gh` from a file outside the repository.
 - Arguments arrive in prose. Leave `$ARGUMENTS` out.
 
+## Descriptions
+
+Amp shows the model only each skill's `name` and `description`, has no slash commands, and ignores `disable-model-invocation`. So the description alone decides whether any harness routes to the skill.
+
+- Start with one sentence on what the skill does.
+- Follow with `Use when` and the plain phrases a person would say, plus the skill's name, such as `or names gs-sharpen`. A slash command may be one trigger, never the only one.
+- A skill with `disable-model-invocation: true` ends with `Only when the user asks for it.` or an equivalent. That sentence is Amp's version of the flag.
+- Keep modes, pipelines, and other detail in the body. Keep the description under 1024 characters, with no em dashes.
+
 ## Skills that use other skills
 
 - Reference a skill by name with a fallback: "use `gs-unslop` when it is installed; without it, <the short rule>".
