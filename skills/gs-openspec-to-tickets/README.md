@@ -6,6 +6,11 @@ Supported trackers are GitHub with `gh`, Linear with MCP, Jira with the Atlassia
 
 The skill labels tickets with [Matt Pocock's default triage labels](https://github.com/mattpocock/skills/blob/main/skills/engineering/setup-matt-pocock-skills/triage-labels.md). The label is `ready-for-agent`, or `ready-for-human` when a slice needs a person. A `docs/agents/triage-labels.md` file overrides the label strings.
 
+## Use cases
+
+- You have an OpenSpec change that is too large for one pull request and want it split into vertical slices that each cut through every layer.
+- You want tickets in GitHub, Linear, Jira, or local markdown, with blocking order and acceptance criteria taken from the spec scenarios.
+
 ## Install
 
 The source is `agoodway/goodstack`. From a local checkout, pass that directory instead of `agoodway/goodstack`.
@@ -49,7 +54,7 @@ This example publishes tickets for two changes.
 
 Run it in the repo that contains `openspec/changes/`. If no change name is given, the skill lists the active changes and asks which ones to ticket. The skill skips and reports a change that fails `openspec validate`, or that already has a `tickets.md`.
 
-## Credit
+## Source
 
 Matt Pocock wrote the skill this one is adapted from. The original source is `to-tickets` in [mattpocock/skills](https://github.com/mattpocock/skills/tree/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/engineering/to-tickets), path `skills/engineering/to-tickets`, commit `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`. The license is MIT. Copyright 2026 Matt Pocock. The full notice is `LICENSE` in this directory.
 

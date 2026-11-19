@@ -2,9 +2,10 @@
 
 This skill builds a throwaway prototype to answer one design question. A question about logic or a state model gets a single HTML file that anyone can open and click through. A question about what a screen should look like gets several structurally different variants on one route, with a floating bar to switch between them.
 
-Matt Pocock wrote this skill. The original source is [mattpocock/skills](https://github.com/mattpocock/skills/tree/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/engineering/prototype), path `skills/engineering/prototype`, commit `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`. The license is MIT. Copyright 2026 Matt Pocock. The full notice is `LICENSE` in this directory. The files pulled from [themusicman's grabbag](https://github.com/themusicman/grabbag/blob/main/skills/mattpocock/prototype/SKILL.md) match that commit.
+## Use cases
 
-`SKILL.md` in this directory is that text with two changes to its front matter: the skill is named `gs-prototype`, where the original is `prototype`, and its description adds "spike", "quick prototype", and the skill's name as triggers. `LOGIC.md` and `UI.md` are unchanged. The instructions name no harness, tool, or model, so they needed no other change. The upstream `agents/openai.yaml` is not included.
+- You are unsure whether a state model or a piece of logic behaves the way you expect, and you want a clickable HTML file to try it.
+- You want to compare several layouts for one screen before you build the real one.
 
 ## Install
 
@@ -40,3 +41,9 @@ Add `-g` to install into your user skill directory instead of the current projec
 ```
 
 The agent can also start it on its own, when you ask whether a state model feels right or what a screen should look like. When the prototype has answered its question, the skill folds the decision into the real code and keeps the prototype on a throwaway branch.
+
+## Source
+
+Matt Pocock wrote this skill. The original source is [mattpocock/skills](https://github.com/mattpocock/skills/tree/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/engineering/prototype), path `skills/engineering/prototype`, commit `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`. The license is MIT. Copyright 2026 Matt Pocock. The full notice is `LICENSE` in this directory. The files pulled from [themusicman's grabbag](https://github.com/themusicman/grabbag/blob/main/skills/mattpocock/prototype/SKILL.md) match that commit.
+
+`SKILL.md` in this directory is that text with two changes to its front matter: the skill is named `gs-prototype`, where the original is `prototype`, and its description adds "spike", "quick prototype", and the skill's name as triggers. `LOGIC.md` and `UI.md` are unchanged. The instructions name no harness, tool, or model, so they needed no other change. The upstream `agents/openai.yaml` is not included.

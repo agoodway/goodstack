@@ -2,15 +2,13 @@
 
 This skill explains how a subsystem works. It covers the runtime flow, where the code lives, and the parts that are easy to miss.
 
-Lauren Tan wrote this skill. The original source is the pstack plugin in the [Cursor plugins repository](https://github.com/cursor/plugins/tree/ce649c03ac3b75b6ae80cbd15b7e2c536caedb5a/pstack/skills/how), path `pstack/skills/how`, commit `ce649c03ac3b75b6ae80cbd15b7e2c536caedb5a`. The license is MIT. Copyright 2026 Lauren Tan. The full notice is `LICENSE` in this directory. `SKILL.md` and the prompts in `references` are adapted from that text so the skill runs on any harness. The steps, prompts, and output format are the same. These parts changed:
-
-- Models are chosen in prose. The skill no longer reads the `pstack-models.mdc` rule or names model slugs.
-- Cursor Task tool fields and their fallback rules are gone. The skill uses the harness's subagent tools, and does the work in the session when there are none.
-- The reference to the `poteto-mode` skill is gone.
-- The explainer prompt no longer names Cursor's file tools.
-- The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it. The `disable-model-invocation` line is removed, so the agent may start it.
-
 The instructions name the companion `gs-why` skill, which is in this repo.
+
+## Use cases
+
+- You are about to change a subsystem you have not worked in and want a walkthrough of its runtime flow first.
+- You need to decide where new code should live, such as which package owns it or which layer it belongs in.
+- A new teammate needs a mental model of how one part of the codebase fits together.
 
 ## Install
 
@@ -46,3 +44,13 @@ Add `-g` to install into your user skill directory instead of the current projec
 ```
 
 Use it for how something works, a walkthrough before a change, or a question about where code should live.
+
+## Source
+
+Lauren Tan wrote this skill. The original source is the pstack plugin in the [Cursor plugins repository](https://github.com/cursor/plugins/tree/ce649c03ac3b75b6ae80cbd15b7e2c536caedb5a/pstack/skills/how), path `pstack/skills/how`, commit `ce649c03ac3b75b6ae80cbd15b7e2c536caedb5a`. The license is MIT. Copyright 2026 Lauren Tan. The full notice is `LICENSE` in this directory. `SKILL.md` and the prompts in `references` are adapted from that text so the skill runs on any harness. The steps, prompts, and output format are the same. These parts changed:
+
+- Models are chosen in prose. The skill no longer reads the `pstack-models.mdc` rule or names model slugs.
+- Cursor Task tool fields and their fallback rules are gone. The skill uses the harness's subagent tools, and does the work in the session when there are none.
+- The reference to the `poteto-mode` skill is gone.
+- The explainer prompt no longer names Cursor's file tools.
+- The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it. The `disable-model-invocation` line is removed, so the agent may start it.

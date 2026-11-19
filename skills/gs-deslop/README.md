@@ -2,11 +2,9 @@
 
 This skill checks the diff against main and removes AI-generated slop introduced in the branch.
 
-Cursor wrote this skill. The original source is the cursor-team-kit plugin in the [Cursor plugins repository](https://github.com/cursor/plugins/tree/b21ab167c8d6aad6e4d91bc0de429eedd49665ed/cursor-team-kit/skills/deslop), path `cursor-team-kit/skills/deslop`, commit `b21ab167c8d6aad6e4d91bc0de429eedd49665ed`. The license is MIT. Copyright 2026 Cursor. The full notice is `LICENSE` in this directory. Grabbag records that source in [SOURCE.md](https://github.com/themusicman/grabbag/blob/main/skills/deslop/SOURCE.md). The file pulled from [themusicman's grabbag](https://github.com/themusicman/grabbag/blob/main/skills/deslop/SKILL.md) matches that commit. `SKILL.md` in this directory is that text with these changes:
+## Use cases
 
-- The skill is named `gs-deslop`, where the original is `deslop`.
-- The description and the opening paragraph point to `gs-no-comments` as the deeper, opt-in comment pass.
-- The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it.
+- Your branch has extra comments, defensive `try`/`catch` blocks, or `any` casts that the rest of the codebase does not use, and you want them removed before review.
 
 ## Install
 
@@ -42,3 +40,11 @@ Add `-g` to install into your user skill directory instead of the current projec
 ```
 
 Use it to remove AI-generated slop from the branch diff against main.
+
+## Source
+
+Cursor wrote this skill. The original source is the cursor-team-kit plugin in the [Cursor plugins repository](https://github.com/cursor/plugins/tree/b21ab167c8d6aad6e4d91bc0de429eedd49665ed/cursor-team-kit/skills/deslop), path `cursor-team-kit/skills/deslop`, commit `b21ab167c8d6aad6e4d91bc0de429eedd49665ed`. The license is MIT. Copyright 2026 Cursor. The full notice is `LICENSE` in this directory. Grabbag records that source in [SOURCE.md](https://github.com/themusicman/grabbag/blob/main/skills/deslop/SOURCE.md). The file pulled from [themusicman's grabbag](https://github.com/themusicman/grabbag/blob/main/skills/deslop/SKILL.md) matches that commit. `SKILL.md` in this directory is that text with these changes:
+
+- The skill is named `gs-deslop`, where the original is `deslop`.
+- The description and the opening paragraph point to `gs-no-comments` as the deeper, opt-in comment pass.
+- The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it.

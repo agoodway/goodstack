@@ -9,6 +9,11 @@ This skill is original to this repo. It uses two other skills from this repo:
 
 When either skill is not installed, a short set of fallback rules in this skill applies.
 
+## Use cases
+
+- You were asked to review a pull request and want to know what it changes and where to look first before you read the diff.
+- You want to understand what someone else's pull request does without posting anything on it.
+
 ## Install
 
 The source is `agoodway/goodstack`. From a local checkout, pass that directory instead of `agoodway/goodstack`.

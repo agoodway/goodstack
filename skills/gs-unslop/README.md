@@ -2,7 +2,10 @@
 
 This skill edits text to remove AI patterns. It scans for the patterns in the skill, then rewrites. It keeps the meaning and matches the intended tone.
 
-Lauren Tan wrote this skill. The original source is the pstack plugin in the [Cursor plugins repository](https://github.com/cursor/plugins/tree/bc697d0a5a163cec979e362b601e36f5616083fd/pstack/skills/unslop), path `pstack/skills/unslop`, commit `bc697d0a5a163cec979e362b601e36f5616083fd`. The license is MIT. Copyright 2026 Lauren Tan. The full notice is `LICENSE` in this directory. The file pulled from [themusicman's grabbag](https://github.com/themusicman/grabbag/blob/main/skills/unslop/SKILL.md) matches that commit, and `SKILL.md` in this directory is that text with two changes to its front matter. The skill is named `gs-unslop`, where the original is `unslop`. The `disable-model-invocation` line is removed, so other skills in this repo can tell the agent to use it, and the description adds when to use the skill. The rules are unchanged.
+## Use cases
+
+- You drafted a README, a pull request description, or a doc with an agent and want the AI patterns removed without changing the meaning.
+- You want writing edited to use plain words, active voice, and no em dashes.
 
 ## Install
 
@@ -38,3 +41,7 @@ Add `-g` to install into your user skill directory instead of the current projec
 ```
 
 Use it when you want the writing edited for AI patterns. The skill runs when you invoke it by name.
+
+## Source
+
+Lauren Tan wrote this skill. The original source is the pstack plugin in the [Cursor plugins repository](https://github.com/cursor/plugins/tree/bc697d0a5a163cec979e362b601e36f5616083fd/pstack/skills/unslop), path `pstack/skills/unslop`, commit `bc697d0a5a163cec979e362b601e36f5616083fd`. The license is MIT. Copyright 2026 Lauren Tan. The full notice is `LICENSE` in this directory. The file pulled from [themusicman's grabbag](https://github.com/themusicman/grabbag/blob/main/skills/unslop/SKILL.md) matches that commit, and `SKILL.md` in this directory is that text with two changes to its front matter. The skill is named `gs-unslop`, where the original is `unslop`. The `disable-model-invocation` line is removed, so other skills in this repo can tell the agent to use it, and the description adds when to use the skill. The rules are unchanged.

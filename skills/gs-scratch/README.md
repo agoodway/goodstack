@@ -6,6 +6,11 @@ The commands are `/gs-scratch bootstrap`, `/gs-scratch write`, `/gs-scratch edit
 
 This skill is original to this repo. An earlier version was called scratchpad and stored files in `.scratchpad`. In this repo the skill name is `gs-scratch`, the commands start with `/gs-scratch`, and the directory is `.scratch`.
 
+## Use cases
+
+- You need a place in the project for notes, drafts, or temporary files that git never picks up.
+- You want the agent to write and edit working files in `.scratch` instead of the source tree.
+
 ## Install
 
 The source is `agoodway/goodstack`. From a local checkout, pass that directory instead of `agoodway/goodstack`.

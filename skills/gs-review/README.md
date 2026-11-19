@@ -4,6 +4,12 @@ This skill reviews a change for what will break in production. The reviewers are
 
 Specialists are chosen by what the change puts at risk. A small, low-risk change gets one reviewer holding all of them. Each finding must state a failure scenario, and a second model then tries to refute it. Confirmed and plausible findings reach the report. The review drops refuted findings and counts them. Style, naming, and anything a linter or CI already reports are out of scope.
 
+## Use cases
+
+- You want uncommitted changes, or a branch against a base ref, reviewed for what will break in production rather than for style.
+- You want a second model to check each finding, so the report drops the ones that do not hold up.
+- Your project has its own review rules, such as queries that must be scoped by tenant, and you want every review to apply them through a `REVIEW.md`.
+
 ## Install
 
 The source is `agoodway/goodstack`. From a local checkout, pass that directory instead of `agoodway/goodstack`.

@@ -2,6 +2,11 @@
 
 This skill ships one or more OpenSpec changes through a fixed pipeline. It rebases the current branch onto the remote's default branch, then applies, verifies, fixes every verify issue, runs gs-review, fixes every review issue, archives after syncing specs, and commits. After the named changes finish, it opens one draft pull request for the commits from that run.
 
+## Use cases
+
+- You have OpenSpec changes ready to build and want each one applied, verified, reviewed, archived, and committed without running every step by hand.
+- You want a batch of OpenSpec changes to end in one draft pull request on a branch rebased onto the default branch.
+
 ## Install
 
 The source is `agoodway/goodstack`. From a local checkout, pass that directory instead of `agoodway/goodstack`.

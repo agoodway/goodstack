@@ -2,21 +2,13 @@
 
 This skill investigates why code is shaped the way it is. It looks for the decision, the constraint, and the evidence, then returns a cited read.
 
-Lauren Tan wrote this skill. The original source is the pstack plugin in the [Cursor plugins repository](https://github.com/cursor/plugins/tree/ce649c03ac3b75b6ae80cbd15b7e2c536caedb5a/pstack/skills/why), path `pstack/skills/why`, commit `ce649c03ac3b75b6ae80cbd15b7e2c536caedb5a`. The license is MIT. Copyright 2026 Lauren Tan. The full notice is `LICENSE` in this directory. `SKILL.md` and the files in `references` are adapted from that text so the skill runs on any harness. The steps and output format are the same. These parts changed:
-
-- Models are chosen in prose. The skill no longer reads the `pstack-models.mdc` rule or names model slugs.
-- Cursor Task tool fields and their fallback rules are gone. The skill uses the harness's subagent tools, and does the work in the session when there are none.
-- The reference to the `poteto-mode` skill is gone.
-- MCP discovery no longer depends on Cursor's tools map or `mcps/` directory. The skill lists whatever MCP servers and connectors the session has.
-- The rule against read-only subagents is now conditional: it applies only where read-only mode removes MCP access.
-- Pull request discussion comes from the host's own CLI, such as `glab` for GitLab. The original assumed `gh`. When the host has no CLI, the skill records the discussion as a gap, and the synthesizer prompt reports it that way.
-- `references/sources/incident-postmortem.md` names an issue tracker and a team chat in general. The original named Linear and Slack.
-- `references/sources/slack.md` numbers its steps 1 to 3, and no longer names the `mcp_auth` tool.
-- `references/sources/code-archaeology.md` allows `grep -rn` where `rg` is not installed.
-- The skill no longer uses the cursor location to guess a vague target.
-- The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it. It ends by saying to run only when the user asks for it.
-
 The instructions name the companion `gs-how` skill, which is in this repo.
+
+## Use cases
+
+- You want to know why code is shaped the way it is before you change it, with citations from git history, tickets, and docs.
+- You are chasing a regression or writing a postmortem and want the decisions behind the code found and cited.
+- You want to check whether a threshold in the code has evidence behind it.
 
 ## Install
 
@@ -52,3 +44,19 @@ Add `-g` to install into your user skill directory instead of the current projec
 ```
 
 Use it for why something works this way, why a design was picked, a regression, a postmortem, or a threshold that should have evidence behind it.
+
+## Source
+
+Lauren Tan wrote this skill. The original source is the pstack plugin in the [Cursor plugins repository](https://github.com/cursor/plugins/tree/ce649c03ac3b75b6ae80cbd15b7e2c536caedb5a/pstack/skills/why), path `pstack/skills/why`, commit `ce649c03ac3b75b6ae80cbd15b7e2c536caedb5a`. The license is MIT. Copyright 2026 Lauren Tan. The full notice is `LICENSE` in this directory. `SKILL.md` and the files in `references` are adapted from that text so the skill runs on any harness. The steps and output format are the same. These parts changed:
+
+- Models are chosen in prose. The skill no longer reads the `pstack-models.mdc` rule or names model slugs.
+- Cursor Task tool fields and their fallback rules are gone. The skill uses the harness's subagent tools, and does the work in the session when there are none.
+- The reference to the `poteto-mode` skill is gone.
+- MCP discovery no longer depends on Cursor's tools map or `mcps/` directory. The skill lists whatever MCP servers and connectors the session has.
+- The rule against read-only subagents is now conditional: it applies only where read-only mode removes MCP access.
+- Pull request discussion comes from the host's own CLI, such as `glab` for GitLab. The original assumed `gh`. When the host has no CLI, the skill records the discussion as a gap, and the synthesizer prompt reports it that way.
+- `references/sources/incident-postmortem.md` names an issue tracker and a team chat in general. The original named Linear and Slack.
+- `references/sources/slack.md` numbers its steps 1 to 3, and no longer names the `mcp_auth` tool.
+- `references/sources/code-archaeology.md` allows `grep -rn` where `rg` is not installed.
+- The skill no longer uses the cursor location to guess a vague target.
+- The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it. It ends by saying to run only when the user asks for it.
