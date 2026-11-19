@@ -49,9 +49,11 @@ Run it in a repo that has no verification skill yet. In a harness without slash 
 
 Lauren Tan wrote this skill. The original source is the pstack plugin in the [Cursor plugins repository](https://github.com/cursor/plugins/tree/e58dd043600587dbaf58ba315e7f2b38373eeb43/pstack/skills/create-verification-skill), path `pstack/skills/create-verification-skill`, commit `e58dd043600587dbaf58ba315e7f2b38373eeb43`. The license is MIT. Copyright 2026 Lauren Tan. The full notice is `LICENSE` in this directory.
 
-The files in `references/feature-map-example` are copied unchanged. `SKILL.md` is adapted from the original. The steps and the generated skill's sections are the same. These parts changed:
+`SKILL.md` and the files in `references/feature-map-example` are adapted from the original. The steps and the generated skill's sections are the same. These parts changed:
 
 - The skill is named `gs-create-verification-skill`, where the original is `create-verification-skill`.
+- The generated skill writes every run's evidence to `.verify/<app>/<run-id>/` at the repo root, with a `run.md` index that records the commit SHA, branch, time, outcome, and each feature driven with its artifact files. It adds `.verify/` to `.gitignore`, and cleanup never removes it. The original let the generated skill name its own location.
+- The feature map example writes its proof under `.verify/notes/$RUN_ID/` and records each feature in `run.md`. The original wrote to `artifacts/<feature>/`.
 - The generated skill goes in the project skills directory of the current harness, such as `.cursor/skills/`, `.claude/skills/`, or `.agents/skills/`, and in the one the repo already uses when this harness reads it. The original always wrote to `.cursor/skills/`.
 - The last step points to the `gs-maintain-verification-skill` skill by name. The original named only the `/maintain-verification-skill` command.
 - Em dashes are replaced with colons, a comma, or a period.

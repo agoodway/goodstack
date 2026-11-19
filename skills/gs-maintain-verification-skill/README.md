@@ -54,6 +54,7 @@ Lauren Tan wrote this skill. The original source is the pstack plugin in the [Cu
 - The skill is named `gs-maintain-verification-skill`, where the original is `maintain-verification-skill`.
 - The skill looks for the target in every project skills directory, such as `.cursor/skills/`, `.claude/skills/`, and `.agents/skills/`. The original looked in `.cursor/skills/`.
 - The source wave uses the harness's subagent tools. When the harness has no subagents, the agent reads the feature files one at a time with the same read-only limits and the same return shape.
+- Index hygiene checks where the verification skill writes evidence. Any location other than `.verify/<app>/<run-id>/` with a `run.md` index and `.verify/` in `.gitignore` is drift, and the pass moves it there. The live pass writes its own evidence to the same place. The original let each skill name its own location.
 - The skill points to the `gs-create-verification-skill` skill by name. The original named only the `/create-verification-skill` command.
 - Em dashes are replaced with colons, periods, or commas.
 - The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it. It keeps `disable-model-invocation: true` and ends by saying to run only when the user asks for it.
