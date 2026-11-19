@@ -1,21 +1,31 @@
 ---
 name: gs-qa-scenarios
-description: "Write manual QA scenarios for the changes on a branch or pull request, so a QA engineer knows what to test, why, and how, without reading the code. Use when the user asks for QA steps, QA scenarios, a manual test plan, or how to verify a branch in the running app, runs /gs-qa-scenarios, or names gs-qa-scenarios."
+description: "Write manual QA scenarios for the changes on a branch or pull request, so a QA engineer knows what to test, why, and how, without reading the code. It can also run the scenarios, new or saved, through the project's verify-* skill and report each one as passed, failed, or not run, with evidence. Use when the user asks for QA steps, QA scenarios, a manual test plan, or how to verify a branch in the running app, asks to run the QA scenarios or automate the QA steps, runs /gs-qa-scenarios, or names gs-qa-scenarios."
 ---
 
 # QA scenarios
 
 Write the scenarios a QA engineer follows to check a change by hand in the running application. The reader knows the product and does not read code. Each scenario says what to test, why it matters, and the exact steps and result to expect.
 
-This skill changes no code. It prints the scenarios in chat. Hunting for defects is the `gs-review` skill.
+This skill changes no code. In write mode it prints the scenarios in chat. In the two run modes it also drives the app through the project's verification skill and saves the evidence under `.verify/`. Hunting for defects is the `gs-review` skill.
+
+## Modes
+
+The user picks a mode in prose. With no mode named, use write.
+
+- **write**: the default. Write the scenarios in steps 1 to 6 and print them. Launch no app and drive nothing beyond what step 6 allows.
+- **write and run**: write the scenarios in steps 1 to 6, then run them in step 7 and report a result for each one. Phrases such as "write and run QA scenarios for this branch" or "automate the QA steps" pick this mode.
+- **run**: run scenarios written earlier in step 7, without writing new ones. Phrases such as "run the QA scenarios in qa.md" or "run the QA scenarios on pull request 482" pick this mode.
 
 ## Arguments
 
 ```text
-/gs-qa-scenarios [number | URL | branch] [focus]
+/gs-qa-scenarios [write | write and run | run] [number | URL | branch | file] [focus]
 ```
 
-With no argument, cover the current branch against the default branch. A number or URL names a pull request. A focus is an area or a question, such as "the checkout page" or "only the admin changes".
+With no argument, write scenarios for the current branch against the default branch. A number or URL names a pull request. A focus is an area or a question, such as "the checkout page" or "only the admin changes".
+
+In run mode, the argument names the saved scenarios: a Markdown file, a pull request whose comment holds them, or nothing when they are in the chat. A focus names the scenarios to run, such as "only the Must scenarios" or "scenario 3".
 
 ## 1. Read the change
 
@@ -165,8 +175,67 @@ When the harness can run the application or drive a browser, walk the Must scena
 
 Remove secrets, tokens, absolute local paths, and private details before you print the result.
 
+In write mode, stop here and go to Sharing.
+
+## 7. Run the scenarios
+
+This step is for write and run mode and for run mode. It drives the app through the project's verification skill, the `verify-<app>` skill that the `gs-create-verification-skill` skill generates.
+
+### Find the verify skill
+
+Look for a `verify-*` skill in every project skills directory the repo has, such as `.cursor/skills/`, `.claude/skills/`, and `.agents/skills/`. When there are several, ask which one to use. When there is none, stop. Say that the project has no verification skill, and point the user to the `gs-create-verification-skill` skill to make one. When that skill is not installed, tell the user to install it from `agoodway/goodstack`. Do not improvise a harness of your own.
+
+Read the verify skill's `SKILL.md` and its feature map README. Its Launch, Doctor, Drive, Evidence, and Cleanup sections decide how to run the app. When a scenario touches a mapped feature, use that feature's file for the entry point and the selectors.
+
+### Load the scenarios
+
+In write and run mode, use the scenarios steps 1 to 6 just wrote.
+
+In run mode, read the scenarios the user names and do not rewrite them:
+
+- A Markdown file: read it from the path the user gives.
+- A pull request comment: run `gh pr view [pr] --comments` and take the latest comment whose body opens with `# QA:`. When several comments could be meant, ask which one.
+- The chat: take the scenarios from the conversation.
+
+When you find no scenarios in any of these places, say so, and offer write and run mode instead. The title and the line under it name the branch or pull request the scenarios cover. Find its revision, `<rev>`, as step 1 does.
+
+### Check the revision
+
+Confirm that the app you drive is built from `<rev>`, as step 6 requires. Compare `git rev-parse HEAD` in the checkout the verify skill launches from with `<rev>`, and note whether `git status --porcelain` prints anything. When the commits differ, say so before the first drive, name both commits, and ask before you continue. When the user says to continue, record both commits in `run.md` and at the top of the results.
+
+### Drive
+
+1. Pick the run ID the verify skill's Evidence section uses, such as `20261119T143000Z-<short-sha>`, and create `.verify/<app>/<run-id>/`. Follow the verify skill's Evidence section, which keeps `.verify/` in `.gitignore`. Never stage or commit anything under `.verify/`.
+2. Launch the app as the verify skill's Launch section says, with the Setup section's accounts, data, and flags.
+3. Run Doctor before the first drive. When Doctor fails, run Cleanup, report the failure, and mark every scenario not run.
+4. Drive each scenario in order, one step at a time, through the verify skill's Drive section. Compare what you observe with the Expected line. Capture the evidence the Evidence section asks for into the run folder.
+5. After a failed drive, run Cleanup for what that drive left behind, then run Doctor again before the next scenario. Relaunch when Doctor fails or the app is stuck in a state Doctor cannot see.
+6. After the last drive, run the verify skill's Cleanup. Cleanup never removes the evidence. Confirm that `.verify/<app>/<run-id>/run.md` still exists and that `git status` does not list it.
+
+Do not change what you are testing. Never edit a scenario to make it pass. A step that no longer matches the app, such as a renamed button, is a failure, and the report calls the step stale. Never edit product code or the verify skill during a run. When the feature map is wrong, such as a selector that no longer exists, put that in the report as a suggestion to run the `gs-maintain-verification-skill` skill. When that skill is not installed, describe the drift and the file it belongs in.
+
+### Results
+
+Give each scenario one result:
+
+- **Passed**: every step ran, and what you observed matched the Expected line.
+- **Failed**: a step could not run, or what you observed did not match. Name the step, what you observed, and the Expected line it broke.
+- **Not run**: the run never reached the scenario, or a person must check it by hand, such as a scenario from "Not covered by these scenarios". Give the reason.
+
+Each passed or failed result names its evidence files under `.verify/<app>/<run-id>/`.
+
+Write `run.md` in the shape the verify skill's Evidence section gives, with the full commit SHA, the branch, a clean or dirty working tree, the time, and the outcome. Add a line that says the run came from `gs-qa-scenarios`, with the scenario source: the branch, the pull request, or the saved file. Then list each scenario with its number, name, priority, result, and evidence files, so the `gs-pull-request` skill can pick the run up.
+
+Print the results in chat in the same shape as the scenarios. Keep each scenario as written, and add a result line under its Expected line:
+
+```markdown
+Result: Failed at step 3. The banner read "Saved" where Expected says "Order cancelled". Evidence: `.verify/web/20261119T143000Z-a1b2c3d/03-cancel.png`
+```
+
+At the top of the results, give the run folder, the commit the app was built from, and the count of passed, failed, and not run scenarios. At the end, list any feature map drift the run found.
+
 ## Sharing
 
-Print the scenarios in chat. When the user asks to save them, write a Markdown file at the path they give, or outside the repository when they give none.
+Print the scenarios, or the results of a run, in chat. When the user asks to save them, write a Markdown file at the path they give, or outside the repository when they give none.
 
 When the user asks to post them on the pull request, use the `gs-pr-comment` skill when it is installed. Without it, show the body first, wait for approval, write the body to a file outside the repository, and run `gh pr comment [pr] --body-file [file]`.
