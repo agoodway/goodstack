@@ -6,7 +6,7 @@ Theo Browne wrote the skill this one is adapted from. The original source is `co
 
 `SKILL.md` keeps the original's text and order: fix known issues first, run three delegates, act on results as they arrive, score each round, report the scores in the pull request, and fight scope creep. These parts changed so the skill runs the same in Claude Code, Codex, Cursor, Amp, and other harnesses:
 
-- The skill is named `gs-council`, where the original is `council`. The description keeps the original trigger and adds a sentence saying what the skill does.
+- The skill is named `gs-council`, where the original is `council`. The description leads with what the skill does, keeps the original trigger, adds a request for a second opinion from other models, and says to run only when the user asks for a council.
 - The harness's subagent tools are the default way to start the delegates. The T3 Code tools `orchestrator_capabilities` and `delegate_task` are kept as an example for T3 Code, not a requirement.
 - High reasoning effort applies when the harness lets the agent set it.
 - Three providers are preferred, not required. The original reports a missing provider instead of substituting. This version still reports it, then fills the empty seats with the strongest models the harness reaches. A council member the user names is still never substituted.

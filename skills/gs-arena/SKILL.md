@@ -1,6 +1,6 @@
 ---
 name: gs-arena
-description: "Spawn N parallel candidates at the same task, pick a base, graft the strongest parts of the losers into it. Use for /gs-arena, 'arena this', 'throw it in the arena', or when one attempt at a non-trivial artifact would lock in the wrong shape."
+description: "Spawn N parallel candidates at the same task, pick a base, and graft the strongest parts of the losers into it. Use when the user says 'arena this' or 'throw it in the arena', runs /gs-arena, or names gs-arena. Only when the user asks for an arena."
 disable-model-invocation: true
 ---
 

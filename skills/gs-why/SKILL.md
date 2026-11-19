@@ -1,6 +1,6 @@
 ---
 name: gs-why
-description: "Use for 'why does X work this way', 'why we picked Y', design rationale, regressions, postmortems, or data-backed thresholds. Discovers available MCPs and queries each evidence category (source control, issue tracker, long-form docs, real-time chat, infrastructure observability, error tracking, product analytics warehouse) in parallel, then returns a cited read on decisions and tradeoffs. Use gs-how for runtime behavior."
+description: "Investigate why code is shaped the way it is by querying every evidence source the session can reach in parallel, then return a cited read on decisions and tradeoffs. Use when the user asks 'why does X work this way' or 'why did we pick Y', asks about design rationale, a regression, a postmortem, or a data-backed threshold, or names gs-why. Use gs-how for runtime behavior. Only when the user asks for it."
 disable-model-invocation: true
 ---
 

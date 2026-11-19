@@ -1,6 +1,6 @@
 ---
 name: gs-deslop
-description: Remove AI-generated code slop and clean up code style. For a deeper, opt-in pass that deletes nearly every comment, use gs-no-comments.
+description: "Remove AI-generated code slop and clean up code style in the branch diff. Use when the user says deslop, asks to remove AI slop, wants to tidy the branch diff before review, or names gs-deslop. For a deeper, opt-in pass that deletes nearly every comment, use gs-no-comments."
 ---
 
 # Remove AI code slop

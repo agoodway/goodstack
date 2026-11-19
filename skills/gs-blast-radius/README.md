@@ -9,6 +9,7 @@ Lauren Tan wrote this skill. The original source is the pstack plugin in the [Cu
 - Step 1 names the `git` and `gh` commands that pull the pull request and its commits. The original sent the agent to the `why` skill for them.
 - Step 6 asks several models through the harness's subagent tools, and is skipped when only one model is reachable. The original ran the `arena` skill.
 - The writeup goes through `gs-unslop` only if that skill is installed.
+- The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it. The `disable-model-invocation` line is removed, so the agent may start it.
 
 The instructions name the companion skills `gs-how`, `gs-why`, and `gs-unslop`. Those skills are in this repo, and none of them is required.
 

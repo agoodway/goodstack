@@ -14,6 +14,7 @@ Both are MIT licensed. Copyright 2026 Lauren Tan and copyright 2026 Matt Pocock.
 - The rules of ASD-STE100 Simplified Technical English are written out as plain instructions, so the agent does not need to know the standard by name.
 - The glossary is optional. The skill uses one if the repo has it, and does not require `GLOSSARY.md` or `GLOSSARY-MAP.md`.
 - Matt Pocock's `agents/openai.yaml` is not included.
+- The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it. The `disable-model-invocation` line is removed, so the agent may start it.
 
 ## Install
 

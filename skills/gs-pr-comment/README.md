@@ -11,6 +11,7 @@ Theo Browne wrote the skill this one is adapted from. The original source is `le
 - A new section says how to show the point: a GitHub suggestion, a diff, a trace tree, pseudocode, or a Mermaid diagram. It follows the [`gs-show-me`](../gs-show-me/README.md) skill in this repo.
 - The comment body is passed to `gh` from a file, so its text never becomes shell syntax.
 - The upstream `agents/openai.yaml` is not included.
+- The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it.
 
 The skill tells the agent to run the draft through `gs-unslop` and to draw the picture with `gs-show-me`. When either is not installed, the rules written into this skill apply on their own. [`gs-review-pr-reply`](../gs-review-pr-reply/README.md) uses the same callout when it posts a review.
 

@@ -1,6 +1,6 @@
 ---
 name: gs-no-comments
-description: "A deliberate, aggressive pass that deletes nearly every comment in a diff or set of files, flags the code that needed one for a reshape, and fixes it. Lint and type suppressions that hide real bugs go too. Use for /gs-no-comments, 'kill the comments', or 'no comments'. For a lighter cleanup of AI slop in the branch diff, use gs-deslop."
+description: "A deliberate, aggressive pass that deletes nearly every comment in a diff or set of files, flags the code that needed one for a reshape, and fixes it. Lint and type suppressions that hide real bugs go too. Use when the user says 'kill the comments' or 'no comments', runs /gs-no-comments, or names gs-no-comments. Never run unasked. For a lighter cleanup of AI slop in the branch diff, use gs-deslop."
 disable-model-invocation: true
 ---
 

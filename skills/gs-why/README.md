@@ -14,6 +14,7 @@ Lauren Tan wrote this skill. The original source is the pstack plugin in the [Cu
 - `references/sources/slack.md` numbers its steps 1 to 3, and no longer names the `mcp_auth` tool.
 - `references/sources/code-archaeology.md` allows `grep -rn` where `rg` is not installed.
 - The skill no longer uses the cursor location to guess a vague target.
+- The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it. It ends by saying to run only when the user asks for it.
 
 The instructions name the companion `gs-how` skill, which is in this repo.
 

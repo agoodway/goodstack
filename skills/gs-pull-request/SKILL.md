@@ -1,6 +1,6 @@
 ---
 name: gs-pull-request
-description: Open a draft GitHub pull request whose description a reviewer can follow without reading the diff first. Use when the user says "/gs-pull-request", "/gs-pull-request --approved", or asks to open a pull request.
+description: "Open a draft GitHub pull request whose description a reviewer can follow without reading the diff first. Use when the user asks to open a pull request, says the pull request is already approved, runs /gs-pull-request or /gs-pull-request --approved, or names gs-pull-request."
 ---
 
 # Pull request

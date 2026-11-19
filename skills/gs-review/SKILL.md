@@ -1,6 +1,6 @@
 ---
 name: gs-review
-description: Use when the user says "/gs-review", "gs-review", or "run gs-review" and wants a multi-specialist review of uncommitted changes, or of a branch against a base ref, that does not depend on named custom agents.
+description: "Run a multi-specialist review of uncommitted changes, or of a branch against a base ref, for what will break in production. Use when the user says 'review my changes' or 'review this branch', runs /gs-review, or names gs-review."
 ---
 
 # gs-review

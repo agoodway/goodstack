@@ -1,6 +1,6 @@
 ---
 name: gs-review-pr-reply
-description: Use when the user says "/gs-review-pr-reply" or asks to post a gs-review report to a pull request as an overview comment and inline review comments.
+description: "Post a gs-review report to a pull request as an overview comment and inline comments. Use when the user asks to post a gs-review report or its findings to a pull request, runs /gs-review-pr-reply, or names gs-review-pr-reply."
 ---
 
 # gs-review-pr-reply

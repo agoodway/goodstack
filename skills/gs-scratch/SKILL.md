@@ -1,6 +1,6 @@
 ---
 name: gs-scratch
-description: "Manage a gitignored .scratch/ directory for temporary project files. Use when the user says '/gs-scratch bootstrap', '/gs-scratch write', '/gs-scratch edit', '/gs-scratch list', or asks to use the project's scratch directory. Supports creating the dir, writing files, editing files, and listing contents."
+description: "Manage a gitignored .scratch/ directory for temporary project files. Use when the user asks to set up, write, edit, or list files in the scratch directory, says 'save this to scratch', or names gs-scratch."
 ---
 
 # Scratch
@@ -11,7 +11,7 @@ Use the harness's file tools for writes and edits, and its shell tool for direct
 
 ## Commands
 
-Take the command from what the user typed. Format: `/gs-scratch <command> [args]`
+Take the command from what the user typed. Format: `/gs-scratch <command> [args]`. The commands are `/gs-scratch bootstrap`, `/gs-scratch write`, `/gs-scratch edit`, and `/gs-scratch list`. They create the directory, write files, edit files, and list its contents.
 
 ### bootstrap
 

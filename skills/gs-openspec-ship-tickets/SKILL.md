@@ -1,6 +1,6 @@
 ---
 name: gs-openspec-ship-tickets
-description: Ship the tickets gs-openspec-to-tickets created, one pipeline per ticket (apply, verify, fix, review, fix, commit), serially with subagents or in parallel children (T3 Code threads, Amp orbs, or worktree subagents), then archive finished changes and open one draft pull request.
+description: "Ship the tickets gs-openspec-to-tickets created, one commit per ticket, then archive the finished changes and open one draft pull request. Use when the user asks to ship OpenSpec tickets, runs /gs-openspec-ship-tickets, or names gs-openspec-ship-tickets. Only when the user asks for it."
 disable-model-invocation: true
 ---
 
@@ -31,7 +31,7 @@ Do not create or switch branches or worktrees in default mode. Every step uses t
 ## Modes
 
 - **Default (serial)**: one ticket at a time, in this checkout, with one subagent per pipeline step.
-- **Thread mode (`--threads`)**: each ticket runs in a child, in parallel, on its own ticket branch. Read [thread-mode.md](thread-mode.md) before the rebase; it replaces the scheduling and adds integration. The ticket pipeline, tracker writes, close-out, and pull request below still apply.
+- **Thread mode (`--threads`)**: each ticket runs in a child (a T3 Code thread, an Amp orb, or a worktree subagent), in parallel, on its own ticket branch. Read [thread-mode.md](thread-mode.md) before the rebase; it replaces the scheduling and adds integration. The ticket pipeline, tracker writes, close-out, and pull request below still apply.
 
 ## Setup
 

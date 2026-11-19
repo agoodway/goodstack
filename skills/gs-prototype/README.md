@@ -4,7 +4,7 @@ This skill builds a throwaway prototype to answer one design question. A questio
 
 Matt Pocock wrote this skill. The original source is [mattpocock/skills](https://github.com/mattpocock/skills/tree/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/engineering/prototype), path `skills/engineering/prototype`, commit `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`. The license is MIT. Copyright 2026 Matt Pocock. The full notice is `LICENSE` in this directory. The files pulled from [themusicman's grabbag](https://github.com/themusicman/grabbag/blob/main/skills/mattpocock/prototype/SKILL.md) match that commit.
 
-`SKILL.md` in this directory is that text with one change to its front matter: the skill is named `gs-prototype`, where the original is `prototype`. `LOGIC.md` and `UI.md` are unchanged. The instructions name no harness, tool, or model, so they needed no other change. The upstream `agents/openai.yaml` is not included.
+`SKILL.md` in this directory is that text with two changes to its front matter: the skill is named `gs-prototype`, where the original is `prototype`, and its description adds "spike", "quick prototype", and the skill's name as triggers. `LOGIC.md` and `UI.md` are unchanged. The instructions name no harness, tool, or model, so they needed no other change. The upstream `agents/openai.yaml` is not included.
 
 ## Install
 
