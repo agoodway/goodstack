@@ -378,6 +378,40 @@ for required in ("gs-pull-request", "gs-blast-radius", "gs-show-me", "gs-unslop"
         sys.exit(f"gs-qa-scenarios SKILL.md missing {required}")
 if "$ARGUMENTS" in qa_skill:
     sys.exit("gs-qa-scenarios SKILL.md takes arguments in prose")
+# The run modes drive the app only through a project verify-* skill and keep evidence in .verify/.
+for required in (
+    "## Modes",
+    "**write**: the default",
+    "**write and run**",
+    "**run**",
+    "[write | write and run | run]",
+    "`verify-*` skill",
+    ".cursor/skills/",
+    ".claude/skills/",
+    ".agents/skills/",
+    "gs-create-verification-skill",
+    "gs-maintain-verification-skill",
+    "Launch, Doctor, Drive, Evidence, and Cleanup",
+    ".verify/<app>/<run-id>/",
+    "run.md",
+    "Never stage or commit anything under `.verify/`",
+    "Never edit a scenario to make it pass",
+    "In write and run mode, skip that walk",
+    "> [!NOTE]",
+    "**Passed**",
+    "**Failed**",
+    "**Not run**",
+):
+    if required not in qa_skill:
+        sys.exit(f"gs-qa-scenarios SKILL.md missing {required}")
+qa_description = re.search(r'(?m)^description:\s*"(.*)"\s*$', qa_skill)
+if qa_description is None or len(qa_description.group(1)) >= 1024:
+    sys.exit("gs-qa-scenarios description is missing or not under 1024 characters")
+for phrase in ("run the QA scenarios", "automate the QA steps", "verify-*"):
+    if phrase not in qa_description.group(1):
+        sys.exit(f"gs-qa-scenarios description missing {phrase}")
+if "skills/gs-create-verification-skill" in qa_skill or "skills/gs-maintain-verification-skill" in qa_skill:
+    sys.exit("gs-qa-scenarios SKILL.md references a verification skill by path")
 
 all_installed = {p.parent.name for p in (tmp / "all").rglob("SKILL.md")}
 if all_installed != expected_set:
