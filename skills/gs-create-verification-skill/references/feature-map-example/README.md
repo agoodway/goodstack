@@ -27,7 +27,7 @@ This directory is the maintained source for verifying the user-facing behavior o
 - UI proof includes an ARIA snapshot and a screenshot with the app identity visible.
 - CLI proof includes the command, stdout, stderr, and exit code.
 - Mutation proof includes a read-only second view of the stored value.
-- Record the feature ID, entry point, result, and artifact files in `.verify/notes/$RUN_ID/run.md`, under the commit SHA, branch, time, and outcome of the run.
+- Record the feature ID, entry point, result, and artifact files in `.verify/notes/$RUN_ID/run.md`, under the commit SHA, branch, clean or dirty working tree, time, and outcome of the run.
 - Report an unreachable path with the attempted command and the unmet precondition.
 - Do not report a skipped entry point as verified through a different path.
 
