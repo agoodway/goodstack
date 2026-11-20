@@ -1,6 +1,6 @@
 # gs-openspec-ship
 
-This skill ships one or more OpenSpec changes through a fixed pipeline. It rebases the current branch onto the remote's default branch, then applies, verifies, fixes every verify issue, runs gs-review, fixes every review issue and removes the tests and comments the review lists, archives after syncing specs, and commits. After the named changes finish, it opens one draft pull request for the commits from that run.
+This skill ships one or more OpenSpec changes through a fixed pipeline. It rebases the current branch onto the remote's default branch, then applies, verifies, fixes every verify issue, runs gs-review, fixes every review issue and removes the tests and comments the review lists, archives after syncing specs, and commits. After the named changes finish, it opens one draft pull request for the commits from that run. When the project has a `verify-*` skill, the run ends by asking whether to run it, so you can see the change working in the real app.
 
 ## Use cases
 

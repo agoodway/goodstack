@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Ship OpenSpec changes
 
-You are the orchestrator. You do not rebase, implement, verify, review, archive, commit, or open the pull request yourself. Rebase the current branch onto the remote's default branch once. Then for each change, run the seven steps below in order, revisiting affected steps when recovery invalidates their results. Each step is one subagent. Wait for it to finish before you start the next. After the last change, open one draft pull request for the commits this run made, unless the batch stopped with unfinished edits.
+You are the orchestrator. You do not rebase, implement, verify, review, archive, commit, or open the pull request yourself. Rebase the current branch onto the remote's default branch once. Then for each change, run the seven steps below in order, revisiting affected steps when recovery invalidates their results. Each step is one subagent. Wait for it to finish before you start the next. After the last change, open one draft pull request for the commits this run made, unless the batch stopped with unfinished edits. Last, when the project has a `verify-*` skill, ask the user whether to run it.
 
 This skill is runtime-neutral. When a step says to start a subagent, use the current runtime's subagent mechanism. If that mechanism is unavailable, run the step in this session and label the result with the step name.
 
@@ -246,3 +246,18 @@ After the pull request step, summarize in chat:
 - Validation results, any accepted unrelated failures, and any changes not started because the batch stopped
 
 When the rebase blocked or the batch stopped with unfinished edits, summarize that blocker and the actual delivery state, including commits already made and why no pull request was opened. Do not paste the verify or gs-review reports again.
+
+## Offer the verify skill
+
+Do this after the Finish summary, when the run made at least one commit and did not stop with unfinished edits.
+
+Look for a `verify-*` skill in every project skills directory the repo has, such as `.cursor/skills/`, `.claude/skills/`, and `.agents/skills/`. When there is none, end the run without mentioning it.
+
+When there is one, end your final message by asking whether to run it against what this run shipped, so the user can see the change working in the real app. When there are several, name each one and ask which to run. Do not run it before the user answers.
+
+When the user says yes, start one subagent on the current branch:
+
+- When `gs-qa-scenarios` is installed, the subagent follows it in write and run mode for the current branch, with the chosen verify skill. It writes scenarios for the change and drives each one through the verify skill.
+- Without it, the subagent reads the verify skill's `SKILL.md` and its feature map, then drives the features this run's changes touch through its Launch, Drive, Evidence, and Cleanup sections.
+
+The subagent changes no code and commits nothing. Evidence stays under `.verify/`, which is never committed. Report each result as passed, failed, or not run, with its evidence path. Do not fix a failure. Report it and leave the next step to the user.

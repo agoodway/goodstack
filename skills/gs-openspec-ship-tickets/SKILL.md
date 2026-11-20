@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Ship OpenSpec tickets
 
-You are the orchestrator. You ship the **tickets** that `gs-openspec-to-tickets` published for one or more OpenSpec changes. Each ticket runs through the **ticket pipeline** below and lands as one commit on the **run branch** (the branch checked out when the run starts). When a change's last ticket lands, you close the change out: full verify, archive, commit. After the last ticket, you open one draft pull request.
+You are the orchestrator. You ship the **tickets** that `gs-openspec-to-tickets` published for one or more OpenSpec changes. Each ticket runs through the **ticket pipeline** below and lands as one commit on the **run branch** (the branch checked out when the run starts). When a change's last ticket lands, you close the change out: full verify, archive, commit. After the last ticket, you open one draft pull request. Last, when the project has a `verify-*` skill, you ask the user whether to run it.
 
 You do not rebase, implement, verify, review, archive, commit, or open the pull request yourself. Each of those is one subagent (or, in thread mode, one child). You schedule tickets, route recovery, and own every tracker write.
 
@@ -272,6 +272,21 @@ Summarize in chat:
 
 Do not paste the verify or gs-review reports again.
 
+## Offer the verify skill
+
+Do this after the Finish summary, when the run made at least one commit and did not stop with unfinished edits. Worker mode skips it.
+
+Look for a `verify-*` skill in every project skills directory the repo has, such as `.cursor/skills/`, `.claude/skills/`, and `.agents/skills/`. When there is none, end the run without mentioning it.
+
+When there is one, end your final message by asking whether to run it against what this run shipped, so the user can see the change working in the real app. When there are several, name each one and ask which to run. Do not run it before the user answers.
+
+When the user says yes, start one subagent on the run branch:
+
+- When `gs-qa-scenarios` is installed, the subagent follows it in write and run mode for the run branch, with the chosen verify skill. It writes scenarios for the shipped tickets and drives each one through the verify skill.
+- Without it, the subagent reads the verify skill's `SKILL.md` and its feature map, then drives the features the shipped tickets touch through its Launch, Drive, Evidence, and Cleanup sections.
+
+The subagent changes no code, commits nothing, and writes nothing to the tracker. Evidence stays under `.verify/`, which is never committed. Report each result as passed, failed, or not run, with its evidence path. Do not fix a failure. Report it and leave the next step to the user.
+
 ## Worker mode
 
 `--worker <ticket> --base <branch>` is how a thread-mode child runs. The child is the orchestrator for one ticket:
@@ -279,7 +294,7 @@ Do not paste the verify or gs-review reports again.
 - Check out `<base>` from `origin`, then create `<base>--<ticket-slug>` from it. Skip the rebase.
 - Read the ticket brief from the prompt; do not refetch or write the tracker.
 - Run the six pipeline steps, one subagent each, under the recovery contract.
-- On `done`, push `<base>--<ticket-slug>` to `origin`. Skip close-out, the pull request, and every tracker write.
+- On `done`, push `<base>--<ticket-slug>` to `origin`. Skip close-out, the pull request, the verify offer, and every tracker write.
 
 End the final message with:
 
