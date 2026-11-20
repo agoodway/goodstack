@@ -5,7 +5,7 @@ description: "Post a gs-review report to a pull request as an overview comment a
 
 # gs-review-pr-reply
 
-Post a `/gs-review` report to the current branch's pull request as one review: an overview comment, plus an inline comment on the changed line for each finding. The user approves the draft before anything reaches GitHub.
+Post a `/gs-review` report to the current branch's pull request as one review: an overview comment, plus an inline comment on the changed line for each finding. The report's lists of tests and comments to remove go in the overview. The user approves the draft before anything reaches GitHub.
 
 ## Arguments
 
@@ -44,6 +44,14 @@ Skip a finding that already has a comment on the pull request from an earlier ru
 
 If the prompt selects nothing, stop and list the findings by number and title.
 
+### Tests and comments to remove
+
+A report may also have a Tests to remove section and a Comments to remove section. Their rows are not findings. They have no numbers, they get no inline comments, and they never change the verdict.
+
+Post both lists unless the selection prompt leaves one out, such as `skip the comments list` or `findings only`. A prompt that selects findings by number or severity says nothing about the lists, so they still post. A prompt may ask for the lists alone, such as `only the tests to remove`. Then no finding is posted, and the stop above does not apply.
+
+Drop a row when the pull request head no longer has that test or that comment in the file it names. Count the dropped rows and give the count in the draft. Leave out a list that the report omits, that reads `None.`, or that has no rows left.
+
 Take the verdict from the posted findings and the report's Evidence section: `Don't ship` for a confirmed Blocker or a check this change broke, `Fix first` for any other finding, `Ship` for none.
 
 ## Step 3: Place each finding
@@ -76,6 +84,20 @@ Overview:
 | [n] | [title] | [Blocker or Should fix] | `[file:line]` |
 
 [For each finding without an inline comment: its number and title, then its failure view and fix.]
+
+## Tests to remove
+
+| File | Test | Category | Why |
+|---|---|---|---|
+| `[file]` | [test name] | [past, nothing, or duplicate] | [one sentence] |
+
+[N] more need a rewrite, and [M] are unsure.
+
+## Comments to remove
+
+| Where | Comment | Verdict | Why |
+|---|---|---|---|
+| `[file:line]` | [first words of the comment] | [delete or reshape] | [one sentence] |
 
 ## Evidence
 
@@ -121,7 +143,9 @@ The **failure view** is the finding's failure scenario drawn in the smallest vie
 
 Show the fix as a `suggestion` block when it replaces exactly the anchored lines, a `diff` block when it touches other lines or another file, or one sentence when it is longer than a few lines. One failure view and one fix per comment.
 
-Carry the Evidence and Merge danger sections over from the report. With no posted findings, the overview has the verdict line, Evidence, and Merge danger, and the review has no inline comments.
+Carry the Evidence and Merge danger sections over from the report. With no posted findings, the overview has the verdict line, the two lists when they have rows, Evidence, and Merge danger, and the review has no inline comments.
+
+Carry the rows of Tests to remove and Comments to remove over as the report gives them, with the line under the tests table when the report has it. Open each section with one sentence saying these are suggestions that do not change the verdict. When a list has more than ten rows, put its table inside a `<details>` block whose summary gives the row count, so the overview stays short.
 
 ### Writing
 
@@ -142,6 +166,7 @@ Print the draft in chat:
 - The overview as it will render
 - Each inline comment under its `path:line`
 - The skipped findings with their reasons, and the undecided ones flagged
+- Each list that was left out, with the reason, and the count of rows dropped from each list
 - A line saying the report is stale, when it is
 
 Ask the user to approve. Apply any edits they ask for and show the changed comments again. Post only after the user approves.
