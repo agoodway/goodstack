@@ -253,9 +253,20 @@ Print the report in chat only. `gs-review` is read-only: applying fixes, writing
 
 ## Comments to remove
 
-| Where | Comment | Verdict | Why |
-|---|---|---|---|
-| `[file:line]` | [first words of the comment] | [delete | reshape] | [one sentence, naming the symbol for a reshape] |
+| Where | Comment | Why |
+|---|---|---|
+| `[file:line]` | [first words of the comment] | [one sentence naming the symbol to reshape] |
+
+<details>
+<summary>[N] more comments to delete</summary>
+
+| Where | Comment | Why |
+|---|---|---|
+| `[file:line]` | [first words of the comment] | [one sentence] |
+
+[M] more are not listed.
+
+</details>
 
 ## Evidence
 
@@ -275,7 +286,7 @@ Roles: [list] · Second opinion: [provider label]
 - **Verdict:** `Don't ship` for a confirmed Blocker or a check this change broke. `Fix first` for any other finding. `Ship` when there are none.
 - **Findings:** Blockers first, numbered consecutively, one entry per finding with every role that raised it on the attribution line. When the fix is larger than a few lines, state it in one sentence instead of a diff. With no findings, the section reads `None above the bar.`
 - **Tests to remove:** include this section only when the change adds or modifies tests. List every test with a verdict of delete. With none, the section reads `None.` Leave out the last line when both counts are zero. When `gs-prune-tests` is installed, add that it deletes these tests and rewrites the others.
-- **Comments to remove:** include this section only when the change adds or modifies comments or suppressions in code. List every reported comment. With none, the section reads `None.` Past twenty rows, list the reshape rows and give a count of the delete rows for each file. When `gs-no-comments` is installed, add that the user can run it to delete these comments and fix the code marked reshape.
+- **Comments to remove:** include this section only when the change adds or modifies comments or suppressions in code. The table in view lists every comment with a verdict of reshape, since those say something about the code. The comments with a verdict of delete go in the `<details>` block, so they stay out of the way. `[N]` in its summary is the full count of them. List at most 25 there, in file order, and give the count of the rest in the last line. Leave that line out when all of them are listed. Leave out the table in view when no comment has a reshape verdict, and leave out the `<details>` block when none has a delete verdict. With no reported comment at all, the section reads `None.` When `gs-no-comments` is installed, add that the user can run it to delete these comments and fix the code marked reshape.
 - **Evidence:** every command QA execution ran, with failures this change caused separated from pre-existing ones. If no checks ran, say why. When a `REVIEW.md` was found, add the line review-md.md gives.
 - **Merge Danger:** a one-way door cannot be walked back after it ships (destructive migrations, sent money or messages, published APIs); a two-way door is cheap to roll back. Blast radius is the widest scope a failure of this change could reach.
 

@@ -95,9 +95,20 @@ Overview:
 
 ## Comments to remove
 
-| Where | Comment | Verdict | Why |
-|---|---|---|---|
-| `[file:line]` | [first words of the comment] | [delete or reshape] | [one sentence] |
+| Where | Comment | Why |
+|---|---|---|
+| `[file:line]` | [first words of the comment] | [one sentence naming the symbol to reshape] |
+
+<details>
+<summary>[N] more comments to delete</summary>
+
+| Where | Comment | Why |
+|---|---|---|
+| `[file:line]` | [first words of the comment] | [one sentence] |
+
+[M] more are not listed.
+
+</details>
 
 ## Evidence
 
@@ -145,7 +156,7 @@ Show the fix as a `suggestion` block when it replaces exactly the anchored lines
 
 Carry the Evidence and Merge danger sections over from the report. With no posted findings, the overview has the verdict line, the two lists when they have rows, Evidence, and Merge danger, and the review has no inline comments.
 
-Carry the rows of Tests to remove and Comments to remove over as the report gives them, with the line under the tests table when the report has it. Open each section with one sentence saying these are suggestions that do not change the verdict. When a list has more than ten rows, put its table inside a `<details>` block whose summary gives the row count, so the overview stays short.
+Carry the rows of Tests to remove and Comments to remove over as the report gives them, with the line under the tests table when the report has it. Open each section with one sentence saying these are suggestions that do not change the verdict. When Tests to remove has more than ten rows, put its table inside a `<details>` block whose summary gives the row count, so the overview stays short. Comments to remove keeps the report's shape: the reshape rows in view, and the delete rows inside the `<details>` block. When you drop rows from that block, lower the count in its summary to match.
 
 ### Writing
 
