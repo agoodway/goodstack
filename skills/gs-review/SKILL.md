@@ -165,6 +165,26 @@ A reviewer holding several roles gets the union of their files.
 
 If the runtime cannot spawn subagents, run the briefs sequentially in this session and keep each output labeled with the role name.
 
+## Tests to remove
+
+When the change adds or modifies tests, find the ones that guard no behavior, so the report can say which to remove. This pass is separate from the Tests role. The Tests role finds behavior that no test covers, and this pass finds tests that cover nothing.
+
+Start it with the Phase 2 reviewers, in its own generic subagent on the host's model. If the runtime cannot spawn subagents, run it in this session after the briefs.
+
+Use `gs-find-bad-tests` when it is installed. Give it the changed test files as its scope, after any `REVIEW.md` ignores, and tell it to judge only the tests this change added or modified. Without it, check each of those tests against this short rule: mark a test for removal when it guards code that no longer exists, when no change to the code can make it fail, or when another test already guards the same behavior. Never mark a regression test for a fixed bug, a test of a public API or external contract, or a test that guards security or data integrity.
+
+Keep the tests with a verdict of delete, and count the ones with a verdict of rewrite or unsure. These tests are not findings. They skip Phases 3 and 4, they take no severity, and they never change the verdict.
+
+## Comments to remove
+
+When the change adds or modifies comments, or lint or type suppressions, in code, find the ones that should go. Skip this pass for a docs-only change.
+
+Start it with the Phase 2 reviewers, in its own generic subagent on the host's model. If the runtime cannot spawn subagents, run it in this session after the briefs.
+
+Use `gs-find-bad-comments` when it is installed. Give it the review's diff as its scope, after any `REVIEW.md` ignores, so it judges only the comments and suppressions this change adds or modifies. Without it, apply this short rule to those comments: mark every one for removal unless it is a legal or license header, explains behavior forced by an external dependency, platform, or protocol, defines a public API contract, links an issue or RFC for a constraint code cannot express, or suppresses a rule that is style-only. Give a comment that excuses surprising code of our own the verdict reshape, and name the symbol.
+
+Keep every reported comment, with its verdict of delete or reshape. These comments are not findings. They skip Phases 3 and 4, they take no severity, and they never change the verdict. A suppression that hides a bug this change can reach is different: a reviewer raises that as a finding of its own.
+
 ## Phase 3: Merge
 
 In the host, combine the reviewer, QA execution, and Fresh Eyes results into one numbered list of candidate findings:
@@ -223,6 +243,31 @@ Print the report in chat only. `gs-review` is read-only: applying fixes, writing
 [the fix]
 ```
 
+## Tests to remove
+
+| File | Test | Category | Why |
+|---|---|---|---|
+| `[file]` | [test name] | [past | nothing | duplicate] | [one sentence] |
+
+[N] more need a rewrite, and [M] are unsure.
+
+## Comments to remove
+
+| Where | Comment | Why |
+|---|---|---|
+| `[file:line]` | [first words of the comment] | [one sentence naming the symbol to reshape] |
+
+<details>
+<summary>[N] more comments to delete</summary>
+
+| Where | Comment | Why |
+|---|---|---|
+| `[file:line]` | [first words of the comment] | [one sentence] |
+
+[M] more are not listed.
+
+</details>
+
 ## Evidence
 
 - `[command]` → [pass and fail counts]
@@ -240,6 +285,8 @@ Roles: [list] · Second opinion: [provider label]
 - **What changed:** choose the view with the `gs-show-me` skill when it is installed, and do not write an HTML file. Without it, use a diff sketch of the call tree, file tree, or control flow.
 - **Verdict:** `Don't ship` for a confirmed Blocker or a check this change broke. `Fix first` for any other finding. `Ship` when there are none.
 - **Findings:** Blockers first, numbered consecutively, one entry per finding with every role that raised it on the attribution line. When the fix is larger than a few lines, state it in one sentence instead of a diff. With no findings, the section reads `None above the bar.`
+- **Tests to remove:** include this section only when the change adds or modifies tests. List every test with a verdict of delete. With none, the section reads `None.` Leave out the last line when both counts are zero. When `gs-prune-tests` is installed, add that it deletes these tests and rewrites the others.
+- **Comments to remove:** include this section only when the change adds or modifies comments or suppressions in code. The table in view lists every comment with a verdict of reshape, since those say something about the code. The comments with a verdict of delete go in the `<details>` block, so they stay out of the way. `[N]` in its summary is the full count of them. List at most 25 there, in file order, and give the count of the rest in the last line. Leave that line out when all of them are listed. Leave out the table in view when no comment has a reshape verdict, and leave out the `<details>` block when none has a delete verdict. With no reported comment at all, the section reads `None.` When `gs-no-comments` is installed, add that the user can run it to delete these comments and fix the code marked reshape.
 - **Evidence:** every command QA execution ran, with failures this change caused separated from pre-existing ones. If no checks ran, say why. When a `REVIEW.md` was found, add the line review-md.md gives.
 - **Merge Danger:** a one-way door cannot be walked back after it ships (destructive migrations, sent money or messages, published APIs); a two-way door is cheap to roll back. Blast radius is the widest scope a failure of this change could reach.
 
@@ -250,4 +297,6 @@ Use these checks while executing the skill (not while authoring it):
 - Three-line bug fix in a pure Elixir function, with `mix test` available → one reviewer holding Elixir; QA execution in the host; Fresh Eyes
 - 60-line change to a LiveView form and its template → one reviewer holding Elixir and UI/a11y; QA execution in the host; Fresh Eyes
 - Phoenix migration plus a new authenticated endpoint → separate reviewers for Elixir, Security, Database, and Tests; QA execution in the host; Fresh Eyes
+- Any of the above with a new or modified test file → the same reviewers, plus the Tests to remove pass in its own subagent
+- Any of the above except the docs-only diff, with a new or modified comment → the same reviewers, plus the Comments to remove pass in its own subagent
 - Short docs-only diff → one reviewer holding Technical writing and Accuracy; Fresh Eyes

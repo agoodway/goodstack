@@ -127,8 +127,37 @@ for snippet in (
 ):
     if snippet not in no_comments_readme:
         sys.exit(f"gs-no-comments README missing {snippet}")
-if not (no_comments_dir / "references" / "comment-sicko.md").is_file():
-    sys.exit("gs-no-comments missing references/comment-sicko.md")
+# gs-find-bad-comments holds the comment rules. gs-no-comments keeps no copy and stops without it.
+if (no_comments_dir / "references" / "comment-sicko.md").exists():
+    sys.exit("gs-no-comments must not keep a copy of the rules in gs-find-bad-comments")
+no_comments_skill = (no_comments_dir / "SKILL.md").read_text()
+for snippet in (
+    "`gs-find-bad-comments` is not installed. Stop before you change any file.",
+    "npx skills add agoodway/goodstack --skill gs-find-bad-comments",
+):
+    if snippet not in no_comments_skill:
+        sys.exit(f"gs-no-comments SKILL.md missing {snippet}")
+
+# gs-find-bad-comments is the finding half of gs-no-comments, so it shares its sources.
+find_comments_dir = root / "skills" / "gs-find-bad-comments"
+find_comments_license = (find_comments_dir / "LICENSE").read_text()
+if "Copyright (c) 2026 Lauren Tan" not in find_comments_license or "MIT License" not in find_comments_license:
+    sys.exit("gs-find-bad-comments LICENSE missing the pstack MIT notice")
+find_comments_readme = (find_comments_dir / "README.md").read_text()
+for snippet in (
+    "Lauren Tan",
+    "https://github.com/cursor/plugins",
+    "pstack/skills/no-comments/SKILL.md",
+    "pstack/agents/comment-sicko.md",
+    "bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7",
+):
+    if snippet not in find_comments_readme:
+        sys.exit(f"gs-find-bad-comments README missing {snippet}")
+find_comments_skill = (find_comments_dir / "SKILL.md").read_text()
+if "Change no file." not in find_comments_skill:
+    sys.exit("gs-find-bad-comments SKILL.md must stay read-only")
+if "disable-model-invocation" in find_comments_skill:
+    sys.exit("gs-find-bad-comments is called by other skills, so it stays model-invocable")
 
 # gs-unslop differs from the pstack original only in its name line, so it has no hash pin.
 unslop_license = (root / "skills" / "gs-unslop" / "LICENSE").read_text()
@@ -349,15 +378,56 @@ for rel in ("tracker-github.md", "tracker-linear.md", "tracker-jira.md", "tracke
 # gs-prune-tests is adapted from the caldoai original, so it has no hash pin.
 prune_dir = root / "skills" / "gs-prune-tests"
 prune_license = (prune_dir / "LICENSE").read_text()
-if "Copyright (c) 2026 Maze" not in prune_license or "MIT License" not in prune_license:
-    sys.exit("gs-prune-tests LICENSE missing Maze's MIT notice")
+for holder in ("Copyright (c) 2026 Maze", "Copyright (c) 2026 Matt Pocock", "MIT License"):
+    if holder not in prune_license:
+        sys.exit(f"gs-prune-tests LICENSE missing {holder}")
 prune_readme = (prune_dir / "README.md").read_text()
-for snippet in ("Maze", "https://github.com/caldoai/skills", "skills/prune-tests/SKILL.md", "bd73b2ea5eb854ab8f0553fb41f77c8786f28f82"):
+for snippet in (
+    "Maze",
+    "https://github.com/caldoai/skills",
+    "skills/prune-tests/SKILL.md",
+    "bd73b2ea5eb854ab8f0553fb41f77c8786f28f82",
+    "Matt Pocock",
+    "https://github.com/mattpocock/skills",
+    "skills/engineering/tdd/tests.md",
+    "43ea0884b07a3e67a5a07f025ce92aefa983177b",
+):
     if snippet not in prune_readme:
         sys.exit(f"gs-prune-tests README missing {snippet}")
+if "skills/engineering/tdd/mocking.md" not in prune_readme:
+    sys.exit("gs-prune-tests README missing skills/engineering/tdd/mocking.md")
 prune_skill = (prune_dir / "SKILL.md").read_text()
 if "argument-hint" in prune_skill or "$ARGUMENTS" in prune_skill:
     sys.exit("gs-prune-tests SKILL.md takes arguments in prose")
+if "`gs-find-bad-tests`" not in prune_skill or "Without it, apply this short rule." not in prune_skill:
+    sys.exit("gs-prune-tests SKILL.md must use gs-find-bad-tests with a fallback")
+
+# gs-find-bad-tests is the finding half of gs-prune-tests, so it shares both sources.
+find_dir = root / "skills" / "gs-find-bad-tests"
+find_license = (find_dir / "LICENSE").read_text()
+for holder in ("Copyright (c) 2026 Maze", "Copyright (c) 2026 Matt Pocock", "MIT License"):
+    if holder not in find_license:
+        sys.exit(f"gs-find-bad-tests LICENSE missing {holder}")
+find_readme = (find_dir / "README.md").read_text()
+for snippet in (
+    "Maze",
+    "https://github.com/caldoai/skills",
+    "skills/prune-tests/SKILL.md",
+    "bd73b2ea5eb854ab8f0553fb41f77c8786f28f82",
+    "Matt Pocock",
+    "https://github.com/mattpocock/skills",
+    "skills/engineering/tdd/tests.md",
+    "43ea0884b07a3e67a5a07f025ce92aefa983177b",
+):
+    if snippet not in find_readme:
+        sys.exit(f"gs-find-bad-tests README missing {snippet}")
+if "skills/engineering/tdd/mocking.md" not in find_readme:
+    sys.exit("gs-find-bad-tests README missing skills/engineering/tdd/mocking.md")
+find_skill = (find_dir / "SKILL.md").read_text()
+if "argument-hint" in find_skill or "$ARGUMENTS" in find_skill:
+    sys.exit("gs-find-bad-tests SKILL.md takes arguments in prose")
+if "Change no file." not in find_skill:
+    sys.exit("gs-find-bad-tests SKILL.md must stay read-only")
 
 pr_show = (root / "skills" / "gs-pr-show-me" / "SKILL.md").read_text()
 for required in ("gs-pull-request", "gs-show-me", "gh pr view", "gh pr diff", "## Where to look first", "read-only"):

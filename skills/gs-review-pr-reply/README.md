@@ -50,7 +50,7 @@ The skill shows the full draft and waits for approval before posting. It posts w
 
 ## What gets posted
 
-- The overview has the verdict, a sketch of the change marked with where each finding lands, a table of the posted findings, the checks that ran, and the merge danger.
+- The overview has the verdict, a sketch of the change marked with where each finding lands, a table of the posted findings, the checks that ran, and the merge danger. When the report lists tests or comments to remove, the overview carries those two tables as suggestions. They get no inline comments and do not change the verdict.
 - Each finding whose line is in the pull request diff gets an inline comment. The comment shows the failure as a trace tree, a sequence diagram, or pseudocode, then a fix. When the fix replaces exactly the commented lines, it is a GitHub suggestion the author can apply in one click.
 - A finding whose line is not in the diff goes in the overview.
 - Every comment opens with a note naming the model and the user it is posting for.

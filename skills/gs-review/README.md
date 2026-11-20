@@ -45,7 +45,7 @@ Add `-g` to install into your user skill directory instead of the current projec
 /gs-review lib/my_app/accounts  # focus on a path or area
 ```
 
-The report opens with a verdict of `Ship`, `Fix first`, or `Don't ship`. Then it gives a sketch of what changed, the numbered findings with a failure trace and a fix each, the evidence, and the merge danger. Evidence covers the checks that ran and the findings that were refuted.
+The report opens with a verdict of `Ship`, `Fix first`, or `Don't ship`. Then it gives a sketch of what changed, the numbered findings with a failure trace and a fix each, the evidence, and the merge danger. When the change adds or modifies tests, the report also lists the ones that guard no behavior and should be removed. It finds them with `gs-find-bad-tests` when that skill is installed, and with a short rule of its own without it. It lists the comments and suppressions the change adds that should be removed in the same way, with `gs-find-bad-comments`. Neither list changes the verdict. Evidence covers the checks that ran and the findings that were refuted.
 
 ## Project guidance with REVIEW.md
 
