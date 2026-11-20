@@ -57,4 +57,4 @@ Reading a pull request or posting to one requires the `gh` CLI, installed and au
 /gs-qa-scenarios run 482 and post the results  # run them, then post the results with screenshots
 ```
 
-The agent can also start it on its own, when you ask for QA steps or a manual test plan for a change, or ask it to run the QA scenarios or automate the QA steps.
+The skill runs only when you ask for it.

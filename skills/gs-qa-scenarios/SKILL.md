@@ -1,6 +1,7 @@
 ---
 name: gs-qa-scenarios
-description: "Write manual QA scenarios for the changes on a branch or pull request, so a QA engineer knows what to test, why, and how, without reading the code. It can also run the scenarios, new or saved, through the project's verify-* skill and report each one as passed, failed, or not run, with evidence. Use when the user asks for QA steps, QA scenarios, a manual test plan, or how to verify a branch in the running app, asks to run the QA scenarios or automate the QA steps, runs /gs-qa-scenarios, or names gs-qa-scenarios."
+description: "Write manual QA scenarios for the changes on a branch or pull request, so a QA engineer knows what to test, why, and how, without reading the code. It can also run the scenarios, new or saved, through the project's verify-* skill and report each one as passed, failed, or not run, with evidence. Use when the user asks for QA steps, QA scenarios, a manual test plan, or how to verify a branch in the running app, asks to run the QA scenarios or automate the QA steps, runs /gs-qa-scenarios, or names gs-qa-scenarios. Only when the user asks for it."
+disable-model-invocation: true
 ---
 
 # QA scenarios

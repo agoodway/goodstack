@@ -63,7 +63,7 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 
 ### Who starts a skill
 
-Ten skills run only when you type the command: `gs-arena`, `gs-why`, `gs-improve-codebase-architecture`, `gs-no-comments`, `gs-reflect`, `gs-openspec-ship`, `gs-openspec-to-tickets`, `gs-openspec-ship-tickets`, `gs-create-verification-skill`, and `gs-maintain-verification-skill`. The agent can also start the other skills when a request matches their description. Amp has no slash commands and ignores the `disable-model-invocation` flag that sets this, so these ten say in their descriptions to run only when you ask for them.
+Eleven skills run only when you type the command: `gs-arena`, `gs-why`, `gs-improve-codebase-architecture`, `gs-no-comments`, `gs-reflect`, `gs-openspec-ship`, `gs-openspec-to-tickets`, `gs-openspec-ship-tickets`, `gs-create-verification-skill`, `gs-maintain-verification-skill`, and `gs-qa-scenarios`. The agent can also start the other skills when a request matches their description. Amp has no slash commands and ignores the `disable-model-invocation` flag that sets this, so these eleven say in their descriptions to run only when you ask for them.
 
 ## Install
 
