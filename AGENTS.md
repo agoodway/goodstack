@@ -33,6 +33,7 @@ Amp shows the model only each skill's `name` and `description`, has no slash com
 ## Skills that use other skills
 
 - Reference a skill by name with a fallback: "use `gs-unslop` when it is installed; without it, <the short rule>".
+- A skill may require another skill only when the fallback would be a full copy of that skill's rules. Then it stops before it changes any file, and gives the user the command that installs the other skill. Its `README.md` says which skill it needs. `gs-no-comments` requires `gs-find-bad-comments` this way.
 - Reference skills, never another skill's files. Each skill installs into its own directory.
 - A skill that other skills call stays model-invocable. `disable-model-invocation: true` is for skills only the user starts.
 - The recovery contract and the "Fix every verify issue" step are byte-identical in `gs-openspec-ship` and `gs-openspec-ship-tickets`. Edit both together.
