@@ -14,8 +14,7 @@ When you ask, the skill posts a run's results on the pull request as one comment
 
 - Your branch is ready for QA, and the tester needs steps to check it in the running app without reading the code.
 - You are reviewing a pull request and want a manual test plan that covers the main path, the edge cases, and the flows the change could break.
-- You want the QA scenarios run against the app automatically, new or from a saved file or pull request comment, with a result and evidence for each one.
-- You want the run's results posted on the pull request, with the screenshots that prove each one, so a reviewer sees the proof without the run folder.
+- You want the QA scenarios run against the app automatically, new or from a saved file or pull request comment, with a result and evidence for each one, and the results posted on the pull request with the screenshots that prove them.
 
 ## Install
 
