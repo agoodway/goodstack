@@ -41,6 +41,7 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 
 - [`gs-arena`](skills/gs-arena/README.md) runs several attempts at the same task in parallel. It picks one as the base and grafts the strongest parts of the others into it.
 - [`gs-prototype`](skills/gs-prototype/README.md) builds a throwaway prototype to answer one design question. Logic gets a clickable HTML file. A screen gets several variants you can switch between.
+- [`gs-improve-codebase-architecture`](skills/gs-improve-codebase-architecture/README.md) scans a codebase for shallow modules to deepen and writes the candidates to an HTML report with before and after diagrams. It then asks you about the one you pick, one decision at a time.
 - [`gs-codebase-design`](skills/gs-codebase-design/README.md) gives the agent a fixed vocabulary for designing deep modules. It also says how to deepen shallow modules and how to compare interface designs.
 - [`gs-sharpen`](skills/gs-sharpen/README.md) makes a task deeper, not bigger, and then rewrites your prompt.
 
@@ -62,7 +63,7 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 
 ### Who starts a skill
 
-Nine skills run only when you type the command: `gs-arena`, `gs-why`, `gs-no-comments`, `gs-reflect`, `gs-openspec-ship`, `gs-openspec-to-tickets`, `gs-openspec-ship-tickets`, `gs-create-verification-skill`, and `gs-maintain-verification-skill`. The agent can also start the other skills when a request matches their description. Amp has no slash commands and ignores the `disable-model-invocation` flag that sets this, so these nine say in their descriptions to run only when you ask for them.
+Ten skills run only when you type the command: `gs-arena`, `gs-why`, `gs-improve-codebase-architecture`, `gs-no-comments`, `gs-reflect`, `gs-openspec-ship`, `gs-openspec-to-tickets`, `gs-openspec-ship-tickets`, `gs-create-verification-skill`, and `gs-maintain-verification-skill`. The agent can also start the other skills when a request matches their description. Amp has no slash commands and ignores the `disable-model-invocation` flag that sets this, so these ten say in their descriptions to run only when you ask for them.
 
 ## Install
 
@@ -100,7 +101,7 @@ Add `-g` to install into your user skill directory.
 
 Ten skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-pr-show-me`, `gs-qa-scenarios`, `gs-scratch`, `gs-openspec-ship`, `gs-openspec-ship-tickets`, and `gs-openspec-review-change`.
 
-The other twenty-one come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
+The other twenty-two come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
 
 | Skill | Original | Author | What this repo changed |
 |---|---|---|---|
@@ -120,6 +121,7 @@ The other twenty-one come from skills that other people published. The originals
 | `gs-council` | `council` in tstack | Theo Browne | It runs on any harness with subagents, and works with fewer than three providers |
 | `gs-prototype` | `prototype` in Matt Pocock's skills | Matt Pocock | The name |
 | `gs-codebase-design` | `codebase-design` in Matt Pocock's skills | Matt Pocock | One reference file runs without subagents |
+| `gs-improve-codebase-architecture` | `improve-codebase-architecture` in Matt Pocock's skills | Matt Pocock | The question loop and glossary handling are written into the skill instead of calling other skills, and it runs without subagents |
 | `gs-openspec-to-tickets` | `to-tickets` in Matt Pocock's skills | Matt Pocock | Rebuilt around OpenSpec changes |
 | `gs-wait-what` | `bro` in pstack, and `wait-what` in Matt Pocock's skills | Lauren Tan and Matt Pocock | New text that merges both |
 | `gs-reflect` | `reflect` in pstack, and `retro` in Matt Pocock's skills | Lauren Tan and Matt Pocock | `retro` becomes a fourth reviewer, and a lesson can become a check or a coding standard |
@@ -136,4 +138,4 @@ The original repos are:
 
 ## License
 
-The license is MIT. See `LICENSE`. Each of the twenty-one skills above also keeps its original author's MIT notice in its own `LICENSE` file.
+The license is MIT. See `LICENSE`. Each of the twenty-two skills above also keeps its original author's MIT notice in its own `LICENSE` file.
