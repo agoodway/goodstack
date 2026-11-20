@@ -209,7 +209,7 @@ In write and run mode, use the scenarios steps 1 to 6 just wrote.
 In run mode, read the scenarios the user names and do not rewrite them:
 
 - A Markdown file: read it from the path the user gives.
-- A pull request comment: run `gh pr view [pr] --comments` and take the latest comment that holds a `# QA:` heading. The heading may follow a `> [!NOTE]` attribution, such as the one the `gs-pr-comment` skill adds, and the scenarios start at the heading. When several comments could be meant, ask which one.
+- A pull request comment: run `gh pr view [pr] --comments` and take the latest comment that holds a `# QA:` heading. The heading may follow a `> [!NOTE]` attribution, such as the one the `gs-pr-comment` skill adds, and the scenarios start at the heading. A comment that posts an earlier run holds the same scenarios. Ignore its ticks, result lines, and evidence. When several comments could be meant, ask which one.
 - The chat: take the scenarios from the conversation.
 
 When you find no scenarios in any of these places, say so, and offer write and run mode instead. The title and the line under it name the branch or pull request the scenarios cover. Find its revision, `<rev>`, as step 1 does.
@@ -262,3 +262,24 @@ Under the Checklist heading, give the run folder, the commit the app was built f
 Print the scenarios, or the results of a run, in chat. When the user asks to save them, write a Markdown file at the path they give, or outside the repository when they give none.
 
 When the user asks to post them on the pull request, use the `gs-pr-comment` skill when it is installed. Without it, show the body first, wait for approval, write the body to a file outside the repository, and run `gh pr comment [pr] --body-file [file]`.
+
+### Post a run with its evidence
+
+A posted run carries its proof, so a reviewer sees each result without the run folder. Build the comment from the results in chat:
+
+- Keep the line under the Checklist heading with the run folder, the commit the app was built from, and the counts. Keep the line that names both commits when they differed.
+- Under each passed or failed scenario's result line, put the screenshots and recordings that prove it, as Markdown images with their paths under `.verify/<app>/<run-id>/`. Give each image alt text that says what it shows, such as `![Scenario 2, step 3: the banner reads "Saved"](.verify/web/20261119T143000Z-a1b2c3d/03-cancel.png)`. For a failed scenario, put the image of the failed step first.
+- Put short text proof, such as a response body or a terminal transcript, in a fenced block under the result. Cut it to the lines that prove the result. Leave out logs, ARIA snapshots, and other long files. The run folder keeps them.
+- Look at each image before you attach it, and leave out one that shows a secret, a token, or a real person's data.
+
+Pass every image and recording the body references to `gh` with `--attach`. `gh` uploads each one and rewrites its path to the uploaded copy. One command takes at most 50 files. When the run has more, attach the evidence for failed scenarios first, then Must scenarios, and list the rest by path in backticks.
+
+Post through the `gs-pr-comment` skill when it is installed, and give it the body and the files to attach. Without it, show the body and the file list, wait for approval, write the body to a file outside the repository, and run this from the repository root:
+
+```bash
+gh pr comment [pr] --body-file [file] --attach [path] --attach [path]
+```
+
+When `gh pr comment --help` does not list `--attach`, replace each image with its path in backticks, post the comment, and tell the user which files to drag into it on GitHub, or to upgrade `gh`. When `gh` prints the comment URL but exits non-zero, some uploads failed. Do not post again. Name the missing files so the user can add them.
+
+Attaching uploads a copy. Never stage or commit the files under `.verify/`.

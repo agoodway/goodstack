@@ -8,6 +8,7 @@ The skill tells the agent to run the draft through `gs-unslop` and to draw the p
 
 - The agent is about to comment on GitHub for you, and the comment should say which model wrote it and for whom.
 - You want a review comment that shows the fix as a GitHub suggestion or a small diff instead of a paragraph.
+- You want a comment to carry screenshots or a screen recording, such as proof from a verification run, placed under the sentences they prove.
 
 ## Install
 
@@ -54,5 +55,6 @@ Theo Browne wrote the skill this one is adapted from. The original source is `le
 - The writing rules are longer. They follow the [`gs-unslop`](../gs-unslop/README.md) skill in this repo: whole sentences, plain words, a named actor, and no em dashes.
 - A new section says how to show the point: a GitHub suggestion, a diff, a trace tree, pseudocode, or a Mermaid diagram. It follows the [`gs-show-me`](../gs-show-me/README.md) skill in this repo.
 - The comment body is passed to `gh` from a file, so its text never becomes shell syntax.
+- A new section says how to attach screenshots and recordings with `gh --attach`, check them for private details first, and fall back when `gh` cannot upload.
 - The upstream `agents/openai.yaml` is not included.
 - The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it.
