@@ -2,7 +2,7 @@
 
 This skill runs a deliberate, aggressive pass over a diff or a set of files. It deletes nearly every comment, flags the code that needed one, and fixes that code. For a lighter cleanup of AI slop in the branch diff, use `gs-deslop`.
 
-It finds the comments with `gs-find-bad-comments` when that skill is installed, and with its own Comment Sicko reference without it.
+It needs `gs-find-bad-comments`, which finds the comments and holds the rules for what stays. When that skill is not installed, this skill stops and asks you to install it. See [Install](https://github.com/agoodway/goodstack#install) in the root README.
 
 ## Use cases
 
@@ -48,11 +48,10 @@ Name files or a diff to limit the pass. Without one, it works on the current dif
 
 Lauren Tan wrote this skill and its agent. The original sources are in the pstack plugin of the [Cursor plugins repository](https://github.com/cursor/plugins/tree/bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7/pstack), commit `bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7`. The skill is `pstack/skills/no-comments/SKILL.md`, and the agent it starts is `pstack/agents/comment-sicko.md`. The license is MIT. Copyright 2026 Lauren Tan. The full notice is `LICENSE` in this directory.
 
-`SKILL.md` and `references/comment-sicko.md` are adapted from those two files so the skill installs on its own and runs on any harness. The steps, the keep list, the `MUST KILL` flags, the handling of suppressions, and the report are the same. These parts changed:
+`SKILL.md` is adapted from the skill file so it runs on any harness. Steps 2 to 6, the `MUST KILL` flags, and the final report are the same. These parts changed:
 
-- Step 1 gets its report from `gs-find-bad-comments` when that skill is installed, or takes a report that skill already made. That report changes no file, so this skill deletes the comments it names. Its `reshape` verdicts stand in for the `MUST KILL` flags. Without that skill, step 1 runs Comment Sicko as before.
+- The Comment Sicko agent is not in this skill. Its rules, which are the keep list, the handling of suppressions, and the history trace, live in `gs-find-bad-comments`, written as a report that changes no file. This skill needs that skill. Step 1 runs it in a subagent, or takes a report it already made, and then deletes the comments the report names. Its `reshape` verdicts stand in for the agent's `MUST KILL` flags. When `gs-find-bad-comments` is not installed, step 1 stops and asks the user to install it. The original started the agent through the `Task` tool's `subagent_type` field, and the agent deleted the comments itself.
 
-- The Comment Sicko agent is now `references/comment-sicko.md` inside the skill. The skill hands its text to whatever subagent the harness has. The original was a Cursor agent in a top-level `agents` directory, started through the `Task` tool's `subagent_type` field.
 - When the harness has no subagent tools, the skill runs the pass itself, re-reads every file in scope from disk, and says so.
 - Models are chosen in prose. The reference to the `poteto-mode` skill for reasoning level and speed is gone.
 - Step 3 writes a short design sketch in the skill. The original ran the `architect` skill.

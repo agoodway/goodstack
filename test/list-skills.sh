@@ -127,11 +127,16 @@ for snippet in (
 ):
     if snippet not in no_comments_readme:
         sys.exit(f"gs-no-comments README missing {snippet}")
-if not (no_comments_dir / "references" / "comment-sicko.md").is_file():
-    sys.exit("gs-no-comments missing references/comment-sicko.md")
+# gs-find-bad-comments holds the comment rules. gs-no-comments keeps no copy and stops without it.
+if (no_comments_dir / "references" / "comment-sicko.md").exists():
+    sys.exit("gs-no-comments must not keep a copy of the rules in gs-find-bad-comments")
 no_comments_skill = (no_comments_dir / "SKILL.md").read_text()
-if "`gs-find-bad-comments` is installed" not in no_comments_skill or "Otherwise start one subagent" not in no_comments_skill:
-    sys.exit("gs-no-comments SKILL.md must use gs-find-bad-comments with a fallback")
+for snippet in (
+    "`gs-find-bad-comments` is not installed. Stop before you change any file.",
+    "npx skills add agoodway/goodstack --skill gs-find-bad-comments",
+):
+    if snippet not in no_comments_skill:
+        sys.exit(f"gs-no-comments SKILL.md missing {snippet}")
 
 # gs-find-bad-comments is the finding half of gs-no-comments, so it shares its sources.
 find_comments_dir = root / "skills" / "gs-find-bad-comments"

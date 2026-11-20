@@ -108,7 +108,7 @@ The other twenty-one come from skills that other people published. The originals
 | `gs-how` | `how` in pstack | Lauren Tan | The skill and its prompts run on any harness |
 | `gs-why` | `why` in pstack | Lauren Tan | The skill and its prompts run on any harness |
 | `gs-blast-radius` | `blast-radius` in pstack | Lauren Tan | It works without its companion skills |
-| `gs-no-comments` | `no-comments` and the `comment-sicko` agent in pstack | Lauren Tan | The agent is a reference file in the skill, and the skill works without its companion skills. It finds the comments with `gs-find-bad-comments` when that skill is installed |
+| `gs-no-comments` | `no-comments` and the `comment-sicko` agent in pstack | Lauren Tan | The agent's rules moved to `gs-find-bad-comments`, which this skill needs. It works without pstack's other companion skills |
 | `gs-find-bad-comments` | `no-comments` and the `comment-sicko` agent in pstack | Lauren Tan | The finding half of `no-comments`, as a report in plain voice that changes no file |
 | `gs-create-verification-skill` | `create-verification-skill` in pstack | Lauren Tan | The generated skill goes in the current harness's skills directory |
 | `gs-maintain-verification-skill` | `maintain-verification-skill` in pstack | Lauren Tan | It finds the target in any harness's skills directory, and reads features one at a time without subagents |
