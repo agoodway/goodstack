@@ -13,7 +13,7 @@ With `--threads`, each frontier ticket runs in a **child**: a T3 Code child thre
 
 1. Run the rebase from `SKILL.md`.
 2. Push the run branch: `git push -u origin HEAD`. Children build from `origin`.
-3. **Amp only**: an orb is a remote machine that clones the repo, so it sees only project-installed skills. Check that `gs-openspec-ship-tickets`, `gs-review`, `gs-git-commit`, and the four OpenSpec skills exist under the repo's skill directory. When any is missing, stop and print the install commands, for example `npx skills add agoodway/goodstack --skill gs-openspec-ship-tickets` (and `gs-review`, `gs-git-commit`), plus `openspec init` or `openspec update` for the OpenSpec skills.
+3. **Amp only**: an orb is a remote machine that clones the repo, so it sees only project-installed skills. Check that `gs-openspec-ship-tickets`, `gs-review`, `gs-git-commit`, and the four OpenSpec skills exist under the repo's skill directory. When any is missing, stop and print the install commands, for example `npx skills add agoodway/goodstack --skill gs-openspec-ship-tickets` (and `gs-review`, `gs-git-commit`), plus `openspec init` or `openspec update` for the OpenSpec skills. Also check for `gs-find-bad-tests` and `gs-find-bad-comments`. They are optional, so do not stop when they are missing, but tell the user that gs-review in each orb falls back to its short rule for tests and comments to remove, and print their install commands.
 
 ## Schedule
 

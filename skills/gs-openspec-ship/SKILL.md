@@ -30,6 +30,8 @@ When no change name is given, run `openspec list --json` and ask which active ch
 
 Resolve each dependency before the first step and pass the resolved path to the subagent. Search the runtime's installed skills, project and user skill directories, then this repository's `skills/`. OpenSpec supplies `openspec-apply-change`, `openspec-verify-change`, `openspec-archive-change`, and `openspec-sync-specs`. This repo supplies `gs-review`, `gs-git-commit`, and `gs-pull-request`. Stop and name any skill you cannot find.
 
+Also look for `gs-find-bad-tests` and `gs-find-bad-comments` from this repo. They are optional. `gs-review` uses each one when it is installed, and a short rule of its own without it, so do not stop when they are missing.
+
 Start one subagent and wait for its result. Do not batch steps.
 
 The prompt stands alone. The subagent does not ask the user. Apply the recovery contract below instead of a named skill's instruction to pause on ordinary errors or ask whether to retry. Questions that require a requirement, scope, or authorization decision remain blockers.
@@ -49,7 +51,7 @@ Skills:
 - Spec sync, only when the archive skill runs it: `openspec-sync-specs`
 - Commit: `gs-git-commit`
 - Pull request: `gs-pull-request`
-- Review: `gs-review`. If that skill is not available, block the change. Do not invent a review.
+- Review: `gs-review`, with the resolved paths of `gs-find-bad-tests` and `gs-find-bad-comments` when you found them. If `gs-review` is not available, block the change. Do not invent a review.
 
 Do not advance on `STATUS: blocked` or `STATUS: unfixed`. Inspect the evidence first. If a safe, in-scope recovery remains, continue the same subagent with the missing investigation or repair. Accept a blocker only under the recovery contract.
 
@@ -146,6 +148,8 @@ UNFIXED:
 
 Follow the `gs-review` skill on the uncommitted changes. Do not edit, commit, or create issues.
 
+Override: under Tests to remove and Comments to remove, list every row, with no cap, and leave out the line that counts the rows not listed. Step 5 removes every listed row, and it cannot remove a row the report leaves out.
+
 If this subagent cannot spawn its own subagents, it uses the sequential fallback already in that skill and still returns the full report.
 
 A report is `STATUS: done` even when its verdict is not `Ship`. Recover reviewer or tool failures within this step's read-only restrictions. Failure to produce the report after recovery is `STATUS: blocked`; do not invent a completed review.
@@ -159,6 +163,24 @@ STATUS: done|blocked
 ### 5. Fix every review issue
 
 Same contract as step 3, for every numbered item under Findings, confirmed or plausible. Pass the gs-review report unchanged, with `Expected issue count: N`.
+
+The same subagent removes every row the report lists under Tests to remove and Comments to remove. These rows are removals, not issues, so they stay out of `ISSUES`. Count them and put `Expected removals: <T> tests, <C> comments` in the prompt. Zero rows is a successful no-op.
+
+- Delete each listed test. When it is the only test that exercises a spec scenario, rewrite it to guard that scenario instead.
+- Delete each comment with a delete verdict. When the comment is a lint or type suppression, fix the code until the check it turned off passes.
+- For each comment with a reshape verdict, reshape the symbol it names with a rename, an extracted function, or a clearer structure, so the code no longer needs the comment. Then delete the comment. Reshape only code this change wrote. When a reshape would reach code outside the change, keep the comment and list it under `KEPT` with the reason.
+- Leave in place the tests the report counts as needing a rewrite or as unsure.
+- Do not run `gs-prune-tests` or `gs-no-comments`, even when the report suggests them. Each one scans past the listed rows.
+
+Deleting a test the report lists does not weaken a check under the recovery contract. A deleted or rewritten test changes the evidence verification relied on, so obtain focused verification in step 2. A reshape is a substantive repair.
+
+```text
+REMOVED: <n> tests deleted, <n> tests rewritten, <n> comments deleted, <n> comments reshaped
+KEPT:
+- <comment> — <why>
+```
+
+Add these lines to the step 3 status block. `done` requires `REMOVED` and `KEPT` together to account for every expected removal.
 
 Obtain focused re-review in step 4 for substantive repairs and resolve new findings here. Repeat affected spec verification through steps 2 and 3 when behavior changes. This subagent must confirm required validation evidence or run missing validation before advancing to archive, even when the review has zero issues. Recover any validation failures under the shared contract.
 
@@ -220,6 +242,7 @@ After the pull request step, summarize in chat:
 - The pull request URL, or why it was not opened
 - For each change: done, or the step that blocked and the reason
 - Verify issues fixed, and review issues fixed
+- Tests and comments removed or reshaped, comments kept, and the tests the review left for a rewrite or marked unsure
 - Validation results, any accepted unrelated failures, and any changes not started because the batch stopped
 
 When the rebase blocked or the batch stopped with unfinished edits, summarize that blocker and the actual delivery state, including commits already made and why no pull request was opened. Do not paste the verify or gs-review reports again.
