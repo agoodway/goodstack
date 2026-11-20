@@ -210,7 +210,7 @@ In write and run mode, use the scenarios steps 1 to 6 just wrote.
 In run mode, read the scenarios the user names and do not rewrite them:
 
 - A Markdown file: read it from the path the user gives.
-- A pull request comment: run `gh pr view [pr] --comments` and take the latest comment that holds a `# QA:` heading. The heading may follow a `> [!NOTE]` attribution, such as the one the `gs-pr-comment` skill adds, and the scenarios start at the heading. A comment that posts an earlier run holds the same scenarios. Ignore its ticks, result lines, and evidence. When several comments could be meant, ask which one.
+- A pull request comment: run `gh pr view [pr] --comments` and take the latest comment that holds a `# QA:` heading. The heading may follow a `> [!NOTE]` attribution, such as the one the `gs-pr-comment` skill adds, and the scenarios start at the heading. A comment that posts an earlier run holds the same scenarios. Ignore its ticks, result alerts, and evidence. When several comments could be meant, ask which one.
 - The chat: take the scenarios from the conversation.
 
 When you find no scenarios in any of these places, say so, and offer write and run mode instead. The title and the line under it name the branch or pull request the scenarios cover. Find its revision, `<rev>`, as step 1 does.
@@ -250,11 +250,20 @@ Print the results in chat in the same shape as the scenarios. Keep each scenario
 - [ ] 3. Cancel as a guest (Should): not run, no guest checkout in the seed data
 ```
 
-Under each scenario's last step, add a result line. A passed scenario needs only its evidence. A failed one says what happened:
+Under each scenario's last step, add the result as a GitHub alert, so it stands out from the steps. GitHub colors the box by its type: green for passed, red for failed, and yellow for not run. Use `[!TIP]` for passed, `[!CAUTION]` for failed, and `[!WARNING]` for not run. Leave `[!NOTE]` out, because the `gs-pr-comment` skill uses it for its attribution. The alert's first line inside the box starts with the result in bold. A passed scenario needs only its evidence. A failed one says what happened:
 
 ```markdown
-Result: Failed at step 3. The banner read "Saved" where the step expects "Order cancelled". Evidence: `.verify/web/20261119T143000Z-a1b2c3d/03-cancel.png`
+> [!TIP]
+> **Passed.** Evidence: `.verify/web/20261119T143000Z-a1b2c3d/01-cancel.png`
+
+> [!CAUTION]
+> **Failed at step 3.** The banner read "Saved" where the step expects "Order cancelled". Evidence: `.verify/web/20261119T143000Z-a1b2c3d/03-cancel.png`
+
+> [!WARNING]
+> **Not run.** No guest checkout in the seed data.
 ```
+
+Leave a blank line before and after each alert, and keep everything else, such as images and fenced blocks, outside it.
 
 Under the Checklist heading, give the run folder, the commit the app was built from, and the count of passed, failed, and not run scenarios. At the end, list any feature map drift the run found.
 
@@ -269,7 +278,7 @@ When the user asks to post them on the pull request, use the `gs-pr-comment` ski
 A posted run carries its proof, so a reviewer sees each result without the run folder. Build the comment from the results in chat:
 
 - Keep the line under the Checklist heading with the run folder, the commit the app was built from, and the counts. Keep the line that names both commits when they differed.
-- Under each passed or failed scenario's result line, put the screenshots and recordings that prove it, as Markdown images with their paths under `.verify/<app>/<run-id>/`. Give each image alt text that says what it shows, such as `![Scenario 2, step 3: the banner reads "Saved"](.verify/web/20261119T143000Z-a1b2c3d/03-cancel.png)`. For a failed scenario, put the image of the failed step first.
+- Under each passed or failed scenario's result alert, put the screenshots and recordings that prove it, as Markdown images with their paths under `.verify/<app>/<run-id>/`. Give each image alt text that says what it shows, such as `![Scenario 2, step 3: the banner reads "Saved"](.verify/web/20261119T143000Z-a1b2c3d/03-cancel.png)`. For a failed scenario, put the image of the failed step first.
 - Put short text proof, such as a response body or a terminal transcript, in a fenced block under the result. Cut it to the lines that prove the result. Leave out logs, ARIA snapshots, and other long files. The run folder keeps them.
 - Look at each image before you attach it, and leave out one that shows a secret, a token, or a real person's data.
 
