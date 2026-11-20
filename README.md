@@ -49,11 +49,13 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 - [`gs-unslop`](skills/gs-unslop/README.md) edits text to remove AI writing patterns.
 - [`gs-deslop`](skills/gs-deslop/README.md) removes AI-generated code slop from the branch's diff.
 - [`gs-no-comments`](skills/gs-no-comments/README.md) deletes nearly every comment in a diff and fixes the code that needed one. It is a deliberate, aggressive pass, where `gs-deslop` is the lighter cleanup.
+- [`gs-find-bad-comments`](skills/gs-find-bad-comments/README.md) reports the comments and lint or type suppressions that should be removed, with a kind, a verdict, and a reason for each. It changes no file.
 - [`gs-show-me`](skills/gs-show-me/README.md) explains the current topic with the smallest picture that fits. The picture is a tree, a diagram, a diff, or one HTML file.
 - [`gs-wait-what`](skills/gs-wait-what/README.md) makes the agent say its last message again in plain language, with the context you are missing.
 
 ### Housekeeping
 
+- [`gs-find-bad-tests`](skills/gs-find-bad-tests/README.md) reports the tests that guard no behavior, with a category, a verdict, and a reason for each. It changes no file.
 - [`gs-prune-tests`](skills/gs-prune-tests/README.md) deletes tests that guard no behavior and rewrites the ones that guard it the wrong way. It keeps regression, contract, and security tests, and the tests must pass before and after.
 - [`gs-reflect`](skills/gs-reflect/README.md) reviews a finished session with four reviewers. It routes each lasting lesson to a check, a coding standard, a skill edit, or a pointer in a steering file.
 - [`gs-scratch`](skills/gs-scratch/README.md) manages a gitignored `.scratch` directory for temporary project files. The commands are `/gs-scratch bootstrap`, `/gs-scratch write`, `/gs-scratch edit`, and `/gs-scratch list`.
@@ -98,7 +100,7 @@ Add `-g` to install into your user skill directory.
 
 Ten skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-pr-show-me`, `gs-qa-scenarios`, `gs-scratch`, `gs-openspec-ship`, `gs-openspec-ship-tickets`, and `gs-openspec-review-change`.
 
-The other nineteen come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
+The other twenty-one come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
 
 | Skill | Original | Author | What this repo changed |
 |---|---|---|---|
@@ -106,7 +108,8 @@ The other nineteen come from skills that other people published. The originals h
 | `gs-how` | `how` in pstack | Lauren Tan | The skill and its prompts run on any harness |
 | `gs-why` | `why` in pstack | Lauren Tan | The skill and its prompts run on any harness |
 | `gs-blast-radius` | `blast-radius` in pstack | Lauren Tan | It works without its companion skills |
-| `gs-no-comments` | `no-comments` and the `comment-sicko` agent in pstack | Lauren Tan | The agent is a reference file in the skill, and the skill works without its companion skills |
+| `gs-no-comments` | `no-comments` and the `comment-sicko` agent in pstack | Lauren Tan | The agent is a reference file in the skill, and the skill works without its companion skills. It finds the comments with `gs-find-bad-comments` when that skill is installed |
+| `gs-find-bad-comments` | `no-comments` and the `comment-sicko` agent in pstack | Lauren Tan | The finding half of `no-comments`, as a report in plain voice that changes no file |
 | `gs-create-verification-skill` | `create-verification-skill` in pstack | Lauren Tan | The generated skill goes in the current harness's skills directory |
 | `gs-maintain-verification-skill` | `maintain-verification-skill` in pstack | Lauren Tan | It finds the target in any harness's skills directory, and reads features one at a time without subagents |
 | `gs-sharpen` | `sharpen` in pstack | Lauren Tan | The name |
@@ -120,7 +123,8 @@ The other nineteen come from skills that other people published. The originals h
 | `gs-openspec-to-tickets` | `to-tickets` in Matt Pocock's skills | Matt Pocock | Rebuilt around OpenSpec changes |
 | `gs-wait-what` | `bro` in pstack, and `wait-what` in Matt Pocock's skills | Lauren Tan and Matt Pocock | New text that merges both |
 | `gs-reflect` | `reflect` in pstack, and `retro` in Matt Pocock's skills | Lauren Tan and Matt Pocock | `retro` becomes a fourth reviewer, and a lesson can become a check or a coding standard |
-| `gs-prune-tests` | `prune-tests` in Caldo's skills | Maze | Adds a scope, a green baseline, mutation checks, a keep list, batches, and a final report |
+| `gs-find-bad-tests` | `prune-tests` in Caldo's skills, and `tests.md` and `mocking.md` from `tdd` in Matt Pocock's skills | Maze and Matt Pocock | The finding half of `prune-tests`, as a report that changes no file. `tests.md` adds examples and the traits a rewrite should have, and `mocking.md` adds how to judge a mock |
+| `gs-prune-tests` | `prune-tests` in Caldo's skills, and `tests.md` and `mocking.md` from `tdd` in Matt Pocock's skills | Maze and Matt Pocock | Adds a scope, a green baseline, mutation checks, a keep list, batches, and a final report. It finds the tests with `gs-find-bad-tests`. `tests.md` adds the traits of a rewritten test, and `mocking.md` adds where a mock may sit |
 
 The original repos are:
 
@@ -132,4 +136,4 @@ The original repos are:
 
 ## License
 
-The license is MIT. See `LICENSE`. Each of the nineteen skills above also keeps its original author's MIT notice in its own `LICENSE` file.
+The license is MIT. See `LICENSE`. Each of the twenty-one skills above also keeps its original author's MIT notice in its own `LICENSE` file.

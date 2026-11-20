@@ -13,37 +13,20 @@ The user names the scope in prose. With a path, file, or module, work there. Wit
 
 Run the tests before you change anything. Use the project's own test command, and run the full suite when it is fast enough. Otherwise run the tests in scope and the tests for any production code you might delete. If anything fails, stop and report the failures. A red baseline hides which failures the prune caused.
 
-**1. Find what each test depends on**
+**1. Find the bad tests**
 
-Keep a test only if it depends on the intended behavior: it should change only when that behavior changes, and fail only when it regresses.
+When the user hands you a report that `gs-find-bad-tests` already made, work from it. Check first that each test it names still exists as the report describes it.
 
-If another test already guards the same behavior, prune the copy. Keep the one closest to what callers see.
+Otherwise use `gs-find-bad-tests` on the same scope when it is installed, and work from its report. Without it, apply this short rule.
 
-Prune tests that depend on:
+Keep a test only if it depends on the intended behavior: it should change only when that behavior changes, and fail only when it regresses. A bad test falls into one of four categories:
 
-**The past:** it guards code that no longer exists, so it has no reason of its own to change.
+- **Past:** it guards code that no longer exists, such as a removed feature or a module's old path.
+- **Nothing:** no change to the code can make it fail. It tests the platform, the framework, or a library. It mocks the unit under test and asserts the mock. It asserts what the type system, the compiler, or a schema already guarantees.
+- **Implementation:** it changes whenever the code does, even when behavior didn't. It asserts private state, internal call order, or a call to a mocked internal collaborator. It reads a store directly where the public interface could show the result. Its expected value repeats the code's own logic. A mock at a system boundary is no fault: an external API, the clock, randomness, and sometimes the database or the file system. A test may assert a call to a boundary mock when that call is the behavior, such as an email being sent.
+- **Duplicate:** another test already guards the same behavior. Keep the one closest to what callers see.
 
-For example:
-
-- A feature was removed, and tests assert it's gone. Removed code never changes, so they can't catch a regression.
-- A module was moved, and a test asserts it's absent from its old path.
-
-**Nothing:** no change to the code can make it fail, so it has no reason of its own to change.
-
-For example:
-
-- It tests the browser: a button element renders, or a click event fires. The browser is already tested.
-- It mocks the unit under test, then asserts what the mock returns.
-- It asserts what the type system already guarantees.
-
-**The implementation:** it changes whenever the code does, even when behavior didn't.
-
-For example:
-
-- The expected value is derived from the same logic as the code, so a wrong result still passes.
-- It asserts private state, internal call order, or which helper was invoked.
-
-**Keep these, even when they look trivial:**
+**Keep these, even when they look trivial, and whatever a report says:**
 
 - A regression test tied to a fixed bug. An issue link, a bug id, or the commit that added it with the fix marks one. Check `git log` for the test when you are unsure.
 - A test of a public API or an external contract that other code or users rely on, such as an exported function, an HTTP response shape, a CLI flag, or a file format.
@@ -53,7 +36,7 @@ A test on this list may still be rewritten against the behavior it guards, but n
 
 **Prove it before you delete it**
 
-When a test's category is not obvious, break the behavior it claims to guard and run it. Make a small edit to the production code, such as flipping a condition or returning a wrong value, run the test, then undo exactly that edit. A test that still passes guards nothing. A test that fails guards something, so keep it or rewrite it. Undo the mutation by hand, not with `git checkout` or `git stash`, so you never discard the user's uncommitted work.
+When a test's category is not obvious, or a report marks it unsure, break the behavior it claims to guard and run it. Make a small edit to the production code, such as flipping a condition or returning a wrong value, run the test, then undo exactly that edit. A test that still passes guards nothing. A test that fails guards something, so keep it or rewrite it. Undo the mutation by hand, not with `git checkout` or `git stash`, so you never discard the user's uncommitted work.
 
 When the suite is too slow to do this for every test, do it for the borderline ones and rely on the categories above for the obvious ones.
 
@@ -62,6 +45,16 @@ When the suite is too slow to do this for every test, do it for the borderline o
 - Delete every test that isn't anchored to intended behavior.
 - Where one also covers behavior something relies on, rewrite it against that behavior instead.
 - Delete production code that only existed for the tests you removed.
+
+**What a rewritten test looks like**
+
+A rewrite survives a refactor that leaves behavior alone. Write it this way:
+
+- It calls the public interface, and it mocks only at a system boundary, never our own modules. When the code builds its external client itself, change it to take the client as a parameter, so the test can pass in a fake one.
+- It checks the result through that interface too. To confirm a user was saved, it fetches the user, and it leaves the database table alone.
+- It compares against a known literal, never a value computed the way the code computes it.
+- Its name says what the caller gets, not how the code produces it.
+- It makes one logical assertion. Split a test that checks two behaviors.
 
 Before you delete production code, search the whole repo for every use of it, including string lookups, configs, scripts, and other packages. Delete it only when the removed tests were its only users. When `gs-blast-radius` is installed, suggest the user run it on any deletion you are unsure of.
 
@@ -116,6 +109,31 @@ The category is past, nothing, implementation, or duplicate. After the table, li
 -test("total includes tax", () => {
 -  expect(cartTotal([book], { tax: 0.1 })).toBe(11);
 -});
+--- a/user.test.ts
++++ b/user.test.ts
+@@ rewritten through the interface: it read the table directly, and its name said how @@
+-test("createUser saves to database", async () => {
+-  await createUser({ name: "Alice" });
+-  const row = await db.query("SELECT * FROM users WHERE name = ?", ["Alice"]);
+-  expect(row).toBeDefined();
++test("createUser makes user retrievable", async () => {
++  const user = await createUser({ name: "Alice" });
++  const retrieved = await getUser(user.id);
++  expect(retrieved.name).toBe("Alice");
+ });
+--- a/checkout.test.ts
++++ b/checkout.test.ts
+@@ rewritten against the result: it mocked a collaborator and asserted the call @@
+-test("checkout calls paymentService.process", async () => {
+-  const mockPayment = jest.mock(paymentService);
+-  await checkout(cart, payment);
+-  expect(mockPayment.process).toHaveBeenCalledWith(cart.total);
++test("user can checkout with valid cart", async () => {
++  const cart = createCart();
++  cart.add(product);
++  const result = await checkout(cart, paymentMethod);
++  expect(result.status).toBe("confirmed");
+ });
 --- a/export.test.ts
 +++ b/export.test.ts
 @@ deleted: it guards code that no longer exists @@

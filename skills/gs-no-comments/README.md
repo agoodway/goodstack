@@ -2,6 +2,8 @@
 
 This skill runs a deliberate, aggressive pass over a diff or a set of files. It deletes nearly every comment, flags the code that needed one, and fixes that code. For a lighter cleanup of AI slop in the branch diff, use `gs-deslop`.
 
+It finds the comments with `gs-find-bad-comments` when that skill is installed, and with its own Comment Sicko reference without it.
+
 ## Use cases
 
 - You want to delete nearly every comment in a diff and fix the unclear code that needed them.
@@ -47,6 +49,8 @@ Name files or a diff to limit the pass. Without one, it works on the current dif
 Lauren Tan wrote this skill and its agent. The original sources are in the pstack plugin of the [Cursor plugins repository](https://github.com/cursor/plugins/tree/bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7/pstack), commit `bf0c7cd80abdbf7fe47b634978a7d1b4071f71a7`. The skill is `pstack/skills/no-comments/SKILL.md`, and the agent it starts is `pstack/agents/comment-sicko.md`. The license is MIT. Copyright 2026 Lauren Tan. The full notice is `LICENSE` in this directory.
 
 `SKILL.md` and `references/comment-sicko.md` are adapted from those two files so the skill installs on its own and runs on any harness. The steps, the keep list, the `MUST KILL` flags, the handling of suppressions, and the report are the same. These parts changed:
+
+- Step 1 gets its report from `gs-find-bad-comments` when that skill is installed, or takes a report that skill already made. That report changes no file, so this skill deletes the comments it names. Its `reshape` verdicts stand in for the `MUST KILL` flags. Without that skill, step 1 runs Comment Sicko as before.
 
 - The Comment Sicko agent is now `references/comment-sicko.md` inside the skill. The skill hands its text to whatever subagent the harness has. The original was a Cursor agent in a top-level `agents` directory, started through the `Task` tool's `subagent_type` field.
 - When the harness has no subagent tools, the skill runs the pass itself, re-reads every file in scope from disk, and says so.
