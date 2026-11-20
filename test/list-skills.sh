@@ -373,7 +373,7 @@ if "When the harness has no subagents" not in maintain_verify:
     sys.exit("gs-maintain-verification-skill SKILL.md missing the no-subagent fallback")
 
 qa_skill = (root / "skills" / "gs-qa-scenarios" / "SKILL.md").read_text()
-for required in ("gs-pull-request", "gs-blast-radius", "gs-show-me", "gs-unslop", "## Setup", "## Scenarios", "## Regression checks", "Expected:", "--body-file"):
+for required in ("gs-pull-request", "gs-blast-radius", "gs-show-me", "gs-unslop", "## Setup", "## Scenarios", "## Regression checks", "## Checklist", "- Expect:", "--body-file"):
     if required not in qa_skill:
         sys.exit(f"gs-qa-scenarios SKILL.md missing {required}")
 if "$ARGUMENTS" in qa_skill:

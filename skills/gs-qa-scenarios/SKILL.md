@@ -7,6 +7,8 @@ description: "Write manual QA scenarios for the changes on a branch or pull requ
 
 Write the scenarios a QA engineer follows to check a change by hand in the running application. The reader knows the product and does not read code. Each scenario says what to test, why it matters, and the exact steps and result to expect.
 
+The tester works through the output like a to-do list. A checklist at the top carries one box for each scenario, and each result sits under the step that produces it.
+
 This skill changes no code. In write mode it prints the scenarios in chat. In the two run modes it also drives the app through the project's verification skill and saves the evidence under `.verify/`. Hunting for defects is the `gs-review` skill.
 
 ## Modes
@@ -94,7 +96,7 @@ When you cannot find how to reach a state, say so under "Questions for the devel
 
 ## 5. Write
 
-Use this shape. Write the prose through the `gs-unslop` skill when it is installed. Without it, keep to these rules: whole sentences, plain words, a named actor, sentence-case headings, straight quotes, commas and periods for punctuation, and no em dashes or emoji. Do not add an AI attribution.
+Use this shape. The tester scans it and ticks scenarios off, so keep prose out of the scenarios. Write the prose through the `gs-unslop` skill when it is installed. Without it, keep to these rules: whole sentences, plain words, a named actor, sentence-case headings, straight quotes, commas and periods for punctuation, and no em dashes or emoji. Do not add an AI attribution.
 
 ```markdown
 # QA: [pull request title or branch name]
@@ -114,22 +116,24 @@ Use this shape. Write the prose through the `gs-unslop` skill when it is install
 - Data: [records to create first]
 - Flags: [each flag or setting, and its value]
 
+## Checklist
+
+- [ ] 1. [Short name of the behavior] (Must)
+- [ ] 2. [...] (Should)
+
 ## Scenarios
 
 ### 1. [Short name of the behavior] (Must)
 
-Why: [What changed here, and what a user hits if it is wrong.]
-
-Where: [Screen, URL, endpoint, or email]
+Why: [One sentence. What a user hits if this is wrong.]
 
 1. [One action per step, with the exact label: Click **Save**.]
+   - Expect: [What the tester sees after this step. Exact text, a value, a count, or a state.]
 2. [...]
-
-Expected: [What the tester sees. Exact text, a value, a count, or a state.]
 
 ## Regression checks
 
-- [Flow that did not change but calls changed code]: [the one check to run, and the result to expect]
+- [ ] [Flow that did not change but calls changed code]: [the one check to run, and the result to expect]
 
 ## Not covered by these scenarios
 
@@ -140,14 +144,23 @@ Expected: [What the tester sees. Exact text, a value, a count, or a state.]
 - [Each gap you could not resolve from the code, or "None."]
 ```
 
+### Checklist and grouping
+
+- The checklist is the tester's to-do list. Give each scenario one line there, with the same number, name, and priority as its heading. It holds the only checkbox a scenario gets. Steps and Expect lines carry no boxes.
+- Leave every box empty unless you ran the scenario yourself and it passed. Tick that one and end its line with ", walked". Step 7 gives the wording for a run.
+- Order the scenarios so the ones that need the same application state sit together, such as one setting value or one account. When the states differ, put each group under a `### [State]` heading with one line on how to reach it, and give the scenarios `####` headings. Then no step repeats the setup. With one state, use no group headings.
+- Keep anything that is true of every scenario, such as how they were walked, to one line under the Checklist heading.
+
 ### Steps and results
 
 - Start each step with a verb, and give one action per step.
+- Put the URL or screen in the step that opens it. A scenario needs no separate line for where it happens.
+- Put each result in an Expect line under the step that produces it. A step with nothing to observe gets none. Never collect the results in a paragraph that refers back to step numbers.
 - Use the label the screen shows, in bold: **Save**, **Delete account**.
 - Give the exact input when the value matters: "Enter `-1` in **Quantity**."
 - Write every result as something the tester can see. "The banner reads 'Order cancelled' and the order moves to **Past orders**" is a result. "It works" and "verify the behavior is correct" are not.
 - Say what should not happen when that is the risk: "No second confirmation email arrives."
-- Put a scenario's reason in one or two sentences. Name the code change behind it in product terms, not file names. Add a `file:line` only under "Questions for the developer", where the developer will read it.
+- Put a scenario's reason in one sentence. Name the code change behind it in product terms, not file names. Add a `file:line` only under "Questions for the developer", where the developer will read it.
 
 ### Pictures
 
@@ -171,7 +184,7 @@ Before you hand them over, read each scenario as the QA engineer:
 - Is every result something a person can observe?
 - Does every Must scenario trace to a real change in the diff?
 
-When the harness can run the application or drive a browser, walk the Must scenarios yourself. First confirm that the running application is built from `<rev>`, for example by checking that `git rev-parse HEAD` in the checkout it runs from prints the same commit. When you cannot confirm the revision, say so plainly at the top of the output, and mark every scenario not walked. Mark each scenario you walked as walked, and fix any step that did not match. Mark the rest not walked. Do not claim a scenario passes when you did not run it.
+When the harness can run the application or drive a browser, walk the Must scenarios yourself. First confirm that the running application is built from `<rev>`, for example by checking that `git rev-parse HEAD` in the checkout it runs from prints the same commit. When you cannot confirm the revision, say so plainly at the top of the output, and leave every box empty. Fix any step that did not match. In the checklist, tick each scenario you walked and end its line with ", walked". Leave the rest empty. Do not claim a scenario passes when you did not run it.
 
 In write and run mode, skip that walk and keep this step to reading. Step 7 drives the app, so every scenario runs once, with evidence, and a step that does not match is reported, not fixed.
 
@@ -210,7 +223,7 @@ Confirm that the app you drive is built from `<rev>`, as step 6 requires. Compar
 1. Pick the run ID the verify skill's Evidence section uses, such as `20261119T143000Z-<short-sha>`, and create `.verify/<app>/<run-id>/`. Follow the verify skill's Evidence section, which keeps `.verify/` in `.gitignore`. Never stage or commit anything under `.verify/`.
 2. Launch the app as the verify skill's Launch section says, with the Setup section's accounts, data, and flags.
 3. Run Doctor before the first drive. When Doctor fails, run Cleanup, report the failure, and mark every scenario not run.
-4. Drive each scenario in order, one step at a time, through the verify skill's Drive section. Compare what you observe with the Expected line. Capture the evidence the Evidence section asks for into the run folder.
+4. Drive each scenario in order, one step at a time, through the verify skill's Drive section. Compare what you observe with each Expect line. Scenarios saved in the older shape have one Expected line for the whole scenario, and you read it the same way. Capture the evidence the Evidence section asks for into the run folder.
 5. After a failed drive, run Cleanup for what that drive left behind, then run Doctor again before the next scenario. Relaunch when Doctor fails or the app is stuck in a state Doctor cannot see.
 6. After the last drive, run the verify skill's Cleanup. Cleanup never removes the evidence. Confirm that `.verify/<app>/<run-id>/run.md` still exists and that `git status` does not list it.
 
@@ -220,21 +233,29 @@ Do not change what you are testing. Never edit a scenario to make it pass. A ste
 
 Give each scenario one result:
 
-- **Passed**: every step ran, and what you observed matched the Expected line.
-- **Failed**: a step could not run, or what you observed did not match. Name the step, what you observed, and the Expected line it broke.
+- **Passed**: every step ran, and what you observed matched every Expect line.
+- **Failed**: a step could not run, or what you observed did not match. Name the step, what you observed, and the Expect line it broke.
 - **Not run**: the run never reached the scenario, or a person must check it by hand, such as a scenario from "Not covered by these scenarios". Give the reason.
 
 Each passed or failed result names its evidence files under `.verify/<app>/<run-id>/`.
 
 Write `run.md` in the shape the verify skill's Evidence section gives, with the full commit SHA, the branch, a clean or dirty working tree, the time, and the outcome. Add a line that says the run came from `gs-qa-scenarios`, with the scenario source: the branch, the pull request, or the saved file. Then list each scenario with its number, name, priority, result, and evidence files, so the `gs-pull-request` skill can pick the run up.
 
-Print the results in chat in the same shape as the scenarios. Keep each scenario as written, and add a result line under its Expected line:
+Print the results in chat in the same shape as the scenarios. Keep each scenario as written. The checklist carries the results, so a reader sees the whole run without scrolling. Tick a box only for a passed scenario, and end every line with its result:
 
 ```markdown
-Result: Failed at step 3. The banner read "Saved" where Expected says "Order cancelled". Evidence: `.verify/web/20261119T143000Z-a1b2c3d/03-cancel.png`
+- [x] 1. Cancel an order from the order page (Must): passed
+- [ ] 2. Cancel a shipped order (Must): failed at step 3
+- [ ] 3. Cancel as a guest (Should): not run, no guest checkout in the seed data
 ```
 
-At the top of the results, give the run folder, the commit the app was built from, and the count of passed, failed, and not run scenarios. At the end, list any feature map drift the run found.
+Under each scenario's last step, add a result line. A passed scenario needs only its evidence. A failed one says what happened:
+
+```markdown
+Result: Failed at step 3. The banner read "Saved" where the step expects "Order cancelled". Evidence: `.verify/web/20261119T143000Z-a1b2c3d/03-cancel.png`
+```
+
+Under the Checklist heading, give the run folder, the commit the app was built from, and the count of passed, failed, and not run scenarios. At the end, list any feature map drift the run found.
 
 ## Sharing
 
