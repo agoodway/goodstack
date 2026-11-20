@@ -362,6 +362,29 @@ for rel in ("DEEPENING.md", "DESIGN-IT-TWICE.md"):
     if not (design_dir / rel).is_file():
         sys.exit(f"gs-codebase-design missing {rel}")
 
+architecture_dir = root / "skills" / "gs-improve-codebase-architecture"
+architecture_license = (architecture_dir / "LICENSE").read_text()
+if "Copyright (c) 2026 Matt Pocock" not in architecture_license or "MIT License" not in architecture_license:
+    sys.exit("gs-improve-codebase-architecture LICENSE missing Matt Pocock's MIT notice")
+architecture_readme = (architecture_dir / "README.md").read_text()
+for snippet in ("Matt Pocock", "https://github.com/mattpocock/skills", "skills/engineering/improve-codebase-architecture", "abeeaf95660ba9e8b7c753eb38f441ca707a8823"):
+    if snippet not in architecture_readme:
+        sys.exit(f"gs-improve-codebase-architecture README missing {snippet}")
+if not (architecture_dir / "HTML-REPORT.md").is_file():
+    sys.exit("gs-improve-codebase-architecture missing HTML-REPORT.md")
+if (architecture_dir / "agents").exists():
+    sys.exit("gs-improve-codebase-architecture includes upstream agents/")
+architecture_skill = (architecture_dir / "SKILL.md").read_text()
+for required in ("disable-model-invocation: true", "Only when the user asks for it.", "gs-codebase-design", "no subagent tools"):
+    if required not in architecture_skill:
+        sys.exit(f"gs-improve-codebase-architecture SKILL.md missing {required}")
+# The grilling and domain-modeling skills are not ported, so nothing may call them.
+for path in (architecture_dir / "SKILL.md", architecture_dir / "HTML-REPORT.md"):
+    text = path.read_text()
+    for banned in ("grilling", "domain-modeling", "Skill tool", "/codebase-design", "\u2014"):
+        if banned in text:
+            sys.exit(f"gs-improve-codebase-architecture {path.name} contains {banned!r}")
+
 # gs-openspec-to-tickets is rebuilt from Matt Pocock's to-tickets, so it has no hash pin.
 tickets_dir = root / "skills" / "gs-openspec-to-tickets"
 tickets_license = (tickets_dir / "LICENSE").read_text()
