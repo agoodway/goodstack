@@ -221,6 +221,16 @@ pstack_skills = {
         "pstack/skills/maintain-verification-skill",
         (),
     ),
+    "gs-create-formal-verification-skill": (
+        "aaeb0ea3a0584995aa8f55ce44c6c5259414b896",
+        "pstack/skills/create-formal-verification-skill",
+        (),
+    ),
+    "gs-maintain-formal-verification-skill": (
+        "aaeb0ea3a0584995aa8f55ce44c6c5259414b896",
+        "pstack/skills/maintain-formal-verification-skill",
+        (),
+    ),
 }
 for skill, (commit, source_path, required_files) in pstack_skills.items():
     skill_dir = root / "skills" / skill
@@ -464,6 +474,16 @@ if ".cursor/skills/verify-" in create_verify:
 maintain_verify = (root / "skills" / "gs-maintain-verification-skill" / "SKILL.md").read_text()
 if "When the harness has no subagents" not in maintain_verify:
     sys.exit("gs-maintain-verification-skill SKILL.md missing the no-subagent fallback")
+
+# The formal verification pair names gs-statechart with a fallback and never links outside the repo.
+for skill in ("gs-create-formal-verification-skill", "gs-maintain-formal-verification-skill"):
+    text = (root / "skills" / skill / "SKILL.md").read_text()
+    for banned in ("/statechart", "../", "/create-formal", "/maintain-formal", "\u2014"):
+        if banned in text:
+            sys.exit(f"{skill} SKILL.md contains {banned!r}")
+    for required in ("`gs-statechart`", "shortest sequence of steps in the code's own words", ".verify/<area>/<run-id>/", "run.md", "Only when the user asks for it."):
+        if required not in text:
+            sys.exit(f"{skill} SKILL.md missing {required}")
 
 qa_skill = (root / "skills" / "gs-qa-scenarios" / "SKILL.md").read_text()
 for required in ("gs-pull-request", "gs-blast-radius", "gs-show-me", "gs-unslop", "## Setup", "## Scenarios", "## Regression checks", "## Checklist", "- Expect:", "--body-file"):
