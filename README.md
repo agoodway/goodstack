@@ -38,6 +38,7 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 - [`gs-maintain-verification-skill`](skills/gs-maintain-verification-skill/README.md) checks a verification skill and its feature map against the source and the live app. It ships proven corrections in at most one pull request.
 - [`gs-create-formal-verification-skill`](skills/gs-create-formal-verification-skill/README.md) formally verifies one property of the code where a bug costs the most and tests reach the least, with the tool that fits. It leaves a project-local skill that rechecks the property on every change.
 - [`gs-maintain-formal-verification-skill`](skills/gs-maintain-formal-verification-skill/README.md) brings formal verification back in line after the code changes. It says whether each failure is drift in the verification or a bug in the code.
+- [`gs-statechart`](skills/gs-statechart/README.md) checks a TLA+ model of a system that moves between states with TLC, and draws it as a Mermaid statechart. The report gives the shortest path to each state that breaks a rule.
 
 ### Design
 
@@ -65,7 +66,7 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 
 ### Who starts a skill
 
-Thirteen skills run only when you type the command: `gs-arena`, `gs-why`, `gs-improve-codebase-architecture`, `gs-no-comments`, `gs-reflect`, `gs-openspec-ship`, `gs-openspec-to-tickets`, `gs-openspec-ship-tickets`, `gs-create-verification-skill`, `gs-maintain-verification-skill`, `gs-create-formal-verification-skill`, `gs-maintain-formal-verification-skill`, and `gs-qa-scenarios`. The agent can also start the other skills when a request matches their description. Amp has no slash commands and ignores the `disable-model-invocation` flag that sets this, so these thirteen say in their descriptions to run only when you ask for them.
+Fourteen skills run only when you type the command: `gs-arena`, `gs-why`, `gs-improve-codebase-architecture`, `gs-no-comments`, `gs-reflect`, `gs-openspec-ship`, `gs-openspec-to-tickets`, `gs-openspec-ship-tickets`, `gs-create-verification-skill`, `gs-maintain-verification-skill`, `gs-create-formal-verification-skill`, `gs-maintain-formal-verification-skill`, `gs-statechart`, and `gs-qa-scenarios`. The agent can also start the other skills when a request matches their description. Amp has no slash commands and ignores the `disable-model-invocation` flag that sets this, so these fourteen say in their descriptions to run only when you ask for them.
 
 ## Install
 
@@ -103,7 +104,7 @@ Add `-g` to install into your user skill directory.
 
 Ten skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-pr-show-me`, `gs-qa-scenarios`, `gs-scratch`, `gs-openspec-ship`, `gs-openspec-ship-tickets`, and `gs-openspec-review-change`.
 
-The other twenty-four come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
+The other twenty-five come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
 
 | Skill | Original | Author | What this repo changed |
 |---|---|---|---|
@@ -117,6 +118,7 @@ The other twenty-four come from skills that other people published. The original
 | `gs-maintain-verification-skill` | `maintain-verification-skill` in pstack | Lauren Tan | It finds the target in any harness's skills directory, and reads features one at a time without subagents |
 | `gs-create-formal-verification-skill` | `create-formal-verification-skill` in pstack | Lauren Tan | Evidence goes in `.verify/`, and `gs-statechart` is optional |
 | `gs-maintain-formal-verification-skill` | `maintain-formal-verification-skill` in pstack | Lauren Tan | It finds the target in any harness's skills directory, and keeps evidence in `.verify/` |
+| `gs-statechart` | `statechart` in pstack | Lauren Tan | The name, and a description that says when to use it in plain phrases |
 | `gs-sharpen` | `sharpen` in pstack | Lauren Tan | The name |
 | `gs-unslop` | `unslop` in pstack | Lauren Tan | The name, and the agent may start it |
 | `gs-deslop` | `deslop` in cursor-team-kit | Cursor | The name, and a pointer to `gs-no-comments` |
@@ -142,4 +144,4 @@ The original repos are:
 
 ## License
 
-The license is MIT. See `LICENSE`. Each of the twenty-four skills above also keeps its original author's MIT notice in its own `LICENSE` file.
+The license is MIT. See `LICENSE`. Each of the twenty-five skills above also keeps its original author's MIT notice in its own `LICENSE` file.

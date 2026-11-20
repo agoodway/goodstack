@@ -190,7 +190,7 @@ for snippet in (
     if snippet not in deslop_readme:
         sys.exit(f"gs-deslop README missing {snippet}")
 
-# how, why, arena, and the verification pair are adapted from the pstack originals, so they have no hash pin.
+# how, why, arena, statechart, and the verification skills are adapted from the pstack originals, so they have no hash pin.
 pstack_skills = {
     "gs-how": (
         "ce649c03ac3b75b6ae80cbd15b7e2c536caedb5a",
@@ -230,6 +230,19 @@ pstack_skills = {
         "aaeb0ea3a0584995aa8f55ce44c6c5259414b896",
         "pstack/skills/maintain-formal-verification-skill",
         (),
+    ),
+    "gs-statechart": (
+        "aaeb0ea3a0584995aa8f55ce44c6c5259414b896",
+        "pstack/skills/statechart",
+        (
+            "references/render.md",
+            "scripts/statechart",
+            "scripts/statechart.ts",
+            "scripts/package.json",
+            "scripts/tsconfig.json",
+            "scripts/test/cli.test.ts",
+            "scripts/test/corpus/CounterStart/CounterStart.tla",
+        ),
     ),
 }
 for skill, (commit, source_path, required_files) in pstack_skills.items():
