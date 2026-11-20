@@ -1,13 +1,22 @@
 ---
 name: gs-pull-request
-description: "Open a draft GitHub pull request whose description a reviewer can follow without reading the diff first. Use when the user asks to open a pull request, says the pull request is already approved, runs /gs-pull-request or /gs-pull-request --approved, or names gs-pull-request."
+description: "Open a draft GitHub pull request whose description a reviewer can follow without reading the diff first. Use when the user asks to open a pull request, says the pull request is already approved, asks to commit and open a pull request, runs /gs-pull-request, /gs-pull-request --approved, or /gs-pull-request --commit, or names gs-pull-request."
 ---
 
 # Pull request
 
 Open one draft GitHub pull request for the current branch. Write the description for a reader who did not make the change. That reader may be another engineer, a reviewer, or a teammate who will operate the result.
 
-Do not commit. When the working tree is dirty, stop and tell the user to run `/gs-git-commit` first. A caller that already forbids questions treats a dirty tree as blocked and does not commit.
+Do not commit unless the request includes `--commit`. When the working tree is dirty and the request has no `--commit`, stop and tell the user to run `/gs-git-commit` first, or to run this skill again with `--commit`. A caller that already forbids questions treats a dirty tree as blocked and does not commit, unless it passed `--commit`.
+
+### Commit first
+
+Read `--commit` from the request's prose. When the request includes `--commit`, or plainly asks to commit the changes before opening the pull request, commit the working tree before anything else:
+
+- Use the `gs-git-commit` skill when it is installed. Skip its last step, which asks whether to push, because this skill pushes the branch.
+- Without it, stage the files that belong to the change by name, and leave out secrets such as `.env` and `credentials.*`, build output, editor and OS files, and anything `.gitignore` covers. Make one commit for each unrelated change, with a conventional message, `type: what changed`, and no AI attribution footer. Ask the user before staging a file you are unsure of.
+
+When the commit leaves the tree dirty, such as a file you chose not to stage, name those files and go on. When the tree was already clean, there is nothing to commit, so go on. `--commit` never skips the print-and-wait step. Only `--approved` does.
 
 ## Before writing
 
