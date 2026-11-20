@@ -77,10 +77,27 @@ on(apply_discount)
 
 Keep only the lines, calls, and states the reader needs to see the point.
 
+When the point is what a screen shows, such as proof from a verification run, the picture is the screenshot or the recording itself. Attach it as the next section says.
+
+## Attach images and video
+
+`gh pr comment` and `gh issue comment` upload each file passed with `--attach` and embed it in the comment. Use this for a screenshot or a screen recording on disk, such as the evidence a verification run saved under `.verify/`.
+
+- Look at every image before you attach it. Leave out or crop one that shows a secret, a token, a real person's data, or another private detail. A screenshot can leak what the text does not.
+- Put each file in the body directly under the sentence it proves, as a Markdown image whose path is relative to the repository root: `![The banner reads "Order cancelled"](.verify/web/20261119T143000Z-a1b2c3d/03-cancel.png)`. Pass the same path with `--attach`. `gh` uploads the file and rewrites the path to the uploaded copy. A file that is attached but not referenced lands at the end of the comment, away from its point.
+- Write alt text that says what the image proves, not the file name. A video renders as a player and takes no alt text, so the sentence above it says what it shows.
+- Attach the files that prove a point, not every file in a folder. One command takes at most 50.
+- Run `gh` from the repository root. It reads image paths relative to the body file's directory first, then relative to the working directory.
+- Never stage or commit the files. `--attach` uploads a copy to GitHub, and the originals stay where they were.
+
+Reviews and inline review comments go through `gh api`, which uploads nothing. Put images in a top-level comment.
+
+When `gh pr comment --help` does not list `--attach`, replace each image with its path in backticks, post the comment, and tell the user which files to drag into it on GitHub, or to upgrade `gh`. When `gh` exits non-zero after printing the comment URL, some uploads failed. Do not post the comment again. Tell the user which files are missing, so they can add them by hand.
+
 ## Post
 
 1. Read the whole comment, including quoted text, command output, and attachments, for secrets, tokens, absolute local paths, and private details. Remove them.
-2. Preview the final Markdown, so the callout, quoting, and blank lines render as intended.
-3. Write the body to a file outside the repository and pass that file to the command, so comment text never becomes shell syntax. For example, `gh pr comment <number> --body-file <file>`, or `gh api ... --input <file>` for a review or an inline comment.
+2. Preview the final Markdown, so the callout, quoting, and blank lines render as intended. List the files you will attach under the preview.
+3. Write the body to a file outside the repository and pass that file to the command, so comment text never becomes shell syntax. For example, `gh pr comment <number> --body-file <file> --attach <path>`, or `gh api ... --input <file>` for a review or an inline comment.
 4. Confirm GitHub returned the comment or review URL.
 5. Resolve a review thread only after its response was posted successfully.

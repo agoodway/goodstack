@@ -8,11 +8,14 @@ The skill changes no code. It prints the scenarios in chat, and it saves them to
 
 The skill has three modes. Write, the default, writes the scenarios and prints them. Write and run writes the scenarios, then runs them through the project's `verify-*` skill. Run takes scenarios written earlier, from a Markdown file, a pull request comment, or the chat, and runs them without rewriting them. Both run modes report each scenario as passed, failed, or not run, and save the evidence under `.verify/<app>/<run-id>/` with a `run.md` index that is never committed. A project without a `verify-*` skill needs one first, which `gs-create-verification-skill` makes.
 
+When you ask, the skill posts a run's results on the pull request as one comment. Each screenshot and recording sits under the result it proves, uploaded with `gh pr comment --attach`.
+
 ## Use cases
 
 - Your branch is ready for QA, and the tester needs steps to check it in the running app without reading the code.
 - You are reviewing a pull request and want a manual test plan that covers the main path, the edge cases, and the flows the change could break.
 - You want the QA scenarios run against the app automatically, new or from a saved file or pull request comment, with a result and evidence for each one.
+- You want the run's results posted on the pull request, with the screenshots that prove each one, so a reviewer sees the proof without the run folder.
 
 ## Install
 
@@ -41,7 +44,7 @@ npx skills add /path/to/goodstack --skill gs-qa-scenarios
 
 Add `-g` to install into your user skill directory instead of the current project.
 
-Reading a pull request or posting to one requires the `gh` CLI, installed and authenticated.
+Reading a pull request or posting to one requires the `gh` CLI, installed and authenticated. Attaching screenshots to a comment needs a `gh` whose `gh pr comment --help` lists `--attach`.
 
 ## Usage
 
@@ -52,6 +55,7 @@ Reading a pull request or posting to one requires the `gh` CLI, installed and au
 /gs-qa-scenarios write and run         # write the scenarios, then run them
 /gs-qa-scenarios run qa.md             # run saved scenarios from a file
 /gs-qa-scenarios run 482               # run the scenarios posted on a pull request
+/gs-qa-scenarios run 482 and post the results  # run them, then post the results with screenshots
 ```
 
 The agent can also start it on its own, when you ask for QA steps or a manual test plan for a change, or ask it to run the QA scenarios or automate the QA steps.

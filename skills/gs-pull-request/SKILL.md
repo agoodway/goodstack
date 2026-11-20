@@ -96,7 +96,8 @@ When a run applies and its features cover the change, use it in Evidence:
 
 - Say which features the run drove, by feature ID and entry point, and which passed or failed.
 - Inline short text proof from the run's artifacts, such as a command and its output or a response snippet, in a fenced block.
-- List each screenshot by its path under `.verify/`. `gh` cannot upload images from the CLI, so after opening the pull request, tell the user which files to drag into the description. Skip that step when the harness has its own way to upload images to the pull request.
+- Put each screenshot in Evidence as a Markdown image with its path under `.verify/` and alt text that says what it shows. Pass the same path to `gh pr create` or `gh pr edit` with `--attach`, and run `gh` from the repository root. `gh` uploads the file and rewrites the path to the uploaded copy. Look at each screenshot first, and leave out one that shows a secret, a token, or a real person's data.
+- When `gh pr create --help` does not list `--attach`, write each path in backticks in place of the image, and after opening the pull request tell the user which files to drag into the description. When `gh` prints the pull request URL but exits non-zero, some uploads failed. Name the missing files to the user, and do not open the pull request again.
 
 Never commit, stage, or push evidence files. They stay in `.verify/`, which the verification skill keeps in `.gitignore`.
 
@@ -136,6 +137,8 @@ Otherwise write the body to a file outside the repository and pass it with `--bo
 ```bash
 gh pr create --draft --title "<title>" --body-file <file>
 ```
+
+Add `--attach <path>` for each screenshot that Evidence references.
 
 The title is a conventional commit subject, `type: what changed`. Types are `feat`, `fix`, `chore`, `docs`, `refactor`, `test`, and `style`.
 
