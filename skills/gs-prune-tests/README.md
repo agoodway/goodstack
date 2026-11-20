@@ -4,6 +4,9 @@ This skill deletes tests that guard no behavior and rewrites the ones that guard
 
 The agent can start this skill on its own. It uses `gs-find-bad-tests` to find the tests when that skill is installed, and works without it. Deleting tests is destructive, but the skill only deletes after a green baseline, keeps regression, contract, and security tests, proves borderline cases by mutation, and runs the tests again at the end. The changes stay in the working tree for the user to review.
 
+> [!WARNING]
+> This skill can change production code, not only tests. It deletes production code that existed only for the tests it removed. When a test mocks internals because the code builds its own external client, the rewrite changes that function to take the client as a parameter, and updates the function's callers. Read the diff before you commit it.
+
 ## Use cases
 
 - Your test suite breaks on every refactor but rarely catches a bug, and you want the brittle tests rewritten or removed.

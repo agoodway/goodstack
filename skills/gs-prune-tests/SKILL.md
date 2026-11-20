@@ -50,7 +50,7 @@ When the suite is too slow to do this for every test, do it for the borderline o
 
 A rewrite survives a refactor that leaves behavior alone. Write it this way:
 
-- It calls the public interface, and it mocks only at a system boundary, never our own modules. When the code builds its external client itself, change it to take the client as a parameter, so the test can pass in a fake one.
+- It calls the public interface, and it mocks only at a system boundary, never our own modules. When the code builds its external client itself, change it to take the client as a parameter, so the test can pass in a fake one. Update every caller, and list the change in the report with the production code you removed.
 - It checks the result through that interface too. To confirm a user was saved, it fetches the user, and it leaves the database table alone.
 - It compares against a known literal, never a value computed the way the code computes it.
 - Its name says what the caller gets, not how the code produces it.
@@ -83,7 +83,7 @@ End with a table of every test you deleted or rewrote.
 |---|---|---|---|---|
 | `cart.test.ts` | adds an item to the cart | implementation | rewritten | It asserted private state. It now asserts the cart total. |
 
-The category is past, nothing, implementation, or duplicate. After the table, list the production code you removed and the test command you ran before and after. Suggest committing the prune on its own, apart from other work, so a reviewer can read it alone.
+The category is past, nothing, implementation, or duplicate. After the table, list the production code you removed or changed and the test command you ran before and after. Suggest committing the prune on its own, apart from other work, so a reviewer can read it alone.
 
 **Example**
 
