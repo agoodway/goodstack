@@ -539,6 +539,57 @@ for phrase in ("run the QA scenarios", "automate the QA steps", "verify-*"):
 if "skills/gs-create-verification-skill" in qa_skill or "skills/gs-maintain-verification-skill" in qa_skill:
     sys.exit("gs-qa-scenarios SKILL.md references a verification skill by path")
 
+# gs-openspec-qa-scenarios writes the gs-qa-scenarios shape from specs. Other tools parse both, so the markers stay fixed.
+# Goodflows parses the qa-scenarios/1 front matter both skills write, so its fields stay fixed.
+def front_matter_keys(text, source):
+    block = re.search(rf"(?ms)^```markdown\n---\nformat: qa-scenarios/1\nsource: {source}\n(.*?)^---\n\n# QA: ", text)
+    if block is None:
+        return None
+    return re.findall(r"(?m)^[ -]*([a-z_]+):", block.group(1))
+diff_keys = front_matter_keys(qa_skill, "diff")
+if diff_keys is None:
+    sys.exit("gs-qa-scenarios SKILL.md has no qa-scenarios/1 front matter with source: diff before its # QA: heading")
+for required in ("`source: intent`", "info string is `yaml qa-scenarios`", "`failed_step`", "`not_run`", "`evidence`", "run:\n  folder:"):
+    if required not in qa_skill:
+        sys.exit(f"gs-qa-scenarios SKILL.md missing {required}")
+intent_skill = (root / "skills" / "gs-openspec-qa-scenarios" / "SKILL.md").read_text()
+for required in (
+    "info string is `yaml qa-scenarios`",
+    "## Setup",
+    "## Checklist",
+    "## Scenarios",
+    "## Regression checks",
+    "## Coverage",
+    "## Not covered by these scenarios",
+    "## Questions for the developer",
+    "Covers: [capability] \u00b7 [Requirement]: [Scenario]",
+    "- Expect:",
+    "(Must)",
+    "No observable check: ",
+    "npx skills add agoodway/goodstack --skill gs-qa-scenarios",
+    "find its installed `SKILL.md`",
+):
+    if required not in intent_skill:
+        sys.exit(f"gs-openspec-qa-scenarios SKILL.md missing {required}")
+intent_keys = front_matter_keys(intent_skill, "intent")
+if intent_keys is None:
+    sys.exit("gs-openspec-qa-scenarios SKILL.md has no qa-scenarios/1 front matter with source: intent before its # QA: heading")
+if diff_keys[:4] != ["branch", "base", "revision", "review"] or intent_keys[:3] != ["change", "specs", "review"]:
+    sys.exit(f"front matter identity keys changed: diff {diff_keys[:4]}, intent {intent_keys[:3]}")
+# review names the change under review on any Git host. Sets written before it carry pr, which run mode still reads.
+if "pr" in diff_keys or "pr" in intent_keys:
+    sys.exit("qa scenario front matter must use the host-neutral review key, not pr")
+if "has a `pr` key" not in qa_skill:
+    sys.exit("gs-qa-scenarios run mode must still read sets that carry pr")
+for shared in ("scenarios", "id", "name", "priority"):
+    if shared not in diff_keys or shared not in intent_keys:
+        sys.exit(f"front matter key {shared} missing from one of the qa scenario skills")
+for intent_only in ("covers", "capability", "requirement", "scenario", "implied", "coverage", "delta", "qa", "no_check"):
+    if intent_only not in intent_keys:
+        sys.exit(f"gs-openspec-qa-scenarios front matter missing {intent_only}")
+if "$ARGUMENTS" in intent_skill or "\u2014" in intent_skill:
+    sys.exit("gs-openspec-qa-scenarios SKILL.md takes arguments in prose and has no em dashes")
+
 all_installed = {p.parent.name for p in (tmp / "all").rglob("SKILL.md")}
 if all_installed != expected_set:
     sys.exit(f"--skill '*' installed {sorted(all_installed)}, expected {expected}")
