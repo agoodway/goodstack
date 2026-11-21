@@ -120,7 +120,7 @@ The other twenty-five come from skills that other people published. The original
 | `gs-maintain-verification-skill` | `maintain-verification-skill` in pstack | Lauren Tan | It finds the target in any harness's skills directory, and reads features one at a time without subagents |
 | `gs-create-formal-verification-skill` | `create-formal-verification-skill` in pstack | Lauren Tan | Evidence goes in `.verify/`, and `gs-statechart` is optional |
 | `gs-maintain-formal-verification-skill` | `maintain-formal-verification-skill` in pstack | Lauren Tan | It finds the target in any harness's skills directory, and keeps evidence in `.verify/` |
-| `gs-statechart` | `statechart` in pstack | Lauren Tan | The name, and a description that says when to use it in plain phrases |
+| `gs-statechart` | `statechart` in pstack | Lauren Tan | The name, a description that says when to use it in plain phrases, a rendered chart by default, and run steps for a missing executable bit or mise |
 | `gs-sharpen` | `sharpen` in pstack | Lauren Tan | The name |
 | `gs-unslop` | `unslop` in pstack | Lauren Tan | The name, and the agent may start it |
 | `gs-deslop` | `deslop` in cursor-team-kit | Cursor | The name, and a pointer to `gs-no-comments` |

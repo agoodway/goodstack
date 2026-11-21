@@ -44,15 +44,15 @@ Add `-g` to install into your user skill directory instead of the current projec
 Describe the system and the rules it must keep. In a harness without slash commands, ask for it by name. The agent writes the spec in a scratch folder and runs the command from the skill's `scripts` folder.
 
 ```sh
-<skill dir>/scripts/statechart SPEC.tla [--config FILE] [--view FILE] [--out DIR]
+sh <skill dir>/scripts/statechart SPEC.tla [--config FILE] [--view FILE] [--out DIR]
 ```
 
-The command writes `report.md`, `chart.mmd`, and `tlc.out` to the `--out` folder. It exits 0 when every rule holds and 1 when a rule breaks.
+Run the launcher with `sh`, because an installed copy can lose its executable bit. The command writes `report.md`, `chart.mmd`, and `tlc.out` to the `--out` folder. It exits 0 when every rule holds and 1 when a rule breaks. When the harness can show an image or a rendered artifact, the agent renders the chart with Pele and gives the Mermaid text after it. Otherwise it shows the Mermaid text.
 
 ### Requirements
 
 - A runtime that runs TypeScript: Node 22.18 to 22.x, Node 23.6 or later, Bun 1.1.5 or later, or Deno 2.0 or later. The `statechart` launcher picks the first one it finds. On native Windows, run `node --disable-warning=ExperimentalWarning <skill dir>/scripts/statechart.ts` with Node.
-- [mise](https://mise.jdx.dev). The first run uses it to install TLC and Java, so that run needs the network. To skip mise, set `TLA2TOOLS` to the path of `tla2tools.jar` and `JAVA` to a Java 11 or later binary.
+- [mise](https://mise.jdx.dev) on PATH. The command does not install it. When it is missing, the agent asks before it installs mise, unless the machine is a disposable sandbox. It runs `curl https://mise.run | sh`, which puts mise in `~/.local/bin`, adds that folder to PATH for the session only, and leaves shell startup files alone. The first run uses mise to install TLC and Java, so that run needs the network. To skip mise, set `TLA2TOOLS` to the path of `tla2tools.jar` and `JAVA` to a Java 11 or later binary.
 
 ### Tests
 
@@ -73,4 +73,6 @@ Lauren Tan wrote this skill. The original source is the pstack plugin in the [Cu
 
 - The skill is named `gs-statechart`, where the original is `statechart`. The `name:` line, the usage text in `scripts/statechart.ts`, and the launcher's error message say `gs-statechart`. The test in `scripts/test/cli.test.ts` that reads that error message expects the new name.
 - The package in `scripts/package.json` is named `@goodstack/gs-statechart`, where the original is `@cursor-skill/statechart`.
+- "Show the chart" renders the chart with Pele by default when the host can show an image or a rendered artifact, and gives the Mermaid text after the image. The original showed a `mermaid` code block and rendered only when the user asked for an image or the chart was too large to read.
+- "Run" calls the launcher with `sh`, because an installed copy can lose its executable bit, and says that `mise` must already be on PATH. When it is missing, the agent asks before it installs mise, except in a disposable sandbox, and the section names the `TLA2TOOLS` and `JAVA` variables that skip mise.
 - The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it. It keeps `disable-model-invocation: true` and ends by saying to run only when the user asks for it. The original said "Use for /statechart".
