@@ -89,7 +89,7 @@ Use this shape. It is the `gs-qa-scenarios` shape with three additions: `covers`
 
 ```markdown
 ---
-format: qa-scenarios/1
+format: qa-scenarios/2
 source: intent
 change: "[change-id]"
 specs: "[short commit SHA, or uncommitted]"
@@ -113,14 +113,14 @@ coverage:
   - capability: "[capability]"
     requirement: "[Requirement]"
     scenario: "[Scenario]"
-    delta: added
-    qa: [1]
+    status: covered
+    scenarios: [1]
   - capability: "[capability]"
     requirement: "[Requirement]"
     scenario: "[Scenario]"
-    delta: modified
-    qa: []
-    no_check: "[reason]"
+    status: no_check
+    scenarios: []
+    reason: "[why no person can check it]"
 ---
 
 # QA: [change-id]
@@ -162,10 +162,10 @@ Covers: [capability] · [Requirement]: [Scenario]; [capability] · [Requirement]
 
 ## Coverage
 
-| Capability | Requirement | Spec scenario | Delta | QA scenario |
+| Capability | Requirement | Spec scenario | Status | QA scenarios |
 |---|---|---|---|---|
-| [capability] | [Requirement] | [Scenario] | ADDED | 1 |
-| [capability] | [Requirement] | [Scenario] | MODIFIED | No observable check: [reason] |
+| [capability] | [Requirement] | [Scenario] | covered | 1 |
+| [capability] | [Requirement] | [Scenario] | no_check | No observable check: [reason] |
 
 ## Not covered by these scenarios
 
@@ -182,11 +182,12 @@ The front matter is the contract other tools read, such as goodflows change requ
 
 - The set starts with a line that holds only `---`, and the front matter ends at the next such line. Nothing comes before it.
 - Write the keys in the order the shape shows. Quote every string value with double quotes, and escape a double quote inside one as `\"`. Numbers, `true`, `null`, and the lowercase values below stay bare.
-- `format` is `qa-scenarios/1`. A change to the fields that would break a reader gets a new number.
+- `format` is `qa-scenarios/2`. A change to the fields that would break a reader gets a new number. Version 2 gave `coverage` rows the same `capability`, `requirement`, and `scenario` as `covers`, with `status` and `scenarios` in place of `delta`, `qa`, and `no_check`.
 - `source` is `intent`. `change` is the change id. `specs` is the short commit SHA of the change directory, or `uncommitted`. These two are intent only. `review` is optional and names the change under review on any Git host: a goodflows change request ID, a GitLab merge request URL, or a GitHub pull request URL, as the user or the host gives it. Before implementation there is usually none, so use `null`.
 - `scenarios` has one entry per scenario in the body, in the same order. `id` is the scenario's number, `name` is its heading without the number and priority, and `priority` is `must`, `should`, or `could`.
 - `covers` is intent only. Each entry names a spec scenario with `capability`, `requirement`, and `scenario`, copied exactly from the delta's `### Requirement:` and `#### Scenario:` headings. An implied case has `capability`, `requirement`, and `implied: true`, with no `scenario`. Behavior from the proposal alone is one entry, `proposal: true`.
-- `coverage` is intent only. It has one entry for every spec scenario in the change, and one for each REMOVED requirement with `scenario: null`. `delta` is `added`, `modified`, `removed`, or `renamed`. `qa` lists the scenario ids that check it. An entry with no observable check has `qa: []` and a `no_check` reason.
+- `coverage` is intent only. It has one row for every spec scenario in the change. A row names its spec scenario with `capability`, `requirement`, and `scenario`, copied exactly as `covers` copies them, so a tool matches a row to a `covers` entry or a `safe_because` fact by comparing the three. For a REMOVED requirement, use the scenarios the canonical spec lists under it, and when it lists none, use `[Requirement] removed` as the scenario. Each of the three is 1 to 200 characters, and no two rows share all three. When a name is longer or two spec scenarios share a name, keep the name as written and ask about it under "Questions for the developer".
+- `status` is `covered` or `no_check`. `scenarios` lists the ids of the QA scenarios that check the row: at least one for `covered`, and `[]` for `no_check`. `reason` is optional, and says why no person can check the row. Write it on every `no_check` row.
 - The body says the same things for the tester. When you change one, change the other.
 
 ### Format rules
@@ -194,7 +195,7 @@ The front matter is the contract other tools read, such as goodflows change requ
 - The title is `# QA: ` and the change id, on the first line after the front matter. The line under it names the change and the spec revision for a person. No tool parses it.
 - The checklist and the scenario headings follow `gs-qa-scenarios`: one checklist line per scenario with the same number, name, and priority as its heading, and the only checkbox a scenario gets. Leave every box empty. This skill walks nothing, so it ticks nothing.
 - `Why:` and `Covers:` sit on the two lines under each scenario heading, in that order. `Covers:` names each spec scenario as `[capability] · [Requirement]: [Scenario]`, with the requirement and scenario names copied exactly from the delta's `### Requirement:` and `#### Scenario:` headings, and `; ` between them. An implied case is `[capability] · [Requirement] (implied)`. Behavior from the proposal alone is `proposal (no requirement)`.
-- The Coverage table has one row for every spec scenario in the change, and one row for each REMOVED requirement. The last column holds the QA scenario numbers, separated by commas, or `No observable check: ` and the reason.
+- The Coverage table has one row for each `coverage` row, in the same order. The Status column holds `covered` or `no_check`. The last column holds the QA scenario numbers, separated by commas, or `No observable check: ` and the reason.
 - When scenarios need different application states, group them under `### [State]` headings with one line on how to reach the state, and give the scenarios `####` headings, as `gs-qa-scenarios` does.
 
 ### Steps and results
@@ -211,6 +212,7 @@ The front matter is the contract other tools read, such as goodflows change requ
 Before you hand them over, read the set as the QA engineer and as the author of the change:
 
 - Does every spec scenario on the step 2 list appear in the front matter's `coverage` and in the Coverage table?
+- Does every `covered` row list a QA scenario whose `covers` names the same capability, requirement, and scenario?
 - Does the front matter parse as YAML, and do its `scenarios`, `covers`, and `coverage` match the body entry for entry?
 - Does every Must scenario's `Covers:` line name a spec scenario that exists, spelled exactly as in the delta?
 - Does every Expect line say only what the spec says, with nothing taken from the code?

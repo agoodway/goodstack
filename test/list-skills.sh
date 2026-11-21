@@ -496,7 +496,8 @@ for required in (
     "Read `--approved` from the request's prose.",
     "command -v goodflows",
     "Without evidence, a fact is `walked` at most.",
-    "Add one `safe_because` fact for each such entry",
+    "Add one `safe_because` fact for each such row",
+    "`status: no_check`",
     "Safe because: <each fact",
     "Read `--commit` from the request's prose.",
     "Skip its last step, which asks whether to push, because this skill never pushes.",
@@ -575,16 +576,19 @@ if "skills/gs-create-verification-skill" in qa_skill or "skills/gs-maintain-veri
     sys.exit("gs-qa-scenarios SKILL.md references a verification skill by path")
 
 # gs-openspec-qa-scenarios writes the gs-qa-scenarios shape from specs. Other tools parse both, so the markers stay fixed.
-# Goodflows parses the qa-scenarios/1 front matter both skills write, so its fields stay fixed.
+# Goodflows parses the qa-scenarios/2 front matter both skills write, so its fields stay fixed.
 def front_matter_keys(text, source):
-    block = re.search(rf"(?ms)^```markdown\n---\nformat: qa-scenarios/1\nsource: {source}\n(.*?)^---\n\n# QA: ", text)
+    block = re.search(rf"(?ms)^```markdown\n---\nformat: qa-scenarios/2\nsource: {source}\n(.*?)^---\n\n# QA: ", text)
     if block is None:
         return None
     return re.findall(r"(?m)^[ -]*([a-z_]+):", block.group(1))
 diff_keys = front_matter_keys(qa_skill, "diff")
 if diff_keys is None:
-    sys.exit("gs-qa-scenarios SKILL.md has no qa-scenarios/1 front matter with source: diff before its # QA: heading")
-for required in ("`source: intent`", "info string is `yaml qa-scenarios`", "`failed_step`", "`not_run`", "`evidence`", "run:\n  folder:"):
+    sys.exit("gs-qa-scenarios SKILL.md has no qa-scenarios/2 front matter with source: diff before its # QA: heading")
+# Goodflows binds approval to the set's bytes and rejects sets with run results, so a run never edits the set.
+if "run:\n  folder:" in qa_skill or "record the run in it" in qa_skill:
+    sys.exit("gs-qa-scenarios run mode must not write results into the set")
+for required in ("`source: intent`", "info string is `yaml qa-scenarios`", "Never edit the set file.", "as `scenarios.md`", "`run.md` is the only place a run writes its results.", "Add no `run` key, and no `result`, `failed_step`, `evidence`, or `reason`"):
     if required not in qa_skill:
         sys.exit(f"gs-qa-scenarios SKILL.md missing {required}")
 intent_skill = (root / "skills" / "gs-openspec-qa-scenarios" / "SKILL.md").read_text()
@@ -608,7 +612,7 @@ for required in (
         sys.exit(f"gs-openspec-qa-scenarios SKILL.md missing {required}")
 intent_keys = front_matter_keys(intent_skill, "intent")
 if intent_keys is None:
-    sys.exit("gs-openspec-qa-scenarios SKILL.md has no qa-scenarios/1 front matter with source: intent before its # QA: heading")
+    sys.exit("gs-openspec-qa-scenarios SKILL.md has no qa-scenarios/2 front matter with source: intent before its # QA: heading")
 if diff_keys[:4] != ["branch", "base", "revision", "review"] or intent_keys[:3] != ["change", "specs", "review"]:
     sys.exit(f"front matter identity keys changed: diff {diff_keys[:4]}, intent {intent_keys[:3]}")
 # review names the change under review on any Git host. Sets written before it carry pr, which run mode still reads.
@@ -619,9 +623,22 @@ if "has a `pr` key" not in qa_skill:
 for shared in ("scenarios", "id", "name", "priority"):
     if shared not in diff_keys or shared not in intent_keys:
         sys.exit(f"front matter key {shared} missing from one of the qa scenario skills")
-for intent_only in ("covers", "capability", "requirement", "scenario", "implied", "coverage", "delta", "qa", "no_check"):
+for intent_only in ("covers", "capability", "requirement", "scenario", "implied", "coverage", "status"):
     if intent_only not in intent_keys:
         sys.exit(f"gs-openspec-qa-scenarios front matter missing {intent_only}")
+# Goodflows matches a coverage row to a covers entry or a safe_because fact by its capability, requirement, and scenario.
+coverage_block = re.search(r"(?ms)^coverage:\n(.*?)^---\n", intent_skill)
+coverage_rows = [re.findall(r"(?m)^ *([a-z_]+):", row) for row in re.split(r"(?m)^  - ", coverage_block.group(1))[1:]] if coverage_block else []
+if not coverage_rows:
+    sys.exit("gs-openspec-qa-scenarios front matter has no coverage rows")
+for row in coverage_rows:
+    if row[:5] != ["capability", "requirement", "scenario", "status", "scenarios"] or not set(row) <= {"capability", "requirement", "scenario", "status", "scenarios", "reason"}:
+        sys.exit(f"gs-openspec-qa-scenarios coverage row keys changed: {row}")
+for required in ("`covered` or `no_check`", "Each of the three is 1 to 200 characters"):
+    if required not in intent_skill:
+        sys.exit(f"gs-openspec-qa-scenarios SKILL.md missing {required}")
+if "A `qa-scenarios/1` set has `delta`, `qa`, and `no_check`" not in qa_skill:
+    sys.exit("gs-qa-scenarios run mode must still read qa-scenarios/1 intent sets")
 if "$ARGUMENTS" in intent_skill or "\u2014" in intent_skill:
     sys.exit("gs-openspec-qa-scenarios SKILL.md takes arguments in prose and has no em dashes")
 
