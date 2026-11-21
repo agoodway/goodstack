@@ -15,6 +15,7 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 - [`gs-review-pr-reply`](skills/gs-review-pr-reply/README.md) posts a `gs-review` report to the current branch's pull request as one GitHub review.
 - [`gs-git-commit`](skills/gs-git-commit/README.md) commits the current changes with conventional messages. It skips secrets and generated files, and it adds no AI attribution.
 - [`gs-pull-request`](skills/gs-pull-request/README.md) opens a draft GitHub pull request. The description says what changed, how it works, what was run, and what could break.
+- [`gs-change-request`](skills/gs-change-request/README.md) writes the description file for a goodflows change request, the replacement for a pull request on any Git host. YAML front matter holds the claims goodflows parses, and the body follows `gs-pull-request`. With `--approved` it creates or updates the change request through the goodflows CLI, and it never pushes or calls a host API itself.
 - [`gs-pr-comment`](skills/gs-pr-comment/README.md) writes and posts a GitHub comment for you. Each comment opens with a note naming the model and the user it speaks for.
 - [`gs-pr-show-me`](skills/gs-pr-show-me/README.md) explains what an existing pull request changes, in plain language with small pictures. It reads the pull request and posts nothing.
 - [`gs-qa-scenarios`](skills/gs-qa-scenarios/README.md) writes manual QA scenarios for a branch or pull request. Each scenario tells a QA engineer what to test, why, the exact steps, and the result to expect. It can also run the scenarios through the project's `verify-*` skill and report a result with evidence for each one.
@@ -103,7 +104,7 @@ Add `-g` to install into your user skill directory.
 
 ## Sources
 
-Eleven skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-pr-show-me`, `gs-qa-scenarios`, `gs-scratch`, `gs-openspec-ship`, `gs-openspec-ship-tickets`, `gs-openspec-review-change`, and `gs-openspec-qa-scenarios`.
+Twelve skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-change-request`, `gs-pr-show-me`, `gs-qa-scenarios`, `gs-scratch`, `gs-openspec-ship`, `gs-openspec-ship-tickets`, `gs-openspec-review-change`, and `gs-openspec-qa-scenarios`.
 
 The other twenty-five come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
 
