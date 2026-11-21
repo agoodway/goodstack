@@ -93,6 +93,7 @@ format: qa-scenarios/1
 source: intent
 change: "[change-id]"
 specs: "[short commit SHA, or uncommitted]"
+review: "[ID or URL of the change request or pull request, or null without the quotes]"
 scenarios:
   - id: 1
     name: "[Short name of the behavior]"
@@ -182,7 +183,7 @@ The front matter is the contract other tools read, such as goodflows change requ
 - The set starts with a line that holds only `---`, and the front matter ends at the next such line. Nothing comes before it.
 - Write the keys in the order the shape shows. Quote every string value with double quotes, and escape a double quote inside one as `\"`. Numbers, `true`, `null`, and the lowercase values below stay bare.
 - `format` is `qa-scenarios/1`. A change to the fields that would break a reader gets a new number.
-- `source` is `intent`. `change` is the change id. `specs` is the short commit SHA of the change directory, or `uncommitted`. These last two are intent only.
+- `source` is `intent`. `change` is the change id. `specs` is the short commit SHA of the change directory, or `uncommitted`. These two are intent only. `review` is optional and names the change under review on any Git host: a goodflows change request ID, a GitLab merge request URL, or a GitHub pull request URL, as the user or the host gives it. Before implementation there is usually none, so use `null`.
 - `scenarios` has one entry per scenario in the body, in the same order. `id` is the scenario's number, `name` is its heading without the number and priority, and `priority` is `must`, `should`, or `could`.
 - `covers` is intent only. Each entry names a spec scenario with `capability`, `requirement`, and `scenario`, copied exactly from the delta's `### Requirement:` and `#### Scenario:` headings. An implied case has `capability`, `requirement`, and `implied: true`, with no `scenario`. Behavior from the proposal alone is one entry, `proposal: true`.
 - `coverage` is intent only. It has one entry for every spec scenario in the change, and one for each REMOVED requirement with `scenario: null`. `delta` is `added`, `modified`, `removed`, or `renamed`. `qa` lists the scenario ids that check it. An entry with no observable check has `qa: []` and a `no_check` reason.

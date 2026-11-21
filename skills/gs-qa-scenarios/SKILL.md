@@ -106,7 +106,7 @@ source: diff
 branch: "[branch]"
 base: "[base]"
 revision: "[short commit SHA of <rev>]"
-pr: "[pull request URL, or null without the quotes]"
+review: "[ID or URL of the change request or pull request, or null without the quotes]"
 scenarios:
   - id: 1
     name: "[Short name of the behavior]"
@@ -165,12 +165,12 @@ Why: [One sentence. What a user hits if this is wrong.]
 
 ### Front matter
 
-The front matter is the contract other tools read, such as goodflows change requests and the run mode in step 7. The `gs-openspec-qa-scenarios` skill writes the same fields with `source: intent`, and adds `change`, `specs`, `covers`, and `coverage` in place of `branch`, `base`, `revision`, `pr`, and `regressions`. Keep the fields exactly as follows:
+The front matter is the contract other tools read, such as goodflows change requests and the run mode in step 7. The `gs-openspec-qa-scenarios` skill writes the same fields with `source: intent`, and adds `change`, `specs`, `covers`, and `coverage` in place of `branch`, `base`, `revision`, and `regressions`. Both write `review`. Keep the fields exactly as follows:
 
 - The set starts with a line that holds only `---`, and the front matter ends at the next such line. Nothing comes before it.
 - Write the keys in the order the shape shows. Quote every string value with double quotes, and escape a double quote inside one as `\"`. Numbers, `true`, `null`, and the lowercase values below stay bare.
 - `format` is `qa-scenarios/1`. A change to the fields that would break a reader gets a new number.
-- `source` is `diff`. `revision` is the short SHA of `<rev>`, with `+dirty` added when the output includes uncommitted changes. `pr` is the pull request URL, or `null`.
+- `source` is `diff`. `revision` is the short SHA of `<rev>`, with `+dirty` added when the output includes uncommitted changes. `review` is optional and names the change under review on any Git host: a goodflows change request ID, a GitLab merge request URL, or a GitHub pull request URL, as the user or the host gives it. Use `null` when there is none. Never put a branch name or a commit in it.
 - `scenarios` has one entry per scenario in the body, in the same order. `id` is the scenario's number, `name` is its heading without the number and priority, and `priority` is `must`, `should`, or `could`. A scenario you walked in step 6 adds `walked: true`.
 - `regressions` has one string per line under "Regression checks", or is `[]`.
 - The body says the same things for the tester. When you change one, change the other.
@@ -247,7 +247,7 @@ When you find no scenarios in any of these places, say so, and offer write and r
 
 Read the front matter first. In a file or the chat it opens the set. In a pull request comment it is the fenced block whose info string is `yaml qa-scenarios`. Its `source` says where the scenarios came from:
 
-- `diff`: the `branch`, `revision`, and `pr` fields name what the scenarios cover. A set saved before front matter existed is a diff set, and the line under its title names the branch or pull request.
+- `diff`: the `branch`, `revision`, and `review` fields name what the scenarios cover. A set written before `review` existed has a `pr` key with a pull request URL in its place, and you read it as `review`. When you record a run in such a set, rename the key to `review` and keep its value. A set saved before front matter existed is a diff set, and the line under its title names the branch or pull request.
 - `intent`: the `gs-openspec-qa-scenarios` skill wrote the set from the OpenSpec change in `change`. Run it against the branch or pull request the user names, or the current branch when they name none. A failed step means the implementation misses the requirement in that scenario's `covers`. Keep `covers`, `coverage`, and each `Covers:` line in the results.
 
 Find the revision to run against, `<rev>`, as step 1 does.

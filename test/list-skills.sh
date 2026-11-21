@@ -573,8 +573,13 @@ for required in (
 intent_keys = front_matter_keys(intent_skill, "intent")
 if intent_keys is None:
     sys.exit("gs-openspec-qa-scenarios SKILL.md has no qa-scenarios/1 front matter with source: intent before its # QA: heading")
-if diff_keys[:2] != ["branch", "base"] or intent_keys[:2] != ["change", "specs"]:
-    sys.exit(f"front matter identity keys changed: diff {diff_keys[:2]}, intent {intent_keys[:2]}")
+if diff_keys[:4] != ["branch", "base", "revision", "review"] or intent_keys[:3] != ["change", "specs", "review"]:
+    sys.exit(f"front matter identity keys changed: diff {diff_keys[:4]}, intent {intent_keys[:3]}")
+# review names the change under review on any Git host. Sets written before it carry pr, which run mode still reads.
+if "pr" in diff_keys or "pr" in intent_keys:
+    sys.exit("qa scenario front matter must use the host-neutral review key, not pr")
+if "has a `pr` key" not in qa_skill:
+    sys.exit("gs-qa-scenarios run mode must still read sets that carry pr")
 for shared in ("scenarios", "id", "name", "priority"):
     if shared not in diff_keys or shared not in intent_keys:
         sys.exit(f"front matter key {shared} missing from one of the qa scenario skills")
