@@ -1,6 +1,6 @@
 # gs-openspec-ship-tickets
 
-This skill ships the tickets that [`gs-openspec-to-tickets`](../gs-openspec-to-tickets) created. Each ticket runs through its own pipeline. The pipeline applies that ticket's scope, verifies it against the acceptance criteria, fixes every verify issue, runs gs-review, fixes every review issue, and commits. Tickets run in blocking order. When a change's last ticket lands, the change gets a full `openspec-verify-change`, fixes, a spec sync, and an archive. The run ends with one draft pull request that references every ticket shipped.
+This skill ships the tickets that [`gs-openspec-to-tickets`](../gs-openspec-to-tickets) created. Each ticket runs through its own pipeline. The pipeline applies that ticket's scope, verifies it against the acceptance criteria, fixes every verify issue, runs gs-review, fixes every review issue and removes the tests and comments the review lists, and commits. Tickets run in blocking order. When a change's last ticket lands, the change gets a full `openspec-verify-change`, fixes, a spec sync, and an archive. The run ends with one draft pull request that references every ticket shipped. When the project has a `verify-*` skill, the run then asks whether to run it, so you can see the change working in the real app.
 
 Default mode is serial. One ticket runs at a time in the current checkout, with one subagent per step. It follows [`gs-openspec-ship`](../gs-openspec-ship), and it runs once per ticket.
 
@@ -40,7 +40,7 @@ npx skills add /path/to/goodstack --skill gs-openspec-ship-tickets
 
 Add `-g` to install into your user skill directory instead of the current project.
 
-It needs `openspec-apply-change`, `openspec-verify-change`, `openspec-archive-change`, and `openspec-sync-specs` from OpenSpec, plus `gs-review`, `gs-git-commit`, and `gs-pull-request` from this repo. You also need the CLI or MCP for your tracker. Amp thread mode needs these skills installed in the project, because an orb sees only project skills.
+It needs `openspec-apply-change`, `openspec-verify-change`, `openspec-archive-change`, and `openspec-sync-specs` from OpenSpec, plus `gs-review`, `gs-git-commit`, and `gs-pull-request` from this repo. `gs-find-bad-tests` and `gs-find-bad-comments` are optional. With them installed, gs-review finds the tests and comments to remove more thoroughly. You also need the CLI or MCP for your tracker. Amp thread mode needs these skills installed in the project, because an orb sees only project skills.
 
 ## Usage
 

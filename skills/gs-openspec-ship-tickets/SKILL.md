@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # Ship OpenSpec tickets
 
-You are the orchestrator. You ship the **tickets** that `gs-openspec-to-tickets` published for one or more OpenSpec changes. Each ticket runs through the **ticket pipeline** below and lands as one commit on the **run branch** (the branch checked out when the run starts). When a change's last ticket lands, you close the change out: full verify, archive, commit. After the last ticket, you open one draft pull request.
+You are the orchestrator. You ship the **tickets** that `gs-openspec-to-tickets` published for one or more OpenSpec changes. Each ticket runs through the **ticket pipeline** below and lands as one commit on the **run branch** (the branch checked out when the run starts). When a change's last ticket lands, you close the change out: full verify, archive, commit. After the last ticket, you open one draft pull request. Last, when the project has a `verify-*` skill, you ask the user whether to run it.
 
 You do not rebase, implement, verify, review, archive, commit, or open the pull request yourself. Each of those is one subagent (or, in thread mode, one child). You schedule tickets, route recovery, and own every tracker write.
 
@@ -37,7 +37,7 @@ Do not create or switch branches or worktrees in default mode. Every step uses t
 
 Do this before the rebase.
 
-1. **Resolve skills.** Search the runtime's installed skills, project and user skill directories, then this repository's `skills/`. OpenSpec supplies `openspec-apply-change`, `openspec-verify-change`, `openspec-archive-change`, and `openspec-sync-specs`. This repo supplies `gs-review`, `gs-git-commit`, and `gs-pull-request`. Stop and name any skill you cannot find. Pass each subagent the resolved path.
+1. **Resolve skills.** Search the runtime's installed skills, project and user skill directories, then this repository's `skills/`. OpenSpec supplies `openspec-apply-change`, `openspec-verify-change`, `openspec-archive-change`, and `openspec-sync-specs`. This repo supplies `gs-review`, `gs-git-commit`, and `gs-pull-request`. Stop and name any skill you cannot find. Pass each subagent the resolved path. Also look for `gs-find-bad-tests` and `gs-find-bad-comments` from this repo, and pass the review subagent their paths when you find them. They are optional. `gs-review` uses each one when it is installed, and a short rule of its own without it, so do not stop when they are missing.
 2. **Resolve the tracker** from `openspec/changes/<change>/tickets.md` (its `Tracker:` line), then `AGENTS.md` / `CLAUDE.md` and the docs they point at. Read [tracker-ops.md](tracker-ops.md) for that tracker's commands. Stop when the tracker's CLI or MCP is unavailable.
 3. **Load tickets.** For every ticket in the run, fetch from the tracker: body, state, labels, and blockers. The tracker is the source of truth for whether a ticket is **done**; `tickets.md` maps tickets to changes, blockers, and covered scenarios. When the tracker body differs from what `gs-openspec-to-tickets` wrote, the tracker body wins.
 4. **Plan the order.** Drop done tickets. A `ready-for-human` ticket is never shipped; it stays an unfinished blocker for its dependents. The **frontier** is every open, non-human ticket whose blockers are all done or landed this run.
@@ -173,6 +173,8 @@ UNFIXED:
 
 Follow the `gs-review` skill on the uncommitted changes. Do not edit, commit, or create issues. If this subagent cannot spawn its own subagents, it uses that skill's sequential fallback and still returns the full report.
 
+Override: under Tests to remove and Comments to remove, list every row, with no cap, and leave out the line that counts the rows not listed. Step 5 removes every listed row, and it cannot remove a row the report leaves out.
+
 A report is `STATUS: done` even when its verdict is not `Ship`. Failure to produce the report after recovery is `STATUS: blocked`; do not invent a review.
 
 Paste the full gs-review report, then:
@@ -184,6 +186,24 @@ STATUS: done|blocked
 ### 5. Fix every review issue
 
 Same contract as step 3, for every numbered item under Findings, confirmed or plausible. Pass the gs-review report unchanged, with `Expected issue count: N`.
+
+The same subagent removes every row the report lists under Tests to remove and Comments to remove. These rows are removals, not issues, so they stay out of `ISSUES`. Count them and put `Expected removals: <T> tests, <C> comments` in the prompt. Zero rows is a successful no-op.
+
+- Delete each listed test. When it is the only test that exercises an acceptance criterion or a covered scenario, rewrite it to guard that criterion or scenario instead.
+- Delete each comment with a delete verdict. When the comment is a lint or type suppression, fix the code until the check it turned off passes.
+- For each comment with a reshape verdict, reshape the symbol it names with a rename, an extracted function, or a clearer structure, so the code no longer needs the comment. Then delete the comment. Reshape only code this ticket wrote. When a reshape would reach code outside the ticket, keep the comment and list it under `KEPT` with the reason.
+- Leave in place the tests the report counts as needing a rewrite or as unsure.
+- Do not run `gs-prune-tests` or `gs-no-comments`, even when the report suggests them. Each one scans past the listed rows.
+
+Deleting a test the report lists does not weaken a check under the recovery contract. A deleted or rewritten test changes the evidence ticket verification relied on, so get focused verification in step 2. A reshape is a substantive repair.
+
+```text
+REMOVED: <n> tests deleted, <n> tests rewritten, <n> comments deleted, <n> comments reshaped
+KEPT:
+- <comment> — <why>
+```
+
+Add these lines to the step 3 status block. `done` requires `REMOVED` and `KEPT` together to account for every expected removal.
 
 Get focused re-review in step 4 for substantive repairs and resolve new findings here. Repeat ticket verification through steps 2 and 3 when behavior changes. This subagent confirms required validation evidence, or runs missing validation, before advancing to commit, even when the review has zero issues.
 
@@ -248,8 +268,24 @@ Summarize in chat:
 - Per ticket: landed (with commit), blocked at which step and why, skipped behind which blocker, or waiting on a human
 - Per change: archived, or which tickets keep it open
 - Verify and review issues fixed, validation results, and any accepted unrelated failures
+- Tests and comments removed or reshaped, comments kept, and the tests the review left for a rewrite or marked unsure
 
 Do not paste the verify or gs-review reports again.
+
+## Offer the verify skill
+
+Do this after the Finish summary, when the run made at least one commit and did not stop with unfinished edits. Worker mode skips it.
+
+Look for a `verify-*` skill in every project skills directory the repo has, such as `.cursor/skills/`, `.claude/skills/`, and `.agents/skills/`. When there is none, end the run without mentioning it.
+
+When there is one, end your final message by asking whether to run it against what this run shipped, so the user can see the change working in the real app. When there are several, name each one and ask which to run. Do not run it before the user answers.
+
+When the user says yes, start one subagent on the run branch:
+
+- When `gs-qa-scenarios` is installed, the subagent follows it in write and run mode for the run branch, with the chosen verify skill. It writes scenarios for the shipped tickets and drives each one through the verify skill.
+- Without it, the subagent reads the verify skill's `SKILL.md` and its feature map, then drives the features the shipped tickets touch through its Launch, Drive, Evidence, and Cleanup sections.
+
+The subagent changes no code, commits nothing, and writes nothing to the tracker. Evidence stays under `.verify/`, which is never committed. Report each result as passed, failed, or not run, with its evidence path. Do not fix a failure. Report it and leave the next step to the user.
 
 ## Worker mode
 
@@ -258,7 +294,7 @@ Do not paste the verify or gs-review reports again.
 - Check out `<base>` from `origin`, then create `<base>--<ticket-slug>` from it. Skip the rebase.
 - Read the ticket brief from the prompt; do not refetch or write the tracker.
 - Run the six pipeline steps, one subagent each, under the recovery contract.
-- On `done`, push `<base>--<ticket-slug>` to `origin`. Skip close-out, the pull request, and every tracker write.
+- On `done`, push `<base>--<ticket-slug>` to `origin`. Skip close-out, the pull request, the verify offer, and every tracker write.
 
 End the final message with:
 

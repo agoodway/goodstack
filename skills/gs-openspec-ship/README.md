@@ -1,6 +1,6 @@
 # gs-openspec-ship
 
-This skill ships one or more OpenSpec changes through a fixed pipeline. It rebases the current branch onto the remote's default branch, then applies, verifies, fixes every verify issue, runs gs-review, fixes every review issue, archives after syncing specs, and commits. After the named changes finish, it opens one draft pull request for the commits from that run.
+This skill ships one or more OpenSpec changes through a fixed pipeline. It rebases the current branch onto the remote's default branch, then applies, verifies, fixes every verify issue, runs gs-review, fixes every review issue and removes the tests and comments the review lists, archives after syncing specs, and commits. After the named changes finish, it opens one draft pull request for the commits from that run. When the project has a `verify-*` skill, the run ends by asking whether to run it, so you can see the change working in the real app.
 
 ## Use cases
 
@@ -34,7 +34,7 @@ npx skills add /path/to/goodstack --skill gs-openspec-ship
 
 Add `-g` to install into your user skill directory instead of the current project.
 
-It needs `openspec-apply-change`, `openspec-verify-change`, `openspec-archive-change`, and `openspec-sync-specs` from OpenSpec, plus `gs-review`, `gs-git-commit`, and `gs-pull-request` from this repo.
+It needs `openspec-apply-change`, `openspec-verify-change`, `openspec-archive-change`, and `openspec-sync-specs` from OpenSpec, plus `gs-review`, `gs-git-commit`, and `gs-pull-request` from this repo. `gs-find-bad-tests` and `gs-find-bad-comments` are optional. With them installed, gs-review finds the tests and comments to remove more thoroughly.
 
 ## Usage
 
