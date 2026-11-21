@@ -44,7 +44,7 @@ Read enough of the diff to say what changed, who it affects, and the facts the c
 
 ## Where the file goes
 
-Write the file to `.goodflows/change-requests/<branch>.md` at the repository root, where `<branch>` is the branch name exactly as `git branch --show-current` prints it, so each `/` in it becomes a directory. Git never lets branches `a` and `a/b` exist together, so no two branches share a file. On a detached HEAD, use `.goodflows/change-requests/.detached/<short SHA>.md`. No branch name can start a component with `.`, so that path never collides with a branch. Create the directories when they are missing.
+Write the file to `.goodflows/change-requests/<branch>/cr.md` at the repository root, where `<branch>` is the branch name exactly as `git branch --show-current` prints it, so each `/` in it becomes a directory. Every branch gets its own directory, and the file inside it always has the same name. Git never lets branches `a` and `a/b` exist together, so no branch's file can sit where another branch needs a directory, even when a deleted branch left its file behind. On a detached HEAD, use `.goodflows/change-requests/.detached/<short SHA>/cr.md`. No branch name can start a component with `.`, so that path never collides with a branch. Create the directories when they are missing.
 
 The file must stay out of the commits it describes. Committing it would make a new commit, so the `head` it names would be stale the moment it landed. Keep it untracked without editing a tracked file: run `git rev-parse --git-path info/exclude`, and add the line `.goodflows/` to that file when it is not there. Do not edit `.gitignore`, because that dirties the tree the claims describe.
 

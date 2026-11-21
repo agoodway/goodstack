@@ -491,7 +491,7 @@ for required in (
     "## What changed", "## How it works", "## Evidence", "## What could break", "## How to check",
     "`stated`, `pointed`, `walked`, or `ran`", "`one_way` or `two_way`", "Do not invent output.",
     "A run built from a dirty working tree tested code that no commit holds",
-    ".goodflows/change-requests/<branch>.md", "info/exclude", "git patch-id --verbatim", "not `--stable`", ".detached/<short SHA>.md", "rewrite only `head`",
+    ".goodflows/change-requests/<branch>/cr.md", "info/exclude", "git patch-id --verbatim", "not `--stable`", ".detached/<short SHA>/cr.md", "rewrite only `head`",
     "do not push, do not open a pull request, and do not call a host API",
     "Read `--approved` from the request's prose.",
     "command -v goodflows",
