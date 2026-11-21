@@ -585,7 +585,10 @@ def front_matter_keys(text, source):
 diff_keys = front_matter_keys(qa_skill, "diff")
 if diff_keys is None:
     sys.exit("gs-qa-scenarios SKILL.md has no qa-scenarios/2 front matter with source: diff before its # QA: heading")
-for required in ("`source: intent`", "info string is `yaml qa-scenarios`", "`failed_step`", "`not_run`", "`evidence`", "run:\n  folder:"):
+# Goodflows binds approval to the set's bytes and rejects sets with run results, so a run never edits the set.
+if "run:\n  folder:" in qa_skill or "record the run in it" in qa_skill:
+    sys.exit("gs-qa-scenarios run mode must not write results into the set")
+for required in ("`source: intent`", "info string is `yaml qa-scenarios`", "Never edit the set file.", "as `scenarios.md`", "`run.md` is the only place a run writes its results.", "Add no `run` key, and no `result`, `failed_step`, `evidence`, or `reason`"):
     if required not in qa_skill:
         sys.exit(f"gs-qa-scenarios SKILL.md missing {required}")
 intent_skill = (root / "skills" / "gs-openspec-qa-scenarios" / "SKILL.md").read_text()

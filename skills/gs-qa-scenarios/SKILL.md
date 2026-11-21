@@ -247,10 +247,12 @@ When you find no scenarios in any of these places, say so, and offer write and r
 
 Read the front matter first. In a file or the chat it opens the set. In a pull request comment it is the fenced block whose info string is `yaml qa-scenarios`. Its `source` says where the scenarios came from:
 
-- `diff`: the `branch`, `revision`, and `review` fields name what the scenarios cover. A set written before `review` existed has a `pr` key with a pull request URL in its place, and you read it as `review`. When you record a run in such a set, rename the key to `review` and keep its value. A set saved before front matter existed is a diff set, and the line under its title names the branch or pull request.
+- `diff`: the `branch`, `revision`, and `review` fields name what the scenarios cover. A set written before `review` existed has a `pr` key with a pull request URL in its place, and you read it as `review`. A set saved before front matter existed is a diff set, and the line under its title names the branch or pull request.
 - `intent`: the `gs-openspec-qa-scenarios` skill wrote the set from the OpenSpec change in `change`. Run it against the branch or pull request the user names, or the current branch when they name none. A failed step means the implementation misses the requirement in that scenario's `covers`. Keep `covers`, `coverage`, and each `Covers:` line in the results. In a `qa-scenarios/2` set, each `coverage` row has `capability`, `requirement`, `scenario`, `status` (`covered` or `no_check`), `scenarios`, and an optional `reason`. A `no_check` row has no scenario to run, so it gets no result. A `qa-scenarios/1` set has `delta`, `qa`, and `no_check` on its rows instead. Read it the same way, and keep its rows and its format number as written.
 
 Find the revision to run against, `<rev>`, as step 1 does.
+
+Never edit the set file. Goodflows ties a review's approval to the set's exact bytes, and rejects a set that holds run results, so a set must stay as it was written. A run records its results only in the run folder, as Results says. A `qa-scenarios/1` set runs here, but goodflows accepts only `qa-scenarios/2`, so it cannot be uploaded.
 
 ### Check the revision
 
@@ -258,7 +260,7 @@ Confirm that the app you drive is built from `<rev>`, as step 6 requires. Compar
 
 ### Drive
 
-1. Pick the run ID the verify skill's Evidence section uses, such as `20261119T143000Z-<short-sha>`, and create `.verify/<app>/<run-id>/`. Follow the verify skill's Evidence section, which keeps `.verify/` in `.gitignore`. Never stage or commit anything under `.verify/`.
+1. Pick the run ID the verify skill's Evidence section uses, such as `20261119T143000Z-<short-sha>`, and create `.verify/<app>/<run-id>/`. Save the set you are about to run there as `scenarios.md`: copy a file byte for byte with `cp`, and write a set from a comment or the chat as you took it. Follow the verify skill's Evidence section, which keeps `.verify/` in `.gitignore`. Never stage or commit anything under `.verify/`.
 2. Launch the app as the verify skill's Launch section says, with the Setup section's accounts, data, and flags.
 3. Run Doctor before the first drive. When Doctor fails, run Cleanup, report the failure, and mark every scenario not run.
 4. Drive each scenario in order, one step at a time, through the verify skill's Drive section. Compare what you observe with each Expect line. Scenarios saved in the older shape have one Expected line for the whole scenario, and you read it the same way. Capture the evidence the Evidence section asks for into the run folder.
@@ -277,7 +279,7 @@ Give each scenario one result:
 
 Each passed or failed result names its evidence files under `.verify/<app>/<run-id>/`.
 
-Write `run.md` in the shape the verify skill's Evidence section gives, with the full commit SHA, the branch, a clean or dirty working tree, the time, and the outcome. Add a line that says the run came from `gs-qa-scenarios`, with the scenario source: the branch, the pull request, or the saved file. For an intent set, also name the OpenSpec change. Then list each scenario with its number, name, priority, result, and evidence files, so the `gs-pull-request` skill can pick the run up.
+Write `run.md` in the shape the verify skill's Evidence section gives, with the full commit SHA, the branch, a clean or dirty working tree, the time, and the outcome. Add a line that says the run came from `gs-qa-scenarios`, with the scenario source: the branch, the pull request, or the saved file. For an intent set, also name the OpenSpec change. When the set came from a file, add its path and the SHA-256 that `sha256sum` or `shasum -a 256` prints for it. Then list each scenario with its number, name, priority, result, the failed step or the reason it did not run, and its evidence files, so the `gs-pull-request` skill and the goodflows CLI can pick the run up. `run.md` is the only place a run writes its results.
 
 Print the results in chat in the same shape as the scenarios. Keep each scenario as written. The checklist carries the results, so a reader sees the whole run without scrolling. Tick a box only for a passed scenario, and end every line with its result:
 
@@ -304,16 +306,7 @@ Leave a blank line before and after each alert, and keep everything else, such a
 
 Under the Checklist heading, give the run folder, the commit the app was built from, and the count of passed, failed, and not run scenarios. At the end, list any feature map drift the run found.
 
-Keep the set's front matter as it was, and record the run in it, so a tool reads the results without parsing the alerts. Add `result` to each scenario entry: `passed`, `failed`, or `not_run`. A failed entry adds `failed_step` with the step number, and a not run entry adds `reason`. A passed or failed entry adds `evidence`, a list of its file paths under `.verify/<app>/<run-id>/`. Then add this block after the last key:
-
-```yaml
-run:
-  folder: ".verify/[app]/[run-id]/"
-  commit: "[full SHA the app was built from]"
-  passed: 2
-  failed: 1
-  not_run: 0
-```
+Keep the set's front matter exactly as it was. Add no `run` key, and no `result`, `failed_step`, `evidence`, or `reason` to any scenario entry, in the printed results or anywhere else. Goodflows rejects a set that carries them, because run results belong in a verify run, which the goodflows CLI builds from `.verify/<app>/<run-id>/`.
 
 ## Sharing
 
@@ -326,7 +319,7 @@ When the user asks to post them on the pull request, move the front matter into 
 A posted run carries its proof, so a reviewer sees each result without the run folder. Build the comment from the results in chat:
 
 - Keep the line under the Checklist heading with the run folder, the commit the app was built from, and the counts. Keep the line that names both commits when they differed.
-- Start the body at the `# QA:` heading. Put the front matter, with its results and without its `---` lines, at the end of the body in a fenced block whose info string is `yaml qa-scenarios`, inside `<details><summary>Scenario data</summary>` and `</details>`. A comment cannot start with front matter, because GitHub renders it as a heading, and the `gs-pr-comment` skill puts its attribution first.
+- Start the body at the `# QA:` heading. Put the front matter, exactly as the set has it and without its `---` lines, at the end of the body in a fenced block whose info string is `yaml qa-scenarios`, inside `<details><summary>Scenario data</summary>` and `</details>`. A comment cannot start with front matter, because GitHub renders it as a heading, and the `gs-pr-comment` skill puts its attribution first.
 - Under each passed or failed scenario's result alert, put the screenshots and recordings that prove it, as Markdown images with their paths under `.verify/<app>/<run-id>/`. Give each image alt text that says what it shows, such as `![Scenario 2, step 3: the banner reads "Saved"](.verify/web/20261119T143000Z-a1b2c3d/03-cancel.png)`. For a failed scenario, put the image of the failed step first.
 - Put short text proof, such as a response body or a terminal transcript, in a fenced block under the result. Cut it to the lines that prove the result. Leave out logs, ARIA snapshots, and other long files. The run folder keeps them.
 - Look at each image before you attach it, and leave out one that shows a secret, a token, or a real person's data.
