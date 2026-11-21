@@ -634,6 +634,16 @@ if not coverage_rows:
 for row in coverage_rows:
     if row[:5] != ["capability", "requirement", "scenario", "status", "scenarios"] or not set(row) <= {"capability", "requirement", "scenario", "status", "scenarios", "reason"}:
         sys.exit(f"gs-openspec-qa-scenarios coverage row keys changed: {row}")
+# Goodflows accepts only {capability, requirement, scenario} or {capability, requirement, implied: true} in covers, 1 to 100 of them.
+# It refuses unknown scenario keys and a revision that is not lowercase hex.
+for banned in ("proposal: true", "covers: []"):
+    if banned in intent_skill:
+        sys.exit(f"gs-openspec-qa-scenarios SKILL.md writes {banned}, which goodflows refuses")
+for banned in ("walked: true", "+dirty"):
+    if banned in qa_skill:
+        sys.exit(f"gs-qa-scenarios SKILL.md writes {banned}, which goodflows refuses")
+if "has no `covers` key, never an empty list" not in intent_skill:
+    sys.exit("gs-openspec-qa-scenarios SKILL.md must say a proposal-only scenario has no covers key")
 for required in ("`covered` or `no_check`", "Each of the three is 1 to 200 characters"):
     if required not in intent_skill:
         sys.exit(f"gs-openspec-qa-scenarios SKILL.md missing {required}")
