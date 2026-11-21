@@ -37,7 +37,7 @@ Amp shows the model only each skill's `name` and `description`, has no slash com
 - Reference skills, never another skill's files. Each skill installs into its own directory.
 - A skill that other skills call stays model-invocable. `disable-model-invocation: true` is for skills only the user starts. When a user-only skill must run inside another skill at the user's request, the caller finds the installed `SKILL.md` and reads it, as `gs-openspec-ship` and `gs-openspec-qa-scenarios` do with `gs-qa-scenarios`.
 - The recovery contract and the "Fix every verify issue" step are byte-identical in `gs-openspec-ship` and `gs-openspec-ship-tickets`. Edit both together.
-- `gs-qa-scenarios` and `gs-openspec-qa-scenarios` write the same `qa-scenarios/1` front matter, which goodflows parses. Edit its shared fields in both together, and give a breaking change a new format number.
+- `gs-qa-scenarios` and `gs-openspec-qa-scenarios` write the same `qa-scenarios/2` front matter, which goodflows parses. Edit its shared fields in both together, and give a breaking change a new format number.
 
 ## Skills derived from another repo
 
