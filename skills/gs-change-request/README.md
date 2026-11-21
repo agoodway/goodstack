@@ -4,7 +4,7 @@ This skill writes the description file for a goodflows change request, which rep
 
 The file opens with `change-claims/1` YAML front matter that goodflows parses. The front matter names the commit the claims describe, the door, the reach, each fact the change depends on with how far it was proven, the open risks, the questions, and the decision hunks copied from the real diff.
 
-The skill only writes the file. It never pushes, opens a pull request, or calls a host API. Uploading the file is the goodflows CLI's job. It writes to `.goodflows/change-requests/<branch>.md` and keeps that directory out of git through `.git/info/exclude`, so the file never changes the commit it describes. When the head moves and the change does not, such as after a clean rebase, it rewrites only `head`.
+By default the skill only writes the file. With `--approved`, it also hands the file to the goodflows CLI, which creates the change request, or updates it when the file already holds a change request number. The skill reads the CLI's own help for the command, and stops with the file kept when the CLI is missing. It never pushes, opens a pull request, or calls a host API itself. It writes to `.goodflows/change-requests/<branch>.md` and keeps that directory out of git through `.git/info/exclude`, so the file never changes the commit it describes. When the head moves and the change does not, such as after a clean rebase, it rewrites only `head`.
 
 This skill is original to this repo. It calls other skills from this repo when they are installed, and it follows a short set of fallback rules when they are not.
 
@@ -12,7 +12,7 @@ This skill is original to this repo. It calls other skills from this repo when t
 
 - Your branch is committed and you want a change request description a reviewer can follow without reading the diff first.
 - You rebased a branch whose change request already exists, and the claims need to name the new head.
-- You want the facts a change depends on, its open risks, and the decisions a reviewer should judge in a form a tool can read.
+- You already approved the claims, and you want the change request created or updated through the goodflows CLI in the same step.
 
 ## Install
 
@@ -47,9 +47,12 @@ Commit first. A dirty working tree stops the skill.
 
 ```
 /gs-change-request
+/gs-change-request --approved
 ```
 
-The skill prints the path of the file, the commit it describes, and whether it wrote new claims or only rewrote `head`.
+The skill prints the path of the file, the commit it describes, and whether it wrote new claims or only rewrote `head`. A request that includes `--approved`, or plainly says the change request is already approved, then creates or updates the change request through the goodflows CLI and prints its number.
+
+With `--approved`, the `goodflows` CLI must be installed.
 
 ## Source
 

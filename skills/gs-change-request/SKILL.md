@@ -1,6 +1,6 @@
 ---
 name: gs-change-request
-description: "Write the description file for a goodflows change request, the replacement for a pull request on any Git host, with change-claims/1 YAML front matter that goodflows parses and a body a reviewer can follow without reading the diff first. It writes the file only, and never pushes, opens a pull request, or calls a host API. Use when the user asks to write or update a change request, a CR description, or the change claims for a branch, asks to describe a branch for goodflows, runs /gs-change-request, or names gs-change-request."
+description: "Write the description file for a goodflows change request, the replacement for a pull request on any Git host, with change-claims/1 YAML front matter that goodflows parses and a body a reviewer can follow without reading the diff first. By default it writes the file only. With --approved it also creates or updates the change request through the goodflows CLI. It never pushes, opens a pull request, or calls a host API itself. Use when the user asks to write, create, or update a change request, a CR description, or the change claims for a branch, asks to describe a branch for goodflows, says the change request is already approved, runs /gs-change-request or /gs-change-request --approved, or names gs-change-request."
 ---
 
 # Change request
@@ -9,7 +9,7 @@ Write the description of a goodflows change request for the current branch. A ch
 
 The file has two parts. YAML front matter holds the claims goodflows parses: the commit they describe, the door, the reach, the facts the change depends on, the open risks, the questions for the reviewer, and the hunks the reviewer should judge. The Markdown body says the same things for a person.
 
-This skill only writes the file. Do not push, do not open a pull request, and do not call a host API through `gh`, `glab`, `curl`, or anything else. Uploading the file is the goodflows CLI's job. Do not commit, and do not stage the file.
+By default this skill only writes the file. With `--approved`, it then hands the file to the goodflows CLI, which creates or updates the change request. See [Create it](#create-it). Either way, do not push, do not open a pull request, and do not call a host API through `gh`, `glab`, `curl`, or anything else yourself. Whatever reaches the host goes through the goodflows CLI. Do not commit, and do not stage the file.
 
 ## Before writing
 
@@ -201,6 +201,19 @@ Under "Questions for the reviewer", give each question with its number, its opti
 
 Before the file is final, read it again, including quoted code and command output. Remove secrets, tokens, absolute local paths, and private details. Check that the front matter parses as YAML, that `head` is the current HEAD, and that every `hunk` appears in the diff as written.
 
+## Create it
+
+Read `--approved` from the request's prose. When the request includes `--approved`, or plainly says the change request is already approved, create or update the change request after the file is final. Without it, skip this section and go to Finish.
+
+1. Run `command -v goodflows`. When it prints nothing, the CLI is not installed. Keep the file, say so, and go to Finish.
+2. Run `goodflows --help`, and the help of the change request command it lists, such as `goodflows cr --help`. Find the command that creates a change request from a description file, and the one that updates an existing change request. Use only commands and flags the help prints. Do not guess a command. When the help names none that fits, keep the file, quote the help's command list, and go to Finish.
+3. When `cr` is `null`, run the create command with the file's path. When `cr` holds a number, run the update command for that number instead, so a second change request is never made.
+4. Read the file again. When the CLI wrote the change request number into `cr`, keep it. When `cr` is still `null` and the CLI printed the number, write that number into `cr` yourself, and change nothing else.
+
+The CLI may push the branch or call the host as part of its own work. That is its job, not this skill's. Do not run a push or a host command to help it.
+
+When a goodflows command fails, quote the command and its error. Read the file again before you retry. When `cr` now holds a number, the change request was created, so retry with the update command, not the create command. Do not retry the same failing command unchanged.
+
 ## Finish
 
-Print the path of the file, the `head` it describes, and whether you wrote new claims or only rewrote `head`. When `cr` is `null`, say that the goodflows CLI writes it into the file when it creates the change request. Do not upload the file, and do not offer to.
+Print the path of the file, the `head` it describes, and whether you wrote new claims or only rewrote `head`. With `--approved`, also print the change request number and any URL the CLI printed, or why the change request was not created. Without `--approved`, say that `/gs-change-request --approved` creates or updates the change request through the goodflows CLI, and do not run it. When `cr` is still `null`, say that the goodflows CLI writes it into the file when it creates the change request.

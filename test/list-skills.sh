@@ -492,7 +492,11 @@ for required in (
     "`stated`, `pointed`, `walked`, or `ran`", "`one_way` or `two_way`", "Do not invent output.",
     "A run built from a dirty working tree tested code that no commit holds",
     ".goodflows/change-requests/<branch>.md", "info/exclude", "git patch-id --stable", "rewrite only `head`",
-    "Do not push, do not open a pull request, and do not call a host API",
+    "do not push, do not open a pull request, and do not call a host API",
+    "Read `--approved` from the request's prose.",
+    "command -v goodflows",
+    "Do not guess a command.",
+    "run the update command for that number instead",
 ):
     if required not in cr_skill:
         sys.exit(f"gs-change-request SKILL.md missing {required}")
