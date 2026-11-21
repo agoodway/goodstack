@@ -93,7 +93,7 @@ for required in (".env", "node_modules/", "credentials.", ".gitignore", "Do not 
         sys.exit(f"gs-git-commit SKILL.md missing {required}")
 
 pr_skill = (root / "skills" / "gs-pull-request" / "SKILL.md").read_text()
-for required in ("## What changed", "## How it works", "## Evidence", "## What could break", "## How to check", "gh pr create --draft", "/gs-git-commit"):
+for required in ("## What changed", "## How it works", "## Evidence", "## What could break", "## How to check", "Safe because: <the one fact", "gh pr create --draft", "/gs-git-commit"):
     if required not in pr_skill:
         sys.exit(f"gs-pull-request SKILL.md missing {required}")
 
@@ -475,16 +475,16 @@ if "argument-hint" in find_skill or "$ARGUMENTS" in find_skill:
 if "Change no file." not in find_skill:
     sys.exit("gs-find-bad-tests SKILL.md must stay read-only")
 
-# Goodflows parses the change-claims/1 front matter, so its keys and their order stay fixed.
+# Goodflows parses the change-claims/2 front matter, so its keys and their order stay fixed.
 cr_skill = (root / "skills" / "gs-change-request" / "SKILL.md").read_text()
-cr_block = re.search(r"(?ms)^```markdown\n---\n(format: change-claims/1\n.*?)^---\n\n# ", cr_skill)
+cr_block = re.search(r"(?ms)^```markdown\n---\n(format: change-claims/2\n.*?)^---\n\n# ", cr_skill)
 if cr_block is None:
-    sys.exit("gs-change-request SKILL.md has no change-claims/1 front matter before its # title")
+    sys.exit("gs-change-request SKILL.md has no change-claims/2 front matter before its # title")
 cr_top = re.findall(r"(?m)^([a-z_]+):", cr_block.group(1))
-if cr_top != ["format", "cr", "head", "door", "door_reason", "reach", "depends_on", "left_open", "questions", "decisions"]:
+if cr_top != ["format", "cr", "head", "door", "door_reason", "reach", "safe_because", "left_open", "questions", "decisions"]:
     sys.exit(f"gs-change-request front matter keys changed: {cr_top}")
 cr_nested = set(re.findall(r"(?m)^ +-? *([a-z_]+):", cr_block.group(1)))
-for key in ("fact", "location", "proof", "risk", "affected", "id", "text", "options", "recommendation", "path", "hunk", "note"):
+for key in ("fact", "location", "proof", "evidence", "covers", "capability", "requirement", "scenario", "risk", "affected", "id", "text", "options", "recommendation", "path", "hunk", "note"):
     if key not in cr_nested:
         sys.exit(f"gs-change-request front matter missing {key}")
 for required in (
@@ -495,6 +495,9 @@ for required in (
     "do not push, do not open a pull request, and do not call a host API",
     "Read `--approved` from the request's prose.",
     "command -v goodflows",
+    "Without evidence, a fact is `walked` at most.",
+    "Add one `safe_because` fact for each such entry",
+    "Safe because: <each fact",
     "Read `--commit` from the request's prose.",
     "Skip its last step, which asks whether to push, because this skill never pushes.",
     "`--commit` never creates the change request. Only `--approved` does.",

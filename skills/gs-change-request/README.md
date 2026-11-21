@@ -2,7 +2,7 @@
 
 This skill writes the description file for a goodflows change request, which replaces a pull request on any Git host. The body follows `gs-pull-request`: it is written for a reader who did not make the change, says what changed, shows the smallest picture of how it works, records the evidence, and names what could break. It adds the questions the reviewer must answer and the few hunks the reviewer should judge.
 
-The file opens with `change-claims/1` YAML front matter that goodflows parses. The front matter names the commit the claims describe, the door, the reach, each fact the change depends on with how far it was proven, the open risks, the questions, and the decision hunks copied from the real diff.
+The file opens with `change-claims/2` YAML front matter that goodflows parses. The front matter names the commit the claims describe, the door, the reach, each fact the change is safe because of, with how far it was proven and the evidence that proves it, the open risks, the questions, and the decision hunks copied from the real diff.
 
 By default the skill only writes the file. With `--approved`, it also hands the file to the goodflows CLI, which creates the change request, or updates it when the file already holds a change request number. The skill reads the CLI's own help for the command, and stops with the file kept when the CLI is missing. It never pushes, opens a pull request, or calls a host API itself.
 
@@ -12,7 +12,7 @@ This skill is original to this repo. It calls other skills from this repo when t
 
 ## Use cases
 
-- Your branch is committed and you want a change request description a reviewer can follow without reading the diff first.
+- Your branch is committed and you want a change request description a reviewer can follow without reading the diff first, with each claim tied to its evidence and, for an OpenSpec change, to the requirement it covers.
 - You rebased a branch whose change request already exists, and the claims need to name the new head.
 - You already approved the claims, and you want the change request created or updated through the goodflows CLI in the same step.
 

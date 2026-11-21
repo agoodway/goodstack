@@ -35,7 +35,7 @@ The base is the remote's default branch. The `symbolic-ref` call prints it as `o
 
 Read `GLOSSARY.md` when the repo has one, and use those names in the description.
 
-Read enough of the diff to say what changed, who it affects, and the one fact the change depends on. Cite a real `file:line`. A search that finds no caller is still an answer. Do not invent a caller, a test result, or an API.
+Read enough of the diff to say what changed, who it affects, and the one fact that makes the change safe. Cite a real `file:line`. A search that finds no caller is still an answer. Do not invent a caller, a test result, or an API.
 
 ## Description
 
@@ -62,7 +62,7 @@ Door: <one-way or two-way, and why a revert is or is not enough>
 
 Reach: <who or what is hit if this is wrong>
 
-Depends on: <the one fact, file:line, and whether it was proven>
+Safe because: <the one fact, file:line, and whether it was proven>
 
 Left open: <each remaining risk, or "None found.">
 
@@ -114,7 +114,7 @@ Never commit, stage, or push evidence files. They stay in `.verify/`, which the 
 
 - Door. One-way when merge cannot be walked back, such as a destructive migration, sent mail or money, a published API, or deleted data. Two-way when a revert is enough.
 - Reach. Name the callers, the data, or the people affected if the change is wrong.
-- Depends on. State the one fact that makes the change safe, with `file:line`. Say how far you proved it, on the scale in the `gs-blast-radius` skill: you only stated it, pointed at the line, walked a failure that cannot happen, or ran the code. Write `unproven` when you did not run it.
+- Safe because. State the one fact that makes the change safe, with `file:line`. Say how far you proved it, on the scale in the `gs-blast-radius` skill: you only stated it, pointed at the line, walked a failure that cannot happen, or ran the code. Write `unproven` when you did not run it.
 - Left open. Each remaining risk says how it breaks, the `file:line`, and who is affected. Write `None found.` when none remain.
 
 ### How to check

@@ -45,7 +45,7 @@ Work from the diff. The author's description is a claim about the change, and th
 
 - What a user, an operator, or the system does differently after merge.
 - Where the change starts, and the path it takes through the code.
-- The one fact the change depends on to be safe.
+- The one fact that makes the change safe.
 - Where the description and the diff disagree. A change the description does not mention is worth a line of its own.
 
 ## 3. Explain
@@ -76,7 +76,7 @@ Door: [one-way or two-way, and why a revert is or is not enough]
 
 Reach: [who or what is hit if this is wrong]
 
-Depends on: [the one fact, with file:line]
+Safe because: [the one fact, with file:line]
 
 ## Evidence
 

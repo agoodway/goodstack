@@ -1,13 +1,13 @@
 ---
 name: gs-change-request
-description: "Write the description file for a goodflows change request, the replacement for a pull request on any Git host, with change-claims/1 YAML front matter that goodflows parses and a body a reviewer can follow without reading the diff first. By default it writes the file only. With --approved it also creates or updates the change request through the goodflows CLI. It never pushes, opens a pull request, or calls a host API itself. Use when the user asks to write, create, or update a change request, a CR description, or the change claims for a branch, asks to describe a branch for goodflows, says the change request is already approved, asks to commit and write or create a change request, runs /gs-change-request, /gs-change-request --approved, or /gs-change-request --commit, or names gs-change-request."
+description: "Write the description file for a goodflows change request, the replacement for a pull request on any Git host, with change-claims/2 YAML front matter that goodflows parses and a body a reviewer can follow without reading the diff first. By default it writes the file only. With --approved it also creates or updates the change request through the goodflows CLI. It never pushes, opens a pull request, or calls a host API itself. Use when the user asks to write, create, or update a change request, a CR description, or the change claims for a branch, asks to describe a branch for goodflows, says the change request is already approved, asks to commit and write or create a change request, runs /gs-change-request, /gs-change-request --approved, or /gs-change-request --commit, or names gs-change-request."
 ---
 
 # Change request
 
 Write the description of a goodflows change request for the current branch. A change request replaces a pull request and works on any Git host. Write it for a reader who did not make the change. That reader may be another engineer, a reviewer, or a teammate who will operate the result.
 
-The file has two parts. YAML front matter holds the claims goodflows parses: the commit they describe, the door, the reach, the facts the change depends on, the open risks, the questions for the reviewer, and the hunks the reviewer should judge. The Markdown body says the same things for a person.
+The file has two parts. YAML front matter holds the claims goodflows parses: the commit they describe, the door, the reach, the facts the change is safe because of, the open risks, the questions for the reviewer, and the hunks the reviewer should judge. The Markdown body says the same things for a person.
 
 By default this skill only writes the file. With `--approved`, it then hands the file to the goodflows CLI, which creates or updates the change request. See [Create it](#create-it). Either way, do not push, do not open a pull request, and do not call a host API through `gh`, `glab`, `curl`, or anything else yourself. Whatever reaches the host goes through the goodflows CLI. Do not commit unless the request includes `--commit`, and never stage or commit the file itself.
 
@@ -40,7 +40,7 @@ The claims describe one commit, so the working tree must be clean. When `git sta
 
 Read `GLOSSARY.md` when the repo has one, and use those names in the description.
 
-Read enough of the diff to say what changed, who it affects, and the facts the change depends on. Cite a real `file:line`. A search that finds no caller is still an answer. Do not invent a caller, a test result, or an API.
+Read enough of the diff to say what changed, who it affects, and the facts that make the change safe. Cite a real `file:line`. A search that finds no caller is still an answer. Do not invent a caller, a test result, or an API.
 
 ## Where the file goes
 
@@ -55,7 +55,7 @@ Do not write the file into an OpenSpec change directory, even when the branch ha
 The claims are per head. When the file already exists, read its front matter first, and keep its `cr` value.
 
 - When the old `head` is the current HEAD, update the claims you can now prove better, and leave the rest.
-- When the head changed and the change did not, such as after a rebase with no conflicts, a reworded commit, or a squash, keep the body and every claim, and rewrite only `head`. The change is the same when `git diff <old-base>...<old-head> | git patch-id --verbatim` and `git diff origin/<base>...HEAD | git patch-id --verbatim` print the same ID, where `<old-base>` is `git merge-base origin/<base> <old-head>`. Use `--verbatim`, not `--stable`, which ignores whitespace and so misses a change inside a string or to indentation. When the old head is no longer in the repository, treat the change as changed. Even when the IDs match, check that each `decisions` hunk still appears in the new diff as written.
+- When the head changed and the change did not, such as after a rebase with no conflicts, a reworded commit, or a squash, keep the body and every claim, and rewrite only `head`. Keep each `evidence` entry too. The `run.md` it points to names the commit it was built from. The change is the same when `git diff <old-base>...<old-head> | git patch-id --verbatim` and `git diff origin/<base>...HEAD | git patch-id --verbatim` print the same ID, where `<old-base>` is `git merge-base origin/<base> <old-head>`. Use `--verbatim`, not `--stable`, which ignores whitespace and so misses a change inside a string or to indentation. When the old head is no longer in the repository, treat the change as changed. Even when the IDs match, check that each `decisions` hunk still appears in the new diff as written.
 - When the change itself changed, write every claim again for the new head. Copy nothing from the old file except `cr`, and recheck each fact and its proof.
 
 ## The file
@@ -64,16 +64,22 @@ Use this shape. Write the prose through the `gs-unslop` skill when it is install
 
 ```markdown
 ---
-format: change-claims/1
+format: change-claims/2
 cr: null
 head: "[full commit SHA of HEAD]"
 door: two_way
 door_reason: "[why a revert is or is not enough]"
 reach: "[who or what is hit if this is wrong]"
-depends_on:
+safe_because:
   - fact: "[a fact that makes the change safe]"
     location: "[path:line]"
     proof: ran
+    evidence:
+      - ".verify/[app]/[run-id]/run.md#[scenario id]"
+    covers:
+      capability: "[capability]"
+      requirement: "[Requirement]"
+      scenario: "[Scenario]"
 left_open:
   - risk: "[how it breaks]"
     location: "[path:line]"
@@ -118,7 +124,7 @@ Door: <one-way or two-way, and why a revert is or is not enough>
 
 Reach: <who or what is hit if this is wrong>
 
-Depends on: <each fact, file:line, and how far it was proven>
+Safe because: <each fact, file:line, and how far it was proven>
 
 Left open: <each remaining risk, or "None found.">
 
@@ -141,11 +147,13 @@ The front matter is the contract goodflows reads. Keep it exactly as follows:
 
 - The file starts with a line that holds only `---`, and the front matter ends at the next such line. Nothing comes before it.
 - Write the keys in the order the shape shows. Quote every string value with double quotes, and escape a double quote inside one as `\"`. The one exception is `hunk`, which is a literal block scalar, `|-`, so the diff lines keep their exact text. Numbers, `null`, and the lowercase values below stay bare.
-- `format` is `change-claims/1`. A change to the fields that would break a reader gets a new number.
+- `format` is `change-claims/2`. A change to the fields that would break a reader gets a new number. Version 2 renamed `depends_on` to `safe_because`, so the key is not read as a dependency on other change requests, and added `evidence` and `covers` to each fact.
 - `cr` is the change request number goodflows gave, as a bare integer. Before the change request exists it is `null`. The goodflows CLI writes the number into this field when it creates the change request. Take it from the existing file or from the user. Never guess it, and never ask a host for it.
 - `head` is the full SHA that `git rev-parse HEAD` prints.
 - `door` is `one_way` or `two_way`, and `door_reason` says why.
-- `depends_on` lists each fact the change is safe because of, with at least one entry. A trivial change still names one, such as "No code reads this file" with `proof: stated`. `location` is a real `file:line`. `proof` is how far you proved the fact, on the `gs-blast-radius` scale, from weakest to strongest: `stated`, `pointed`, `walked`, or `ran`. See What could break.
+- `safe_because` lists each fact the change is safe because of, with at least one entry. A trivial change still names one, such as "No code reads this file" with `proof: stated`. `location` is a real `file:line`. `proof` is how far you proved the fact, on the `gs-blast-radius` scale, from weakest to strongest: `stated`, `pointed`, `walked`, or `ran`. See What could break.
+- `evidence` is optional, and lists where the proof is, as paths from the repository root. An entry is a file in a verify run, such as `.verify/web/20261121T1200Z-b6524cb/03-cancel.png`, a QA run's `run.md` with `#` and the scenario id, such as `.verify/web/20261121T1200Z-b6524cb/run.md#3`, or a test as `file:line`. A `ran` fact names at least one entry, and every entry exists on disk. Without evidence, a fact is `walked` at most. Use a verify run only when the verify-run rule in Evidence says it applies.
+- `covers` is optional, and ties the fact to a spec scenario with `capability`, `requirement`, and `scenario`, copied exactly from the OpenSpec delta. See Spec scenarios no one can see.
 - `left_open` lists each remaining risk, or is `[]`.
 - `questions` lists what the reviewer must decide that you could not settle from the code, the specs, or the request, or is `[]`. `id` counts from 1. `options` has two or more entries. `recommendation` is one of the `options`, copied exactly.
 - `decisions` lists at most three hunks a reviewer should judge, or is `[]`. A hunk is a decision when it holds a tradeoff, a rejected alternative, a behavior that changes, or an edge case you resolved. Leave routine edits out. `id` counts from 1. `path` is the file's path from the repository root. `hunk` starts at its `@@` line and is copied from `git diff origin/<base>...HEAD -- <path>`, cut to the lines that carry the decision, with no line edited. `note` is one sentence on why it changed or what to check.
@@ -197,7 +205,13 @@ Never commit, stage, or push evidence files. They stay in `.verify/`, which the 
 
 - Door. One-way when merge cannot be walked back, such as a destructive migration, sent mail or money, a published API, or deleted data. Two-way when a revert is enough.
 - Reach. Name the callers, the data, or the people affected if the change is wrong.
-- Depends on. State each fact that makes the change safe, with `file:line`, and how far you proved it, on the scale in the `gs-blast-radius` skill. `stated` means you only said it. `pointed` means you pointed at the line. `walked` means you walked the failure step by step and showed it cannot happen. `ran` means you ran code that proves it. Give a fact the proof you reached, not the one you meant to reach. In the body, write `unproven` beside a fact you did not run.
+- Safe because. State each fact that makes the change safe, with `file:line`, and how far you proved it, on the scale in the `gs-blast-radius` skill. `stated` means you only said it. `pointed` means you pointed at the line. `walked` means you walked the failure step by step and showed it cannot happen. `ran` means you ran code that proves it. Give a fact the proof you reached, not the one you meant to reach. In the body, write `unproven` beside a fact you did not run, and name the evidence beside a fact you did.
+#### Spec scenarios no one can see
+
+When the branch implements an OpenSpec change, look for that change's intent QA set: `qa-scenarios.md` in the change directory, or the file the user names, with `source: intent` and the same `change` in its front matter. Each `coverage` entry with a `no_check` reason is spec behavior a tester cannot observe, so a QA run never proves it. Add one `safe_because` fact for each such entry, with `covers` set to that entry's capability, requirement, and scenario, and the proof you actually reached. When there is no intent set, skip this.
+
+When a QA run proves a fact, such as a passed scenario that shows a guest cannot reach an admin page, the fact is `ran` and its `evidence` points at that scenario in the run's `run.md`. A failed or not run scenario proves nothing.
+
 - Left open. Each remaining risk says how it breaks, the `file:line`, and who is affected. Write `None found.` when none remain.
 
 ### How to check
