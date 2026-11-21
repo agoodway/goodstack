@@ -93,7 +93,7 @@ for required in (".env", "node_modules/", "credentials.", ".gitignore", "Do not 
         sys.exit(f"gs-git-commit SKILL.md missing {required}")
 
 pr_skill = (root / "skills" / "gs-pull-request" / "SKILL.md").read_text()
-for required in ("## What changed", "## How it works", "## Evidence", "## What could break", "## How to check", "gh pr create --draft", "/gs-git-commit"):
+for required in ("## What changed", "## How it works", "## Evidence", "## What could break", "## How to check", "Safe because: <the one fact", "gh pr create --draft", "/gs-git-commit"):
     if required not in pr_skill:
         sys.exit(f"gs-pull-request SKILL.md missing {required}")
 
