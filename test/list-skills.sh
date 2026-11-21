@@ -642,6 +642,23 @@ if "A `qa-scenarios/1` set has `delta`, `qa`, and `no_check`" not in qa_skill:
 if "$ARGUMENTS" in intent_skill or "\u2014" in intent_skill:
     sys.exit("gs-openspec-qa-scenarios SKILL.md takes arguments in prose and has no em dashes")
 
+# The goodflows CLI parses run.md, so both skills carry the same verify-run-notes/1 block and rules.
+def run_notes(text):
+    match = re.search(r'(?ms)^```yaml\n---\nformat: "verify-run-notes/1"\n.*?^---\n```\n\n(?:- [^\n]*\n)+', text)
+    return match.group(0) if match else None
+qa_notes = run_notes(qa_skill)
+verify_notes = run_notes(create_verify)
+if qa_notes is None or verify_notes is None:
+    sys.exit("gs-qa-scenarios and gs-create-verification-skill must both give run.md verify-run-notes/1 front matter")
+if qa_notes != verify_notes:
+    sys.exit("the verify-run-notes/1 block differs between gs-qa-scenarios and gs-create-verification-skill")
+notes_top = re.findall(r"(?m)^([a-z_]+):", qa_notes)
+if notes_top != ["format", "set", "commit", "branch", "dirty", "changed_files", "started_at", "finished_at", "results", "features", "drift"]:
+    sys.exit(f"verify-run-notes/1 keys changed: {notes_top}")
+for key in ("path", "sha256", "id", "result", "failed_step", "reason", "evidence", "entry_point"):
+    if not re.search(rf"(?m)^ +-? *{key}:", qa_notes):
+        sys.exit(f"verify-run-notes/1 missing {key}")
+
 all_installed = {p.parent.name for p in (tmp / "all").rglob("SKILL.md")}
 if all_installed != expected_set:
     sys.exit(f"--skill '*' installed {sorted(all_installed)}, expected {expected}")
