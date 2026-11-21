@@ -12,9 +12,8 @@ This skill is original to this repo. It calls other skills from this repo when t
 
 ## Use cases
 
-- Your branch is committed and you want a change request description a reviewer can follow without reading the diff first.
+- Your branch is committed and you want a change request description a reviewer can follow without reading the diff first, with each claim tied to its evidence and, for an OpenSpec change, to the requirement it covers.
 - You rebased a branch whose change request already exists, and the claims need to name the new head.
-- Your branch implements an OpenSpec change, and the spec behavior no tester can see needs a stated claim, tied to its requirement, with its proof.
 - You already approved the claims, and you want the change request created or updated through the goodflows CLI in the same step.
 
 ## Install
