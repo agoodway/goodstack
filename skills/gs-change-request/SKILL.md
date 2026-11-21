@@ -44,7 +44,7 @@ Read enough of the diff to say what changed, who it affects, and the facts the c
 
 ## Where the file goes
 
-Write the file to `.goodflows/change-requests/<branch>.md` at the repository root, where `<branch>` is the branch name with each `/` replaced by `-`. On a detached HEAD, use `detached-<short SHA>`. Create the directories when they are missing.
+Write the file to `.goodflows/change-requests/<branch>.md` at the repository root, where `<branch>` is the branch name exactly as `git branch --show-current` prints it, so each `/` in it becomes a directory. Git never lets branches `a` and `a/b` exist together, so no two branches share a file. On a detached HEAD, use `.goodflows/change-requests/.detached/<short SHA>.md`. No branch name can start a component with `.`, so that path never collides with a branch. Create the directories when they are missing.
 
 The file must stay out of the commits it describes. Committing it would make a new commit, so the `head` it names would be stale the moment it landed. Keep it untracked without editing a tracked file: run `git rev-parse --git-path info/exclude`, and add the line `.goodflows/` to that file when it is not there. Do not edit `.gitignore`, because that dirties the tree the claims describe.
 
@@ -55,7 +55,7 @@ Do not write the file into an OpenSpec change directory, even when the branch ha
 The claims are per head. When the file already exists, read its front matter first, and keep its `cr` value.
 
 - When the old `head` is the current HEAD, update the claims you can now prove better, and leave the rest.
-- When the head changed and the change did not, such as after a rebase with no conflicts, a reworded commit, or a squash, keep the body and every claim, and rewrite only `head`. The change is the same when `git diff <old-base>...<old-head> | git patch-id --stable` and `git diff origin/<base>...HEAD | git patch-id --stable` print the same ID, where `<old-base>` is `git merge-base origin/<base> <old-head>`. When the old head is no longer in the repository, treat the change as changed.
+- When the head changed and the change did not, such as after a rebase with no conflicts, a reworded commit, or a squash, keep the body and every claim, and rewrite only `head`. The change is the same when `git diff <old-base>...<old-head> | git patch-id --verbatim` and `git diff origin/<base>...HEAD | git patch-id --verbatim` print the same ID, where `<old-base>` is `git merge-base origin/<base> <old-head>`. Use `--verbatim`, not `--stable`, which ignores whitespace and so misses a change inside a string or to indentation. When the old head is no longer in the repository, treat the change as changed. Even when the IDs match, check that each `decisions` hunk still appears in the new diff as written.
 - When the change itself changed, write every claim again for the new head. Copy nothing from the old file except `cr`, and recheck each fact and its proof.
 
 ## The file
