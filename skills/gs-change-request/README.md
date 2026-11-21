@@ -4,7 +4,9 @@ This skill writes the description file for a goodflows change request, which rep
 
 The file opens with `change-claims/1` YAML front matter that goodflows parses. The front matter names the commit the claims describe, the door, the reach, each fact the change depends on with how far it was proven, the open risks, the questions, and the decision hunks copied from the real diff.
 
-By default the skill only writes the file. With `--approved`, it also hands the file to the goodflows CLI, which creates the change request, or updates it when the file already holds a change request number. The skill reads the CLI's own help for the command, and stops with the file kept when the CLI is missing. It never pushes, opens a pull request, or calls a host API itself. It writes to `.goodflows/change-requests/<branch>.md` and keeps that directory out of git through `.git/info/exclude`, so the file never changes the commit it describes. When the head moves and the change does not, such as after a clean rebase, it rewrites only `head`.
+By default the skill only writes the file. With `--approved`, it also hands the file to the goodflows CLI, which creates the change request, or updates it when the file already holds a change request number. The skill reads the CLI's own help for the command, and stops with the file kept when the CLI is missing. It never pushes, opens a pull request, or calls a host API itself.
+
+It does not commit unless you pass `--commit`. Without the flag, a dirty tree stops the skill and points at `/gs-git-commit`, because the claims describe one commit. With it, the skill commits the changes first, through `gs-git-commit` when that skill is installed, and the claims describe the new commit. It writes to `.goodflows/change-requests/<branch>.md` and keeps that directory out of git through `.git/info/exclude`, so the file never changes the commit it describes. When the head moves and the change does not, such as after a clean rebase, it rewrites only `head`.
 
 This skill is original to this repo. It calls other skills from this repo when they are installed, and it follows a short set of fallback rules when they are not.
 
@@ -43,16 +45,20 @@ Add `-g` to install into your user skill directory instead of the current projec
 
 ## Usage
 
-Commit first. A dirty working tree stops the skill.
+Commit first, or pass `--commit`. Without the flag, a dirty working tree stops the skill.
 
 ```
 /gs-change-request
 /gs-change-request --approved
+/gs-change-request --commit
+/gs-change-request --commit --approved
 ```
 
 The skill prints the path of the file, the commit it describes, and whether it wrote new claims or only rewrote `head`. A request that includes `--approved`, or plainly says the change request is already approved, then creates or updates the change request through the goodflows CLI and prints its number.
 
-With `--approved`, the `goodflows` CLI must be installed.
+A request that includes `--commit` commits the working tree before it writes the file. The two flags combine.
+
+With `--approved`, the `goodflows` CLI must be installed. With `--commit`, the skill uses the `gs-git-commit` skill when that skill is installed, and follows a short commit rule of its own when it is not.
 
 ## Source
 

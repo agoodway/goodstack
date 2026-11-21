@@ -1,6 +1,6 @@
 ---
 name: gs-change-request
-description: "Write the description file for a goodflows change request, the replacement for a pull request on any Git host, with change-claims/1 YAML front matter that goodflows parses and a body a reviewer can follow without reading the diff first. By default it writes the file only. With --approved it also creates or updates the change request through the goodflows CLI. It never pushes, opens a pull request, or calls a host API itself. Use when the user asks to write, create, or update a change request, a CR description, or the change claims for a branch, asks to describe a branch for goodflows, says the change request is already approved, runs /gs-change-request or /gs-change-request --approved, or names gs-change-request."
+description: "Write the description file for a goodflows change request, the replacement for a pull request on any Git host, with change-claims/1 YAML front matter that goodflows parses and a body a reviewer can follow without reading the diff first. By default it writes the file only. With --approved it also creates or updates the change request through the goodflows CLI. It never pushes, opens a pull request, or calls a host API itself. Use when the user asks to write, create, or update a change request, a CR description, or the change claims for a branch, asks to describe a branch for goodflows, says the change request is already approved, asks to commit and write or create a change request, runs /gs-change-request, /gs-change-request --approved, or /gs-change-request --commit, or names gs-change-request."
 ---
 
 # Change request
@@ -9,7 +9,16 @@ Write the description of a goodflows change request for the current branch. A ch
 
 The file has two parts. YAML front matter holds the claims goodflows parses: the commit they describe, the door, the reach, the facts the change depends on, the open risks, the questions for the reviewer, and the hunks the reviewer should judge. The Markdown body says the same things for a person.
 
-By default this skill only writes the file. With `--approved`, it then hands the file to the goodflows CLI, which creates or updates the change request. See [Create it](#create-it). Either way, do not push, do not open a pull request, and do not call a host API through `gh`, `glab`, `curl`, or anything else yourself. Whatever reaches the host goes through the goodflows CLI. Do not commit, and do not stage the file.
+By default this skill only writes the file. With `--approved`, it then hands the file to the goodflows CLI, which creates or updates the change request. See [Create it](#create-it). Either way, do not push, do not open a pull request, and do not call a host API through `gh`, `glab`, `curl`, or anything else yourself. Whatever reaches the host goes through the goodflows CLI. Do not commit unless the request includes `--commit`, and never stage or commit the file itself.
+
+### Commit first
+
+Read `--commit` from the request's prose. When the request includes `--commit`, or plainly asks to commit the changes before writing the change request, commit the working tree before anything else:
+
+- Use the `gs-git-commit` skill when it is installed. Skip its last step, which asks whether to push, because this skill never pushes.
+- Without it, stage the files that belong to the change by name, and leave out secrets such as `.env` and `credentials.*`, build output, editor and OS files, anything `.gitignore` covers, and anything under `.goodflows/` or `.verify/`. Make one commit for each unrelated change, with a conventional message, `type: what changed`, and no AI attribution footer. Ask the user before staging a file you are unsure of.
+
+When the tree was already clean, there is nothing to commit, so go on. `--commit` never skips the clean-tree rule in Before writing. When the commit leaves files you chose not to stage, name them and stop, because the claims would describe a commit that is not the code on disk. `--commit` never creates the change request. Only `--approved` does.
 
 ## Before writing
 
@@ -27,7 +36,7 @@ git diff origin/<base>...HEAD --stat
 
 The base is the remote's default branch. The `symbolic-ref` call prints it as `origin/<base>`. Use `git remote show origin` when that call fails, and `main` when both fail. Compare against `origin/<base>`, not the local branch, which may be behind the remote. `git fetch` only reads from the remote, so it is allowed.
 
-The claims describe one commit, so the working tree must be clean. When `git status --porcelain` prints anything, stop and tell the user to commit first, with the `gs-git-commit` skill when it is installed. Do not commit for them.
+The claims describe one commit, so the working tree must be clean. When `git status --porcelain` prints anything, stop and tell the user to commit first, with the `gs-git-commit` skill when it is installed, or to run this skill again with `--commit`. Without `--commit`, do not commit for them. A caller that already forbids questions treats a dirty tree as blocked and does not commit, unless it passed `--commit`.
 
 Read `GLOSSARY.md` when the repo has one, and use those names in the description.
 
@@ -216,4 +225,4 @@ When a goodflows command fails, quote the command and its error. Read the file a
 
 ## Finish
 
-Print the path of the file, the `head` it describes, and whether you wrote new claims or only rewrote `head`. With `--approved`, also print the change request number and any URL the CLI printed, or why the change request was not created. Without `--approved`, say that `/gs-change-request --approved` creates or updates the change request through the goodflows CLI, and do not run it. When `cr` is still `null`, say that the goodflows CLI writes it into the file when it creates the change request.
+Print the path of the file, the `head` it describes, and whether you wrote new claims or only rewrote `head`. With `--commit`, also print each commit you made, or that the tree was already clean. With `--approved`, also print the change request number and any URL the CLI printed, or why the change request was not created. Without `--approved`, say that `/gs-change-request --approved` creates or updates the change request through the goodflows CLI, and do not run it. When `cr` is still `null`, say that the goodflows CLI writes it into the file when it creates the change request.

@@ -495,6 +495,9 @@ for required in (
     "do not push, do not open a pull request, and do not call a host API",
     "Read `--approved` from the request's prose.",
     "command -v goodflows",
+    "Read `--commit` from the request's prose.",
+    "Skip its last step, which asks whether to push, because this skill never pushes.",
+    "`--commit` never creates the change request. Only `--approved` does.",
     "Do not guess a command.",
     "run the update command for that number instead",
 ):
