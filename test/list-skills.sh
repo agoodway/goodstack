@@ -567,6 +567,7 @@ for required in (
     "(Must)",
     "No observable check: ",
     "npx skills add agoodway/goodstack --skill gs-qa-scenarios",
+    "find its installed `SKILL.md`",
 ):
     if required not in intent_skill:
         sys.exit(f"gs-openspec-qa-scenarios SKILL.md missing {required}")

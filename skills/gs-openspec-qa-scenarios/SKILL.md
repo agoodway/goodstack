@@ -225,9 +225,9 @@ Print the scenarios in chat. When the user asks to save them and gives no path, 
 
 ## Run the scenarios
 
-Running belongs to the `gs-qa-scenarios` skill's run mode, which drives the app through the project's `verify-*` skill and saves evidence under `.verify/`. When the user asks to run the scenarios, follow that skill's run mode with this set: from the saved file, the pull request comment, or the chat. Run them against the branch the user names, or the current branch when they name none. A failed step in an intent set means the implementation misses the requirement in that scenario's `Covers:` line.
+Running belongs to the `gs-qa-scenarios` skill's run mode, which drives the app through the project's `verify-*` skill and saves evidence under `.verify/`. Run only when the user asks for it. That skill starts only when the user asks, and some harnesses then refuse to start it for you. So find its installed `SKILL.md` instead: search the harness's installed skills, then the project skills directories, such as `.cursor/skills/`, `.claude/skills/`, and `.agents/skills/`, then the user skill directories. Read it, and follow its run mode with this set: from the saved file, the pull request comment, or the chat. Run them against the branch the user names, or the current branch when they name none. A failed step in an intent set means the implementation misses the requirement in that scenario's `Covers:` line.
 
-When `gs-qa-scenarios` is not installed, the fallback would be a full copy of its run mode. Stop before you drive anything, and give the user the install command:
+When you find no installed `gs-qa-scenarios`, the fallback would be a full copy of its run mode. Stop before you drive anything, and give the user the install command:
 
 ```bash
 npx skills add agoodway/goodstack --skill gs-qa-scenarios
