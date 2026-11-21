@@ -101,7 +101,7 @@ Use this shape. The tester scans it and ticks scenarios off, so keep prose out o
 
 ```markdown
 ---
-format: qa-scenarios/1
+format: qa-scenarios/2
 source: diff
 branch: "[branch]"
 base: "[base]"
@@ -169,7 +169,7 @@ The front matter is the contract other tools read, such as goodflows change requ
 
 - The set starts with a line that holds only `---`, and the front matter ends at the next such line. Nothing comes before it.
 - Write the keys in the order the shape shows. Quote every string value with double quotes, and escape a double quote inside one as `\"`. Numbers, `true`, `null`, and the lowercase values below stay bare.
-- `format` is `qa-scenarios/1`. A change to the fields that would break a reader gets a new number.
+- `format` is `qa-scenarios/2`. A change to the fields that would break a reader gets a new number. Version 2 changed only the intent set's `coverage` rows, so a diff set reads the same in both.
 - `source` is `diff`. `revision` is the short SHA of `<rev>`, with `+dirty` added when the output includes uncommitted changes. `review` is optional and names the change under review on any Git host: a goodflows change request ID, a GitLab merge request URL, or a GitHub pull request URL, as the user or the host gives it. Use `null` when there is none. Never put a branch name or a commit in it.
 - `scenarios` has one entry per scenario in the body, in the same order. `id` is the scenario's number, `name` is its heading without the number and priority, and `priority` is `must`, `should`, or `could`. A scenario you walked in step 6 adds `walked: true`.
 - `regressions` has one string per line under "Regression checks", or is `[]`.
@@ -248,7 +248,7 @@ When you find no scenarios in any of these places, say so, and offer write and r
 Read the front matter first. In a file or the chat it opens the set. In a pull request comment it is the fenced block whose info string is `yaml qa-scenarios`. Its `source` says where the scenarios came from:
 
 - `diff`: the `branch`, `revision`, and `review` fields name what the scenarios cover. A set written before `review` existed has a `pr` key with a pull request URL in its place, and you read it as `review`. When you record a run in such a set, rename the key to `review` and keep its value. A set saved before front matter existed is a diff set, and the line under its title names the branch or pull request.
-- `intent`: the `gs-openspec-qa-scenarios` skill wrote the set from the OpenSpec change in `change`. Run it against the branch or pull request the user names, or the current branch when they name none. A failed step means the implementation misses the requirement in that scenario's `covers`. Keep `covers`, `coverage`, and each `Covers:` line in the results.
+- `intent`: the `gs-openspec-qa-scenarios` skill wrote the set from the OpenSpec change in `change`. Run it against the branch or pull request the user names, or the current branch when they name none. A failed step means the implementation misses the requirement in that scenario's `covers`. Keep `covers`, `coverage`, and each `Covers:` line in the results. In a `qa-scenarios/2` set, each `coverage` row has `capability`, `requirement`, `scenario`, `status` (`covered` or `no_check`), `scenarios`, and an optional `reason`. A `no_check` row has no scenario to run, so it gets no result. A `qa-scenarios/1` set has `delta`, `qa`, and `no_check` on its rows instead. Read it the same way, and keep its rows and its format number as written.
 
 Find the revision to run against, `<rev>`, as step 1 does.
 
