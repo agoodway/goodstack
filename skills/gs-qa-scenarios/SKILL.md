@@ -100,6 +100,24 @@ When you cannot find how to reach a state, say so under "Questions for the devel
 Use this shape. The tester scans it and ticks scenarios off, so keep prose out of the scenarios. Write the prose through the `gs-unslop` skill when it is installed. Without it, keep to these rules: whole sentences, plain words, a named actor, sentence-case headings, straight quotes, commas and periods for punctuation, and no em dashes or emoji. Do not add an AI attribution.
 
 ```markdown
+---
+format: qa-scenarios/1
+source: diff
+branch: "[branch]"
+base: "[base]"
+revision: "[short commit SHA of <rev>]"
+pr: "[pull request URL, or null without the quotes]"
+scenarios:
+  - id: 1
+    name: "[Short name of the behavior]"
+    priority: must
+  - id: 2
+    name: "[...]"
+    priority: should
+regressions:
+  - "[Flow that did not change but calls changed code]: [the check and its result]"
+---
+
 # QA: [pull request title or branch name]
 
 [branch] against [base] · [pull request URL, when there is one]
@@ -144,6 +162,18 @@ Why: [One sentence. What a user hits if this is wrong.]
 
 - [Each gap you could not resolve from the code, or "None."]
 ```
+
+### Front matter
+
+The front matter is the contract other tools read, such as goodflows change requests and the run mode in step 7. The `gs-openspec-qa-scenarios` skill writes the same fields with `source: intent`, and adds `change`, `specs`, `covers`, and `coverage` in place of `branch`, `base`, `revision`, `pr`, and `regressions`. Keep the fields exactly as follows:
+
+- The set starts with a line that holds only `---`, and the front matter ends at the next such line. Nothing comes before it.
+- Write the keys in the order the shape shows. Quote every string value with double quotes, and escape a double quote inside one as `\"`. Numbers, `true`, `null`, and the lowercase values below stay bare.
+- `format` is `qa-scenarios/1`. A change to the fields that would break a reader gets a new number.
+- `source` is `diff`. `revision` is the short SHA of `<rev>`, with `+dirty` added when the output includes uncommitted changes. `pr` is the pull request URL, or `null`.
+- `scenarios` has one entry per scenario in the body, in the same order. `id` is the scenario's number, `name` is its heading without the number and priority, and `priority` is `must`, `should`, or `could`. A scenario you walked in step 6 adds `walked: true`.
+- `regressions` has one string per line under "Regression checks", or is `[]`.
+- The body says the same things for the tester. When you change one, change the other.
 
 ### Checklist and grouping
 
@@ -213,7 +243,14 @@ In run mode, read the scenarios the user names and do not rewrite them:
 - A pull request comment: run `gh pr view [pr] --comments` and take the latest comment that holds a `# QA:` heading. The heading may follow a `> [!NOTE]` attribution, such as the one the `gs-pr-comment` skill adds, and the scenarios start at the heading. A comment that posts an earlier run holds the same scenarios. Ignore its ticks, result alerts, and evidence. When several comments could be meant, ask which one.
 - The chat: take the scenarios from the conversation.
 
-When you find no scenarios in any of these places, say so, and offer write and run mode instead. The title and the line under it name the branch or pull request the scenarios cover. Find its revision, `<rev>`, as step 1 does.
+When you find no scenarios in any of these places, say so, and offer write and run mode instead.
+
+Read the front matter first. In a file or the chat it opens the set. In a pull request comment it is the fenced block whose info string is `yaml qa-scenarios`. Its `source` says where the scenarios came from:
+
+- `diff`: the `branch`, `revision`, and `pr` fields name what the scenarios cover. A set saved before front matter existed is a diff set, and the line under its title names the branch or pull request.
+- `intent`: the `gs-openspec-qa-scenarios` skill wrote the set from the OpenSpec change in `change`. Run it against the branch or pull request the user names, or the current branch when they name none. A failed step means the implementation misses the requirement in that scenario's `covers`. Keep `covers`, `coverage`, and each `Covers:` line in the results.
+
+Find the revision to run against, `<rev>`, as step 1 does.
 
 ### Check the revision
 
@@ -240,7 +277,7 @@ Give each scenario one result:
 
 Each passed or failed result names its evidence files under `.verify/<app>/<run-id>/`.
 
-Write `run.md` in the shape the verify skill's Evidence section gives, with the full commit SHA, the branch, a clean or dirty working tree, the time, and the outcome. Add a line that says the run came from `gs-qa-scenarios`, with the scenario source: the branch, the pull request, or the saved file. Then list each scenario with its number, name, priority, result, and evidence files, so the `gs-pull-request` skill can pick the run up.
+Write `run.md` in the shape the verify skill's Evidence section gives, with the full commit SHA, the branch, a clean or dirty working tree, the time, and the outcome. Add a line that says the run came from `gs-qa-scenarios`, with the scenario source: the branch, the pull request, or the saved file. For an intent set, also name the OpenSpec change. Then list each scenario with its number, name, priority, result, and evidence files, so the `gs-pull-request` skill can pick the run up.
 
 Print the results in chat in the same shape as the scenarios. Keep each scenario as written. The checklist carries the results, so a reader sees the whole run without scrolling. Tick a box only for a passed scenario, and end every line with its result:
 
@@ -267,17 +304,29 @@ Leave a blank line before and after each alert, and keep everything else, such a
 
 Under the Checklist heading, give the run folder, the commit the app was built from, and the count of passed, failed, and not run scenarios. At the end, list any feature map drift the run found.
 
+Keep the set's front matter as it was, and record the run in it, so a tool reads the results without parsing the alerts. Add `result` to each scenario entry: `passed`, `failed`, or `not_run`. A failed entry adds `failed_step` with the step number, and a not run entry adds `reason`. A passed or failed entry adds `evidence`, a list of its file paths under `.verify/<app>/<run-id>/`. Then add this block after the last key:
+
+```yaml
+run:
+  folder: ".verify/[app]/[run-id]/"
+  commit: "[full SHA the app was built from]"
+  passed: 2
+  failed: 1
+  not_run: 0
+```
+
 ## Sharing
 
 Print the scenarios, or the results of a run, in chat. When the user asks to save them, write a Markdown file at the path they give, or outside the repository when they give none.
 
-When the user asks to post them on the pull request, use the `gs-pr-comment` skill when it is installed. Without it, show the body first, wait for approval, write the body to a file outside the repository, and run `gh pr comment [pr] --body-file [file]`.
+When the user asks to post them on the pull request, move the front matter into a fenced block at the end of the body, as [Post a run with its evidence](#post-a-run-with-its-evidence) describes. Use the `gs-pr-comment` skill when it is installed. Without it, show the body first, wait for approval, write the body to a file outside the repository, and run `gh pr comment [pr] --body-file [file]`.
 
 ### Post a run with its evidence
 
 A posted run carries its proof, so a reviewer sees each result without the run folder. Build the comment from the results in chat:
 
 - Keep the line under the Checklist heading with the run folder, the commit the app was built from, and the counts. Keep the line that names both commits when they differed.
+- Start the body at the `# QA:` heading. Put the front matter, with its results and without its `---` lines, at the end of the body in a fenced block whose info string is `yaml qa-scenarios`, inside `<details><summary>Scenario data</summary>` and `</details>`. A comment cannot start with front matter, because GitHub renders it as a heading, and the `gs-pr-comment` skill puts its attribution first.
 - Under each passed or failed scenario's result alert, put the screenshots and recordings that prove it, as Markdown images with their paths under `.verify/<app>/<run-id>/`. Give each image alt text that says what it shows, such as `![Scenario 2, step 3: the banner reads "Saved"](.verify/web/20261119T143000Z-a1b2c3d/03-cancel.png)`. For a failed scenario, put the image of the failed step first.
 - Put short text proof, such as a response body or a terminal transcript, in a fenced block under the result. Cut it to the lines that prove the result. Leave out logs, ARIA snapshots, and other long files. The run folder keeps them.
 - Look at each image before you attach it, and leave out one that shows a secret, a token, or a real person's data.

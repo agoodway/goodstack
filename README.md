@@ -23,6 +23,7 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 
 - [`gs-openspec-ship`](skills/gs-openspec-ship/README.md) takes each named OpenSpec change through apply, verify, review, archive, and commit. It rebases onto the remote's default branch first, and it opens one draft pull request at the end.
 - [`gs-openspec-review-change`](skills/gs-openspec-review-change/README.md) quick-reviews an OpenSpec change before you build it. It patches the findings with one obvious fix and answers design questions with a recorded recommendation, or asks you each one when you request it.
+- [`gs-openspec-qa-scenarios`](skills/gs-openspec-qa-scenarios/README.md) writes QA scenarios from an OpenSpec change's specs, before or after anyone builds it. Each Must scenario names the requirement it covers, and the output has the same shape as `gs-qa-scenarios`, so its run mode can run either set.
 - [`gs-openspec-to-tickets`](skills/gs-openspec-to-tickets/README.md) breaks OpenSpec changes into tickets that each cut through every layer. It publishes them to GitHub, Linear, Jira, or local markdown.
 - [`gs-openspec-ship-tickets`](skills/gs-openspec-ship-tickets/README.md) ships those tickets in blocking order, one pipeline per ticket. It archives each finished change and opens one draft pull request.
 
@@ -102,7 +103,7 @@ Add `-g` to install into your user skill directory.
 
 ## Sources
 
-Ten skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-pr-show-me`, `gs-qa-scenarios`, `gs-scratch`, `gs-openspec-ship`, `gs-openspec-ship-tickets`, and `gs-openspec-review-change`.
+Eleven skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-pr-show-me`, `gs-qa-scenarios`, `gs-scratch`, `gs-openspec-ship`, `gs-openspec-ship-tickets`, `gs-openspec-review-change`, and `gs-openspec-qa-scenarios`.
 
 The other twenty-five come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
 
