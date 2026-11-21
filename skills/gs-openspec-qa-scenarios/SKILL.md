@@ -67,7 +67,7 @@ Turn the list into scenarios:
 
 - **Must**: every spec scenario with an observable THEN gets a Must scenario. GIVEN becomes setup or the first steps, WHEN becomes the actions, and each THEN and AND becomes an Expect line under the step that produces it. Several spec scenarios that share one path may share one QA scenario, which lists each of them in its Covers line. A REMOVED requirement gets a Must scenario that checks the behavior is gone. A MODIFIED requirement's scenario checks the new behavior, and adds an Expect line that the old behavior no longer happens when that is the risk.
 - **Should** and **Could**: cases the requirement text implies but no spec scenario states, such as the other side of a limit, a role without access, empty data, or records created before the change. Mark the Covers line `(implied)`. Each one is also a gap in the spec, so list it under "Questions for the developer" as a scenario the author may want to add.
-- Behavior the proposal or design describes but no requirement states gets at most a Could scenario, with `Covers: proposal (no requirement)`, and a question.
+- Behavior the proposal or design describes but no requirement states gets at most a Could scenario, with `Covers: proposal (no requirement)`, no `covers` in the front matter, and a question.
 
 Never drop a Must scenario to keep the set short. Drop a Should or Could scenario that only repeats another with different data, and say what you left out. Within a priority, rank by what breaks and how many people it reaches.
 
@@ -109,6 +109,9 @@ scenarios:
       - capability: "[capability]"
         requirement: "[Requirement]"
         implied: true
+  - id: 3
+    name: "[Behavior from the proposal alone]"
+    priority: could
 coverage:
   - capability: "[capability]"
     requirement: "[Requirement]"
@@ -184,10 +187,10 @@ The front matter is the contract other tools read, such as goodflows change requ
 - Write the keys in the order the shape shows. Quote every string value with double quotes, and escape a double quote inside one as `\"`. Numbers, `true`, `null`, and the lowercase values below stay bare.
 - `format` is `qa-scenarios/2`. A change to the fields that would break a reader gets a new number. Version 2 gave `coverage` rows the same `capability`, `requirement`, and `scenario` as `covers`, with `status` and `scenarios` in place of `delta`, `qa`, and `no_check`.
 - `source` is `intent`. `change` is the change id. `specs` is the short commit SHA of the change directory, or `uncommitted`. These two are intent only. `review` is optional and names the change under review on any Git host: a goodflows change request ID, a GitLab merge request URL, or a GitHub pull request URL, as the user or the host gives it. Before implementation there is usually none, so use `null`.
-- `scenarios` has one entry per scenario in the body, in the same order. `id` is the scenario's number, `name` is its heading without the number and priority, and `priority` is `must`, `should`, or `could`.
-- `covers` is intent only. Each entry names a spec scenario with `capability`, `requirement`, and `scenario`, copied exactly from the delta's `### Requirement:` and `#### Scenario:` headings. An implied case has `capability`, `requirement`, and `implied: true`, with no `scenario`. Behavior from the proposal alone is one entry, `proposal: true`.
-- `coverage` is intent only. It has one row for every spec scenario in the change. A row names its spec scenario with `capability`, `requirement`, and `scenario`, copied exactly as `covers` copies them, so a tool matches a row to a `covers` entry or a `safe_because` fact by comparing the three. For a REMOVED requirement, use the scenarios the canonical spec lists under it, and when it lists none, use `[Requirement] removed` as the scenario. Each of the three is 1 to 200 characters, and no two rows share all three. When a name is longer or two spec scenarios share a name, keep the name as written and ask about it under "Questions for the developer".
-- `status` is `covered` or `no_check`. `scenarios` lists the ids of the QA scenarios that check the row: at least one for `covered`, and `[]` for `no_check`. `reason` is optional, and says why no person can check the row. Write it on every `no_check` row.
+- `scenarios` has one entry per scenario in the body, in the same order, and holds 1 to 200 entries. `id` is the scenario's number, `name` is its heading without the number and priority, 1 to 200 characters, and `priority` is `must`, `should`, or `could`.
+- `covers` is intent only. Each entry names a spec scenario with `capability`, `requirement`, and `scenario`, copied exactly from the delta's `### Requirement:` and `#### Scenario:` headings. An implied case has `capability`, `requirement`, and `implied: true`, with no `scenario`. An entry has no other keys, each string is 1 to 200 characters, and a scenario has at most 100 entries. A scenario that covers no requirement, such as behavior from the proposal alone, has no `covers` key, never an empty list. Its `Covers:` line says `proposal (no requirement)`. A scenario that checks proposal behavior and a requirement lists only the requirement's entry.
+- `coverage` is intent only. It has one row for every spec scenario in the change. A row names its spec scenario with `capability`, `requirement`, and `scenario`, copied exactly as `covers` copies them, so a tool matches a row to a `covers` entry or a `safe_because` fact by comparing the three. For a REMOVED requirement, use the scenarios the canonical spec lists under it, and when it lists none, use `[Requirement] removed` as the scenario. Each of the three is 1 to 200 characters, and no two rows share all three. When a name is longer or two spec scenarios share a name, keep the name as written and ask the author to rename it in the delta under "Questions for the developer". Goodflows refuses the set until the delta and the set agree on a valid name, so tell the user it cannot be uploaded yet.
+- `status` is `covered` or `no_check`. `scenarios` lists the ids of the QA scenarios that check the row: at least one for `covered`, and `[]` for `no_check`. `reason` is optional, at most 1,000 characters, and says why no person can check the row. Write it on every `no_check` row.
 - The body says the same things for the tester. When you change one, change the other.
 
 ### Format rules
@@ -214,6 +217,7 @@ Before you hand them over, read the set as the QA engineer and as the author of 
 - Does every spec scenario on the step 2 list appear in the front matter's `coverage` and in the Coverage table?
 - Does every `covered` row list a QA scenario whose `covers` names the same capability, requirement, and scenario?
 - Does the front matter parse as YAML, and do its `scenarios`, `covers`, and `coverage` match the body entry for entry?
+- Does every `covers` entry hold `capability`, `requirement`, and exactly one of `scenario` or `implied: true`, with no empty `covers` list?
 - Does every Must scenario's `Covers:` line name a spec scenario that exists, spelled exactly as in the delta?
 - Does every Expect line say only what the spec says, with nothing taken from the code?
 - Can a person who has not seen the code or the specs follow every step?
