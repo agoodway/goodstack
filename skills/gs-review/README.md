@@ -112,8 +112,8 @@ Fresh Eyes and verification run on a model other than the host when one is reach
 
 | Host | Provider order |
 |---|---|
-| Claude | Codex MCP session tool, Grok CLI, Claude subagent on another model |
+| Claude | Codex CLI, Grok CLI, Claude subagent on another model |
 | Codex | Grok CLI, Claude CLI |
-| Grok | Codex MCP session tool, Claude CLI |
+| Grok | Codex CLI, Claude CLI |
 
-The Grok and Claude CLIs must already be installed and authenticated. This skill never installs or authenticates them. Each runs headless with read-only file tools. If no provider is usable, the skill uses a generic subagent or a host pass and labels that pass as a fallback in the report.
+The Codex, Grok, and Claude CLIs must already be installed and authenticated. This skill never installs or authenticates them. Each runs headless and cannot write files. If no provider is usable, the skill uses a generic subagent or a host pass and labels that pass as a fallback in the report.

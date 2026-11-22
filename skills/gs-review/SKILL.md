@@ -73,10 +73,10 @@ Take the first usable provider in the host's row:
 
 | Host | Provider order |
 |---|---|
-| Claude | Codex through MCP, Grok headless, Claude subagent on another model |
+| Claude | Codex headless, Grok headless, Claude subagent on another model |
 | Codex | Grok headless, Claude headless |
-| Grok | Codex through MCP, Claude headless |
-| Other or unknown | Codex through MCP, Grok headless, Claude headless |
+| Grok | Codex headless, Claude headless |
+| Other or unknown | Codex headless, Grok headless, Claude headless |
 
 Never select the provider that is the host. If nothing in the row is usable, fall back to a generic subagent or a separate host pass.
 
@@ -89,7 +89,7 @@ Pass the prompt using an argument-safe execution mechanism; never allow prompt, 
 
 The commands, read-only controls, availability checks, and timeout for each provider are in [references/providers.md](references/providers.md). Read its availability section, then only the section for the provider you are about to use.
 
-Record the provider actually used and label it accurately in the report: `Grok CLI`, `Codex via MCP`, `Claude CLI`, `Claude [model] subagent (cross-tier)`, `generic subagent`, or `host fallback`. Only the first three are cross-vendor second opinions when the host is a different vendor; never describe a fallback as one.
+Record the provider actually used and label it accurately in the report: `Grok CLI`, `Codex CLI`, `Claude CLI`, `Claude [model] subagent (cross-tier)`, `generic subagent`, or `host fallback`. Only the first three are cross-vendor second opinions when the host is a different vendor; never describe a fallback as one.
 
 ## Phase 2: Select roles and launch
 

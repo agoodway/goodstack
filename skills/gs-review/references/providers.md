@@ -6,7 +6,7 @@ Read Availability and timeouts, then only the section for the provider you are a
 
 - Availability and timeouts
 - Grok headless
-- Codex through MCP
+- Codex headless
 - Claude headless
 - Claude subagent on another model
 
@@ -14,11 +14,11 @@ Read Availability and timeouts, then only the section for the provider you are a
 
 Before the first pass, check that the provider exists, and skip it without attempting a pass if it does not:
 
-- Codex through MCP: one of its session tools is in your tool list
+- Codex headless: `command -v codex` succeeds
 - Grok headless: `command -v grok` succeeds
 - Claude headless: `command -v claude` succeeds
 
-Give every pass a 10-minute timeout, using the shell call's timeout for a CLI and the tool's own timeout setting for MCP when it has one. A pass that times out, fails, or returns no usable review makes that provider unusable for the rest of the review; move to the next one in the host's row.
+Give every pass a 10-minute timeout, using the shell call's timeout. A pass that times out, fails, or returns no usable review makes that provider unusable for the rest of the review; move to the next one in the host's row.
 
 ## Grok headless
 
@@ -30,15 +30,15 @@ grok --cwd [repository root] --permission-mode dontAsk --sandbox strict --tools 
 
 The tool allowlist lets Grok inspect the changed files while withholding edit and shell tools. Keep MCP and web access disabled, and run Grok inside both its strict sandbox and any read-only sandbox supplied by the host.
 
-## Codex through MCP
+## Codex headless
 
-Use the first available Codex session tool:
+Run each pass as a new Codex CLI process from the repository root, with the prompt on stdin:
 
-- `mcp__codex__codex`
-- `codex__codex`
-- `codex_codex`
+```text
+codex exec --cd [repository root] --sandbox read-only -c 'approval_policy="never"' -c 'web_search="disabled"' --ephemeral --color never -o [output file] - < [pass prompt file]
+```
 
-Call it with the pass prompt. If the tool accepts them, set `sandbox` to `read-only` and `approval-policy` to `never`.
+The read-only sandbox lets Codex read files and run read-only commands such as `git diff`, while every write fails. With approvals off, Codex never asks to leave the sandbox, and `--ephemeral` keeps the pass out of its session history. Take the review from the output file, which holds only Codex's final message. Write the prompt and output files outside the repository so they never appear in the change.
 
 ## Claude headless
 
