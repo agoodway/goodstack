@@ -222,7 +222,7 @@ Give the smallest steps a reviewer can run to see the change.
 
 Under "Questions for the reviewer", give each question with its number, its options, and your recommendation marked. Under "Decisions to judge", give each decision as a `diff` block under a `### [id]. [path]` heading, with its note under the block. Write `None.` under a heading with nothing in it.
 
-Before the file is final, read it again, including quoted code and command output. Remove secrets, tokens, absolute local paths, and private details. Check that the front matter parses as YAML, that `head` is the current HEAD, and that every `hunk` appears in the diff as written.
+Before the file is final, read it again, including quoted code and command output. Remove secrets, tokens, absolute local paths, and private details. Check that the front matter parses as YAML, that `head` is the current HEAD, and that every `hunk` appears in the diff as written. When `goodflows cr validate --help` runs, also run `goodflows cr validate <file>`, and fix every error and warning it lists until it lists none. It checks the fields the CLI reads, not every claim the server checks.
 
 ## Create it
 
