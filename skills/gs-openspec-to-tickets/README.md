@@ -1,15 +1,15 @@
 # gs-openspec-to-tickets
 
-This skill breaks one or more OpenSpec changes into tracer-bullet tickets and publishes them to the project's tracker. Each change gets a parent ticket. Its slices are vertical. Each slice declares the tickets that block it, and blockers can cross changes. Each slice takes its acceptance criteria from the spec-delta scenarios it covers. After you approve the breakdown, the skill publishes in dependency order and writes an index to `openspec/changes/<change>/tickets.md`.
+This skill publishes one ticket per OpenSpec change to the project's tracker. The ticket is the whole change, and its acceptance criteria are the scenarios in the change's spec deltas. When you name several changes, a ticket is blocked by another only when its change builds on the other, so every other change can run in parallel. After you approve the tickets and their blocking edges, the skill publishes in dependency order and writes an index to `openspec/changes/<change>/tickets.md`.
 
 Supported trackers are GitHub with `gh`, Linear with MCP, Jira with the Atlassian MCP or `jira-cli`, and local markdown inside the change directory. The skill reads the tracker from `AGENTS.md` or `CLAUDE.md`. If neither names one, the skill asks and offers to record the answer.
 
-The skill labels tickets with [Matt Pocock's default triage labels](https://github.com/mattpocock/skills/blob/main/skills/engineering/setup-matt-pocock-skills/triage-labels.md). The label is `ready-for-agent`, or `ready-for-human` when a slice needs a person. A `docs/agents/triage-labels.md` file overrides the label strings.
+The skill labels tickets with [Matt Pocock's default triage labels](https://github.com/mattpocock/skills/blob/main/skills/engineering/setup-matt-pocock-skills/triage-labels.md). The label is `ready-for-agent`, or `ready-for-human` when a change needs a person. A `docs/agents/triage-labels.md` file overrides the label strings.
 
 ## Use cases
 
-- You have an OpenSpec change that is too large for one pull request and want it split into vertical slices that each cut through every layer.
-- You want tickets in GitHub, Linear, Jira, or local markdown, with blocking order and acceptance criteria taken from the spec scenarios.
+- You have several OpenSpec changes and want to know which can be built in parallel and which must wait for another.
+- You want each change tracked as one ticket in GitHub, Linear, Jira, or local markdown, with acceptance criteria taken from the spec scenarios.
 
 ## Install
 
@@ -58,7 +58,7 @@ Run it in the repo that contains `openspec/changes/`. If no change name is given
 
 Matt Pocock wrote the skill this one is adapted from. The original source is `to-tickets` in [mattpocock/skills](https://github.com/mattpocock/skills/tree/4ae2317ddb22b046e26455e4f9c9b3aaaf62212d/skills/engineering/to-tickets), path `skills/engineering/to-tickets`, commit `4ae2317ddb22b046e26455e4f9c9b3aaaf62212d`. The license is MIT. Copyright 2026 Matt Pocock. The full notice is `LICENSE` in this directory.
 
-`SKILL.md` keeps the original's vertical-slice rules, its exception for wide refactors, its step that asks the user to approve the breakdown, and its issue template. These parts changed:
+`SKILL.md` keeps the original's blocking edges, its step that asks the user to approve before anything is published, its publishing in dependency order, and the outline of its issue template. These parts changed:
 
 - The skill is named `gs-openspec-to-tickets`, where the original is `to-tickets`.
 - The input is one or more OpenSpec changes. The original takes a plan, a spec, or the conversation.
@@ -66,9 +66,10 @@ Matt Pocock wrote the skill this one is adapted from. The original source is `to
 - The description says what the skill does, then when to use it in plain phrases and by name, so a harness that routes on the description alone, such as Amp, can find it. It ends by saying to run only when the user asks for it.
 - The skill finds the tracker itself, from `AGENTS.md` or `CLAUDE.md`, and asks when neither names one. The original relied on `/setup-matt-pocock-skills`.
 - Four new files hold the commands for GitHub, Linear, Jira, and local markdown.
-- The triage labels are written into the skill, and a slice that needs a person gets `ready-for-human`.
-- Each change gets a parent ticket, and a slice can be blocked by a ticket from another change.
-- Acceptance criteria come from the spec-delta scenarios, and every scenario must be covered by a ticket.
-- Local tickets live in the change directory under `tickets/`. The original wrote them under `.scratch/`.
+- The triage labels are written into the skill, and a change that needs a person gets `ready-for-human`.
+- Each change gets one ticket. The original's vertical-slice rules, its exception for wide refactors, and its questions about granularity are removed.
+- A ticket is blocked only by another change it builds on, and the skill says which changes can run in parallel.
+- Acceptance criteria are every scenario in the change's spec deltas.
+- A local ticket lives in the change directory as `ticket.md`. The original wrote tickets under `.scratch/`.
 - A new last step writes the `tickets.md` index.
 - The upstream `agents/openai.yaml` is not included.

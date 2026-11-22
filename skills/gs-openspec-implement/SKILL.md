@@ -1,12 +1,12 @@
 ---
-name: gs-openspec-ship
-description: "Take OpenSpec changes through apply, verify, review, archive, and commit, then open one draft pull request. Use when the user says 'ship these openspec changes', asks to implement OpenSpec changes and take them through to a draft pull request, runs /gs-openspec-ship, or names gs-openspec-ship. Only when the user asks for it."
+name: gs-openspec-implement
+description: "Take OpenSpec changes through apply, verify, review, archive, and commit, then stop with the commits on the current branch. It does not push and does not open a pull request. Use when the user says 'implement these openspec changes' or 'ship these openspec changes', asks to build OpenSpec changes and commit them, runs /gs-openspec-implement, or names gs-openspec-implement. Only when the user asks for it."
 disable-model-invocation: true
 ---
 
-# Ship OpenSpec changes
+# Implement OpenSpec changes
 
-You are the orchestrator. You do not rebase, implement, verify, review, archive, commit, or open the pull request yourself. Rebase the current branch onto the remote's default branch once. Then for each change, run the seven steps below in order, revisiting affected steps when recovery invalidates their results. Each step is one subagent. Wait for it to finish before you start the next. After the last change, open one draft pull request for the commits this run made, unless the batch stopped with unfinished edits. Last, when the project has a `verify-*` skill, ask the user whether to run it.
+You are the orchestrator. You do not rebase, implement, verify, review, archive, or commit yourself. Rebase the current branch onto the remote's default branch once. Then for each change, run the seven steps below in order, revisiting affected steps when recovery invalidates their results. Each step is one subagent. Wait for it to finish before you start the next. After the last change, summarize the run and stop. Nothing in this run pushes or opens a pull request.
 
 This skill is runtime-neutral. When a step says to start a subagent, use the current runtime's subagent mechanism. If that mechanism is unavailable, run the step in this session and label the result with the step name.
 
@@ -17,18 +17,18 @@ Changes run one at a time. Finish or block a change before you start the next.
 ## Input
 
 ```text
-/gs-openspec-ship <change> [<change> ...]
+/gs-openspec-implement <change> [<change> ...]
 ```
 
 Also accept a prose list, including "implement the following openspec change(s):" followed by change names.
 
 An optional `--store <id>` applies to every OpenSpec command in the run. Pass it through. When the user names no store, tell each OpenSpec subagent that no store was named so it follows the store rules in the skill it is reading.
 
-When no change name is given, run `openspec list --json` and ask which active changes to ship. That is the only question you ask before starting. A name that is not an active change is reported as not found, and you continue with the remaining names.
+When no change name is given, run `openspec list --json` and ask which active changes to implement. That is the only question you ask before starting. A name that is not an active change is reported as not found, and you continue with the remaining names.
 
 ## How to start a step
 
-Resolve each dependency before the first step and pass the resolved path to the subagent. Search the runtime's installed skills, project and user skill directories, then this repository's `skills/`. OpenSpec supplies `openspec-apply-change`, `openspec-verify-change`, `openspec-archive-change`, and `openspec-sync-specs`. This repo supplies `gs-review`, `gs-git-commit`, and `gs-pull-request`. Stop and name any skill you cannot find.
+Resolve each dependency before the first step and pass the resolved path to the subagent. Search the runtime's installed skills, project and user skill directories, then this repository's `skills/`. OpenSpec supplies `openspec-apply-change`, `openspec-verify-change`, `openspec-archive-change`, and `openspec-sync-specs`. This repo supplies `gs-review` and `gs-git-commit`. Stop and name any skill you cannot find.
 
 Also look for `gs-find-bad-tests` and `gs-find-bad-comments` from this repo. They are optional. `gs-review` uses each one when it is installed, and a short rule of its own without it, so do not stop when they are missing.
 
@@ -50,18 +50,17 @@ Skills:
 - Archive: `openspec-archive-change`
 - Spec sync, only when the archive skill runs it: `openspec-sync-specs`
 - Commit: `gs-git-commit`
-- Pull request: `gs-pull-request`
 - Review: `gs-review`, with the resolved paths of `gs-find-bad-tests` and `gs-find-bad-comments` when you found them. If `gs-review` is not available, block the change. Do not invent a review.
 
 Do not advance on `STATUS: blocked` or `STATUS: unfixed`. Inspect the evidence first. If a safe, in-scope recovery remains, continue the same subagent with the missing investigation or repair. Accept a blocker only under the recovery contract.
 
 When the runtime cannot resume a subagent, start a replacement for that same step with the prior report, attempted repairs, and current checkout state. Preserve its no-progress count; a new subagent is not a fresh retry budget.
 
-When a genuine blocker leaves unfinished edits, stop the batch and preserve the checkout. Do not start another change, stash or discard edits, or include unfinished work in another change's commit. Otherwise record the blocker and continue with the next change. Do not open a pull request when the batch stopped with unfinished edits.
+When a genuine blocker leaves unfinished edits, stop the batch and preserve the checkout. Do not start another change, stash or discard edits, or include unfinished work in another change's commit. Otherwise record the blocker and continue with the next change.
 
-The rebase and the pull request are not among these steps. The rebase runs once, before the first change. The pull request runs once, after the last change unless the batch stopped with unfinished edits.
+The rebase is not among these steps. It runs once, before the first change.
 
-Before the rebase, tell the user `rebase · origin/<default>`. Before each step, tell the user one line: `<change> · <n>/7 <step name>`. Before the pull request, tell the user `pull request · draft`.
+Before the rebase, tell the user `rebase · origin/<default>`. Before each step, tell the user one line: `<change> · <n>/7 <step name>`.
 
 ## Shared recovery contract
 
@@ -87,7 +86,7 @@ After a repair invalidates earlier evidence, repeat the affected verification or
 
 ## Rebase
 
-When at least one named change will run, start one subagent before the first change. This step runs once per ship run. When none will run, stop without rebasing.
+When at least one named change will run, start one subagent before the first change. This step runs once per run. When none will run, stop without rebasing.
 
 The prompt does not name a change or a store. Include the shared recovery contract and the restrictions below. This step has no skill. Do not follow the gs-git-commit skill.
 
@@ -95,7 +94,7 @@ Rebase the current branch onto the latest default branch of `origin`. Check that
 
 - A clean rebase, a fast-forward, or an already up-to-date branch is `STATUS: done`.
 - A dirty tree, a missing `origin/<default>`, or a rebase conflict is `STATUS: blocked`. Abort a conflicted rebase before returning, so the checkout is back to where it started.
-- When this step is blocked, stop the run. Do not start a change and do not open a pull request.
+- When this step is blocked, stop the run. Do not start a change.
 
 ```text
 STATUS: done|blocked
@@ -214,50 +213,14 @@ STATUS: done|blocked
 COMMITS: <sha> <subject>
 ```
 
-## Pull request
-
-After every named change has finished or blocked, start one subagent, unless the batch stopped with unfinished edits. This step runs once per ship run.
-
-The prompt names every change in the run and the commit each one made. It does not name a store.
-
-Follow the `gs-pull-request` skill.
-
-Overrides:
-
-- The pull request contains every commit this run made.
-- The tree must already be clean. A dirty tree is `STATUS: blocked`. Do not make another commit.
-- When every change blocked before a commit, do not open a pull request. Return `STATUS: blocked` and say that this run made no commits.
-- Otherwise push and open one draft pull request. Put the pull request URL on its own line.
-- Use the recovery contract for operational failures. Inspect remote branch and pull request state before retrying uncertain pushes or pull request creation; reuse an already created pull request rather than opening a duplicate. Do not force-push or change authorization to recover.
-
-```text
-STATUS: done|blocked
-PR_URL: <url, or none>
-```
-
 ## Finish
 
-After the pull request step, summarize in chat:
+After every named change has finished or blocked, summarize in chat:
 
-- The pull request URL, or why it was not opened
-- For each change: done, or the step that blocked and the reason
+- For each change: done with its commit, or the step that blocked and the reason
 - Verify issues fixed, and review issues fixed
 - Tests and comments removed or reshaped, comments kept, and the tests the review left for a rewrite or marked unsure
 - Validation results, any accepted unrelated failures, and any changes not started because the batch stopped
+- That the commits are local and nothing was pushed
 
-When the rebase blocked or the batch stopped with unfinished edits, summarize that blocker and the actual delivery state, including commits already made and why no pull request was opened. Do not paste the verify or gs-review reports again.
-
-## Offer the verify skill
-
-Do this after the Finish summary, when the run made at least one commit and did not stop with unfinished edits.
-
-Look for a `verify-*` skill in every project skills directory the repo has, such as `.cursor/skills/`, `.claude/skills/`, and `.agents/skills/`. When there is none, end the run without mentioning it.
-
-When there is one, end your final message by asking whether to run it against what this run shipped, so the user can see the change working in the real app. When there are several, name each one and ask which to run. Do not run it before the user answers.
-
-When the user says yes, start one subagent on the current branch:
-
-- When `gs-qa-scenarios` is installed, the subagent follows it in write and run mode for the current branch, with the chosen verify skill. It writes scenarios for the change and drives each one through the verify skill.
-- Without it, the subagent reads the verify skill's `SKILL.md` and its feature map, then drives the features this run's changes touch through its Launch, Drive, Evidence, and Cleanup sections.
-
-The subagent changes no code and commits nothing. Evidence stays under `.verify/`, which is never committed. Report each result as passed, failed, or not run, with its evidence path. Do not fix a failure. Report it and leave the next step to the user.
+When the rebase blocked or the batch stopped with unfinished edits, summarize that blocker and the actual delivery state, including commits already made. Do not paste the verify or gs-review reports again.

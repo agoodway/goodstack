@@ -13,20 +13,20 @@ With `--threads`, each frontier ticket runs in a **child**: a T3 Code child thre
 
 1. Run the rebase from `SKILL.md`.
 2. Push the run branch: `git push -u origin HEAD`. Children build from `origin`.
-3. **Amp only**: an orb is a remote machine that clones the repo, so it sees only project-installed skills. Check that `gs-openspec-ship-tickets`, `gs-review`, `gs-git-commit`, and the four OpenSpec skills exist under the repo's skill directory. When any is missing, stop and print the install commands, for example `npx skills add agoodway/goodstack --skill gs-openspec-ship-tickets` (and `gs-review`, `gs-git-commit`), plus `openspec init` or `openspec update` for the OpenSpec skills. Also check for `gs-find-bad-tests` and `gs-find-bad-comments`. They are optional, so do not stop when they are missing, but tell the user that gs-review in each orb falls back to its short rule for tests and comments to remove, and print their install commands.
+3. **Amp only**: an orb is a remote machine that clones the repo, so it sees only project-installed skills. Check that `gs-openspec-implement-tickets`, `gs-review`, `gs-git-commit`, and the four OpenSpec skills exist under the repo's skill directory. When any is missing, stop and print the install commands, for example `npx skills add agoodway/goodstack --skill gs-openspec-implement-tickets` (and `gs-review`, `gs-git-commit`), plus `openspec init` or `openspec update` for the OpenSpec skills. Also check for `gs-find-bad-tests` and `gs-find-bad-comments`. They are optional, so do not stop when they are missing, but tell the user that gs-review in each orb falls back to its short rule for tests and comments to remove, and print their install commands.
 
 ## Schedule
 
-Keep up to `--parallel` children running (default 3). Whenever a slot is free, start a child for the next frontier ticket in `tickets.md` order, and move that ticket to in progress on the tracker. A ticket joins the frontier only after every blocker has **landed** (integrated onto the run branch and pushed), never when a blocker's child merely finishes.
+Keep up to `--parallel` children running (default 3). Whenever a slot is free, start a child for the next frontier ticket, in the order the changes were named, and move that ticket to in progress on the tracker. A ticket joins the frontier only after every blocker has **landed** (integrated onto the run branch and pushed), never when a blocker's child merely finishes.
 
 ### Child prompt
 
 Each child gets one standalone prompt:
 
 ```text
-/gs-openspec-ship-tickets --worker <ticket> --base <run-branch> [--store <id>]
+/gs-openspec-implement-tickets --worker <ticket> --base <run-branch> [--store <id>]
 
-<ticket brief: reference, title, tracker body verbatim, covered scenarios, change name and path>
+<ticket brief: reference, title, tracker body verbatim, change name and path>
 ```
 
 In T3 Code and with worktree subagents, also tell the child the base: its worktree must start from `origin/<run-branch>`.
@@ -53,10 +53,10 @@ Integrate one ticket at a time, in blocking order, on the run branch in this che
 2. On a conflict, start one subagent on the run branch. It resolves the conflict within both tickets' intent, reruns the checks covering both tickets, and completes the cherry-pick. If it cannot resolve the conflict safely, it aborts the cherry-pick (`git cherry-pick --abort`) and returns `STATUS: blocked`; treat the ticket as blocked.
 3. `git push origin HEAD`.
 4. Comment the landed commit on the ticket, delete the ticket branch (`git push origin --delete <branch>`), mark the ticket landed, and recompute the frontier.
-5. When the ticket's change has no open tickets left, run **Close out a change** on the run branch now, then push again.
+5. Run **Close out a change** for the ticket's change on the run branch now, then push again.
 
 Close-out and integration share this checkout, so run them one at a time; children keep running meanwhile.
 
 ## Finish
 
-When no child is running and the frontier is empty, run the pull request step from `SKILL.md`. Add each child's thread link to the per-ticket summary.
+When no child is running and the frontier is empty, write the Finish summary from `SKILL.md`. Add each child's thread link to the per-ticket summary.

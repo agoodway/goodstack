@@ -35,8 +35,8 @@ Amp shows the model only each skill's `name` and `description`, has no slash com
 - Reference a skill by name with a fallback: "use `gs-unslop` when it is installed; without it, <the short rule>".
 - A skill may require another skill only when the fallback would be a full copy of that skill's rules. Then it stops before it changes any file, and gives the user the command that installs the other skill. Its `README.md` says which skill it needs. `gs-no-comments` requires `gs-find-bad-comments` this way.
 - Reference skills, never another skill's files. Each skill installs into its own directory.
-- A skill that other skills call stays model-invocable. `disable-model-invocation: true` is for skills only the user starts. When a user-only skill must run inside another skill at the user's request, the caller finds the installed `SKILL.md` and reads it, as `gs-openspec-ship` and `gs-openspec-qa-scenarios` do with `gs-qa-scenarios`.
-- The recovery contract and the "Fix every verify issue" step are byte-identical in `gs-openspec-ship` and `gs-openspec-ship-tickets`. Edit both together.
+- A skill that other skills call stays model-invocable. `disable-model-invocation: true` is for skills only the user starts. When a user-only skill must run inside another skill at the user's request, the caller finds the installed `SKILL.md` and reads it, as `gs-change-request-ship` and `gs-openspec-qa-scenarios` do with `gs-qa-scenarios`.
+- The recovery contract and the "Fix every verify issue" step are byte-identical in `gs-openspec-implement` and `gs-openspec-implement-tickets`. Edit both together.
 - `gs-qa-scenarios` and `gs-openspec-qa-scenarios` write the same `qa-scenarios/2` front matter, which goodflows parses. Edit its shared fields in both together, and give a breaking change a new format number.
 - `gs-qa-scenarios` and `gs-create-verification-skill` give `run.md` the same `verify-run-notes/1` front matter block and rules, byte for byte. Edit both together.
 
