@@ -85,14 +85,14 @@ left_open:
     location: "[path:line]"
     affected: "[who or what is hit]"
 questions:
-  - id: 1
+  - id: "1"
     text: "[the question the reviewer must answer]"
     options:
       - "[an option]"
       - "[another option]"
     recommendation: "[one of the options, copied exactly]"
 decisions:
-  - id: 1
+  - id: "1"
     path: "[path from the repository root]"
     hunk: |-
       @@ -10,3 +10,4 @@ [the hunk exactly as git diff prints it]
@@ -155,8 +155,8 @@ The front matter is the contract goodflows reads. Keep it exactly as follows:
 - `evidence` is optional, and lists where the proof is, as paths from the repository root. An entry is a file in a verify run, such as `.verify/web/20261121T1200Z-b6524cb/03-cancel.png`, a QA run's `run.md` with `#` and the scenario id, such as `.verify/web/20261121T1200Z-b6524cb/run.md#3`, or a test as `file:line`. A `ran` fact names at least one entry, and every entry exists on disk. Without evidence, a fact is `walked` at most. Use a verify run only when the verify-run rule in Evidence says it applies.
 - `covers` is optional, and ties the fact to a spec scenario with `capability`, `requirement`, and `scenario`, copied exactly from the OpenSpec delta. See Spec scenarios no one can see.
 - `left_open` lists each remaining risk, or is `[]`.
-- `questions` lists what the reviewer must decide that you could not settle from the code, the specs, or the request, or is `[]`. `id` counts from 1. `options` has two or more entries. `recommendation` is one of the `options`, copied exactly.
-- `decisions` lists at most three hunks a reviewer should judge, or is `[]`. A hunk is a decision when it holds a tradeoff, a rejected alternative, a behavior that changes, or an edge case you resolved. Leave routine edits out. `id` counts from 1. `path` is the file's path from the repository root. `hunk` starts at its `@@` line and is copied from `git diff origin/<base>...HEAD -- <path>`, cut to the lines that carry the decision, with no line edited. `note` is one sentence on why it changed or what to check.
+- `questions` lists what the reviewer must decide that you could not settle from the code, the specs, or the request, or is `[]`. `id` is a quoted string that counts from `"1"`, because goodflows refuses a bare number. `options` has two or more entries. `recommendation` is one of the `options`, copied exactly.
+- `decisions` lists at most three hunks a reviewer should judge, or is `[]`. A hunk is a decision when it holds a tradeoff, a rejected alternative, a behavior that changes, or an edge case you resolved. Leave routine edits out. `id` is a quoted string that counts from `"1"`, as in `questions`. `path` is the file's path from the repository root. `hunk` starts at its `@@` line and is copied from `git diff origin/<base>...HEAD -- <path>`, cut to the lines that carry the decision, with no line edited. `note` is one sentence on why it changed or what to check.
 - The body says the same things for the reviewer. When you change one, change the other.
 
 ### Title
