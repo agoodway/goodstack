@@ -318,6 +318,8 @@ drift: []
 
 Take `sha256` from `sha256sum` or `shasum -a 256` run on the run folder's `scenarios.md`. Below the front matter, write the Markdown index in the shape the verify skill's Evidence section gives. Add a line that says the run came from `gs-qa-scenarios`, with the scenario source: the branch, the pull request, or the saved file. For an intent set, also name the OpenSpec change. Then list each scenario with its number, name, priority, result, the failed step or the reason it did not run, and its evidence files, so the `gs-pull-request` skill can pick the run up. The front matter and the list say the same things. `run.md` is the only place a run writes its results.
 
+When `goodflows cr validate --help` runs, run `goodflows cr validate .verify/<app>/<run-id>/` after writing `run.md`. It checks the folder as `goodflows cr runs upload` reads it. Fix every error it lists in `run.md` until it lists none. Never edit `scenarios.md` to clear an error, because it must stay the set the run drove; tell the user about an error in it instead.
+
 Print the results in chat in the same shape as the scenarios. Keep each scenario as written. The checklist carries the results, so a reader sees the whole run without scrolling. Tick a box only for a passed scenario, and end every line with its result:
 
 ```markdown
@@ -347,7 +349,7 @@ Keep the set's front matter exactly as it was. Add no `run` key, and no `result`
 
 ## Sharing
 
-Print the scenarios, or the results of a run, in chat. When the user asks to save them, write a Markdown file at the path they give, or outside the repository when they give none.
+Print the scenarios, or the results of a run, in chat. When the user asks to save them, write a Markdown file at the path they give, or outside the repository when they give none. When `goodflows cr validate --help` runs, run `goodflows cr validate <file>` on a saved set, and fix every error it lists until it lists none. It checks the set as `goodflows cr scenarios upload` reads it.
 
 When the user asks to post them on the pull request, move the front matter into a fenced block at the end of the body, as [Post a run with its evidence](#post-a-run-with-its-evidence) describes. Use the `gs-pr-comment` skill when it is installed. Without it, show the body first, wait for approval, write the body to a file outside the repository, and run `gh pr comment [pr] --body-file [file]`.
 
