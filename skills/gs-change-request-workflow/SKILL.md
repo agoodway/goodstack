@@ -27,6 +27,8 @@ The CLI uploads files. It does not write them. Each file has one writer, and you
 | `.verify/<app>/<run-id>/`, a run folder with `scenarios.md`, `run.md`, and evidence | the repo's `verify-<app>` skill, driven by `gs-qa-scenarios` | `cr runs upload <folder>` |
 | `verify-<app>/features/*.md`, the feature map, with `paths` globs in front matter | `gs-create-verification-skill`, kept true by `gs-maintain-verification-skill` | `features sync` |
 
+`gs-qa-scenarios`, `gs-create-verification-skill`, and `gs-maintain-verification-skill` start only when the user asks, and some harnesses then refuse to start them for you. When the user asked for this workflow and a step needs one of them, find its installed `SKILL.md` instead: search the harness's installed skills, then the project skills directories, such as `.cursor/skills/`, `.claude/skills/`, and `.agents/skills/`, then the user skill directories. Read it, and follow its write or run mode for that step.
+
 When a writer skill is not installed, say which file is missing and which skill writes it. Do not write the file from memory of its format.
 
 `.goodflows/` and `.verify/` are never committed. The claims describe a commit, so committing them would change the commit they describe.
