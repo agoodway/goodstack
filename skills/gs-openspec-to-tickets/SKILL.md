@@ -1,12 +1,12 @@
 ---
 name: gs-openspec-to-tickets
-description: "Break one or more OpenSpec changes into tracer-bullet tickets with blocking edges, published to the project's tracker (GitHub, Linear, Jira, or local markdown). Use when the user asks to turn an OpenSpec change into tickets or issues, runs /gs-openspec-to-tickets, or names gs-openspec-to-tickets. Only when the user asks for it."
+description: "Publish one ticket per OpenSpec change to the project's tracker (GitHub, Linear, Jira, or local markdown), with a blocking edge wherever one change builds on another, so independent changes can run in parallel. Use when the user asks to turn OpenSpec changes into tickets or issues, runs /gs-openspec-to-tickets, or names gs-openspec-to-tickets. Only when the user asks for it."
 disable-model-invocation: true
 ---
 
 # OpenSpec to Tickets
 
-Break OpenSpec changes into **tickets**: tracer-bullet vertical slices, each declaring the tickets that **block** it, published to the project's tracker under one parent ticket per change.
+Publish one **ticket** per OpenSpec change. A ticket is the whole change. When several changes are named, each ticket declares the changes that **block** it, and every other pair of changes stays free to run in parallel.
 
 ## Input
 
@@ -15,8 +15,6 @@ Break OpenSpec changes into **tickets**: tracer-bullet vertical slices, each dec
 ```
 
 Also accept a prose list of change names. When no change is named, run `openspec list --json` and ask which active changes to ticket (several may be picked). A name that is not an active change is reported as not found; continue with the rest.
-
-The user may also pass an existing tracker issue as the parent for a change. Use it as that change's parent and leave its body, labels, and state untouched.
 
 ## Process
 
@@ -52,7 +50,7 @@ Read the matching tracker file now; it holds the commands for every later step t
 - Jira: [tracker-jira.md](tracker-jira.md)
 - Local markdown: [tracker-local.md](tracker-local.md)
 
-Any other tracker the user names: ask them to describe in a paragraph how to create an issue, nest it under a parent, link a blocker, and apply a label, then follow that description.
+Any other tracker the user names: ask them to describe in a paragraph how to create an issue, link a blocker, and apply a label, then follow that description.
 
 ### 3. Resolve the labels
 
@@ -70,58 +68,51 @@ When `docs/agents/triage-labels.md` exists, its mapping overrides the label stri
 
 ### 4. Read each change
 
-Read the whole change: `proposal.md`, `design.md` when present, every spec delta under `specs/`, and `tasks.md`. Treat `tasks.md` as a hint about scope and ordering, not as the ticket list: its tasks are usually horizontal layers.
+Read the whole change: `proposal.md`, `design.md` when present, every spec delta under `specs/`, and `tasks.md`.
 
-List every **scenario** in the spec deltas (each `#### Scenario:` under an ADDED or MODIFIED requirement, plus each REMOVED requirement). This list is the coverage target for step 5.
+List every **scenario** in the spec deltas: each `#### Scenario:` under an ADDED or MODIFIED requirement, plus each REMOVED requirement. These become the ticket's acceptance criteria.
 
-Explore the codebase around the change. Use the project's glossary vocabulary and respect ADRs in the area. Look for prefactoring that makes the change easy: "make the change easy, then make the easy change."
+### 5. Draft the tickets
 
-### 5. Draft vertical slices
+Draft one ticket per change. Each ticket carries:
 
-Break each change into **tracer bullet** tickets.
+- **Title**: the change's title, short, in the domain vocabulary
+- **Change**: the OpenSpec change it stands for
+- **Blocked by**: the changes that must land before this one can start
+- **Why** and **What changes**: the proposal's sections, condensed
+- **Acceptance criteria**: every scenario from step 4, its WHEN/THEN restated as a checkbox
+- **Label**: `ready-for-human` when the change needs a person (credentials, a third-party dashboard, a product or design decision), else `ready-for-agent`
 
-<vertical-slice-rules>
+Change B is **blocked by** change A only when B cannot be built or verified until A lands:
 
-- Each slice cuts a narrow but COMPLETE path through every layer (schema, API, UI, tests): vertical, not a horizontal slice of one layer
-- A completed slice is demoable or verifiable on its own
-- Each slice is sized to fit in a single fresh context window
-- Any prefactoring comes first
+- B uses a capability, schema, interface, or data that A adds.
+- B's spec deltas modify or remove a requirement that A adds or modifies.
+- B's proposal or design names A as a prerequisite.
 
-</vertical-slice-rules>
+Leave every other pair unblocked. Two changes that edit the same files but do not build on each other get no edge: the conflict is resolved when they are integrated, and an edge would make them run one after the other. Add no edge to make an order tidy.
 
-Each ticket carries:
+Look for blockers among the changes in this run and among the active changes that already have a `tickets.md`. A blocker with a `tickets.md` is linked to the ticket that file names. A change that depends on an active change with no `tickets.md`, outside this run, gets no edge. Report that dependency in step 6, so the user can add the other change to the run. An archived change has already landed and blocks nothing.
 
-- **Title**: short, in the domain vocabulary
-- **Change**: the OpenSpec change it belongs to
-- **Blocked by**: the tickets that must complete before it can start, from any change in the run. A cross-change edge belongs where one change builds on a capability another change adds.
-- **What it delivers**: the end-to-end behaviour it makes work
-- **Covers**: the scenarios it satisfies. Its acceptance criteria are those scenarios' WHEN/THEN, restated as checkboxes.
-- **Label**: `ready-for-human` when the slice needs a person (credentials, a third-party dashboard, a product or design decision), else `ready-for-agent`
+The edges form no cycle. When two changes each need the other, report the cycle in step 6 and ask the user which edge to drop or which changes to merge.
 
-**Wide refactors are the exception to vertical slicing.** A wide refactor is one mechanical change (rename a column, retype a shared symbol) whose blast radius fans across the codebase, so no vertical slice can land green. Sequence it as **expand–contract**: an expand ticket adds the new form beside the old; migrate tickets move call sites over in batches sized by blast radius, each blocked by the expand; a contract ticket deletes the old form, blocked by every migrate batch. When even the batches cannot stay green alone, let them share an integration branch that all block a final integrate-and-verify ticket.
+Done when every change in the run has one drafted ticket, and every edge points at a change that genuinely gates it.
 
-Done when every scenario from step 4 is covered by at least one ticket, and every blocking edge points at a ticket that genuinely gates it.
+### 6. Ask the user to approve
 
-### 6. Quiz the user
+Present the tickets as a numbered list. For each one show its title, blocked by, label, and the number of acceptance criteria. Below the list, show the groups of changes that can run in parallel, in the order the edges allow. Then report any dependency on an unticketed change and any cycle. Ask:
 
-Present one combined breakdown for all changes, grouped by change, as a numbered list. For each ticket show its title, blocked by, what it delivers, covered scenarios, and label. Ask:
-
-- Does the granularity feel right? (too coarse / too fine)
-- Are the blocking edges correct, including the cross-change ones?
-- Should any tickets be merged or split?
+- Are the blocking edges correct? Is one missing, or does one hold back work that could run in parallel?
 - Is each `ready-for-human` call right?
 
-Iterate until the user approves the breakdown. Nothing is published before approval.
+Iterate until the user approves. Nothing is published before approval.
 
 ### 7. Publish
 
 Ensure the labels exist first. List any label the tracker lacks, confirm once, then create them per the tracker file.
 
-For each change, publish its **parent ticket** first (or use the parent the user passed). Then publish every slice across the whole run in dependency order, blockers first, so each blocking edge can reference a real identifier. Work the **frontier**: any ticket whose blockers are all published. Each slice is nested under its change's parent, gets its label, and links its blockers natively where the tracker supports it.
+Publish the tickets in dependency order, blockers first, so each blocking edge can reference a real identifier. Work the **frontier**: any ticket whose blockers are all published. Each ticket gets its label, and links its blockers natively where the tracker supports it.
 
-Never close, relabel, or edit a parent the user passed in.
-
-Done when every approved ticket exists on the tracker with its parent, label, and blockers.
+Done when every approved ticket exists on the tracker with its label and blockers.
 
 ### 8. Write the index
 
@@ -131,21 +122,21 @@ Write `openspec/changes/<change>/tickets.md` for each published change. Leave ev
 # Tickets: <change>
 
 Tracker: <tracker and target>
-Parent: <parent ID/URL>
 
-| #  | Ticket           | Title   | Label           | Blocked by          | Covers                       |
-| -- | ---------------- | ------- | --------------- | ------------------- | ---------------------------- |
-| 01 | <ID/URL or path> | <title> | ready-for-agent | None                | <Requirement>: <Scenario>, … |
-| 02 | <ID/URL or path> | <title> | ready-for-human | 01, other-change#03 | …                            |
+| Ticket           | Title   | Label           | Blocked by                   |
+| ---------------- | ------- | --------------- | ---------------------------- |
+| <ID/URL or path> | <title> | ready-for-agent | None, or <change>, <change>  |
 ```
 
-Then report to the user: per change, the parent link and ticket count, plus any change dropped in step 1.
+The table has one row. `Blocked by` lists change names.
 
-## Templates
+Then report to the user: each change's ticket link and blockers, the groups that can run in parallel, and any change dropped in step 1.
+
+## Template
 
 Ticket bodies avoid file paths and code snippets: they go stale fast. The exception is a snippet that encodes a decision more precisely than prose (a state machine, schema, or type shape) from the change's design; trim it to the decision-rich part.
 
-<parent-template>
+<issue-template>
 
 ## Why
 
@@ -153,28 +144,16 @@ The proposal's Why, condensed.
 
 ## What changes
 
-The proposal's What Changes, condensed.
-
-## OpenSpec
-
-Change `<change>`. Slices are the sub-issues of this ticket.
-
-</parent-template>
-
-<issue-template>
-
-## Parent
-
-A reference to the change's parent ticket. Omit when the tracker nested it natively.
-
-## What to build
-
-The end-to-end behaviour this ticket makes work, from the user's perspective, not layer-by-layer implementation.
+The proposal's What Changes, condensed, as the end-to-end behaviour this ticket makes work.
 
 ## Acceptance criteria
 
 - [ ] WHEN … THEN … (from `<Requirement>: <Scenario>`)
 - [ ] …
+
+## OpenSpec
+
+Change `<change>`. This ticket is the whole change.
 
 ## Blocked by
 

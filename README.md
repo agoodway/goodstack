@@ -2,7 +2,7 @@
 
 This repo publishes agent skills. They review and ship code, explain a codebase, test a design before you build it, and edit prose. Each skill installs on its own with the skills CLI. The source is `agoodway/goodstack`.
 
-The skills are written to run in Claude Code, Codex, Cursor, Amp, and any other harness that reads skills. Three skills name specific tools for an optional feature, and each says what it does without them. `gs-review` names the Codex, Grok, and Claude tools it can ask for a second opinion. `gs-openspec-ship-tickets` names T3 Code, Amp, and Claude Code for its thread mode. `gs-council` names the T3 Code tools that can start its delegates.
+The skills are written to run in Claude Code, Codex, Cursor, Amp, and any other harness that reads skills. Three skills name specific tools for an optional feature, and each says what it does without them. `gs-review` names the Codex, Grok, and Claude tools it can ask for a second opinion. `gs-openspec-implement-tickets` names T3 Code, Amp, and Claude Code for its thread mode. `gs-council` names the T3 Code tools that can start its delegates.
 
 Every skill name starts with `gs-`, so a skill from this repo never overwrites a same-named skill from another source.
 
@@ -16,18 +16,18 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 - [`gs-git-commit`](skills/gs-git-commit/README.md) commits the current changes with conventional messages. It skips secrets and generated files, and it adds no AI attribution.
 - [`gs-pull-request`](skills/gs-pull-request/README.md) opens a draft GitHub pull request. The description says what changed, how it works, what was run, and what could break.
 - [`gs-change-request`](skills/gs-change-request/README.md) writes the description file for a goodflows change request, the replacement for a pull request on any Git host. YAML front matter holds the claims goodflows parses, and the body follows `gs-pull-request`. With `--approved` it creates or updates the change request through the goodflows CLI, and it never pushes or calls a host API itself.
-- [`gs-change-request-workflow`](skills/gs-change-request-workflow/README.md) takes a branch through a goodflows change request, from opening it to reporting the merge. It gives the order of the `goodflows cr` commands, which skill writes each file they upload, and what each verdict reason asks for.
+- [`gs-change-request-ship`](skills/gs-change-request-ship/README.md) takes a branch through a goodflows change request, from opening it to reporting the merge. It gives the order of the `goodflows cr` commands, which skill writes each file they upload, and what each verdict reason asks for.
 - [`gs-pr-comment`](skills/gs-pr-comment/README.md) writes and posts a GitHub comment for you. Each comment opens with a note naming the model and the user it speaks for.
 - [`gs-pr-show-me`](skills/gs-pr-show-me/README.md) explains what an existing pull request changes, in plain language with small pictures. It reads the pull request and posts nothing.
 - [`gs-qa-scenarios`](skills/gs-qa-scenarios/README.md) writes manual QA scenarios for a branch or pull request. Each scenario tells a QA engineer what to test, why, the exact steps, and the result to expect. It can also run the scenarios through the project's `verify-*` skill and report a result with evidence for each one.
 
 ### OpenSpec
 
-- [`gs-openspec-ship`](skills/gs-openspec-ship/README.md) takes each named OpenSpec change through apply, verify, review, archive, and commit. It rebases onto the remote's default branch first, and it opens one draft pull request at the end.
+- [`gs-openspec-implement`](skills/gs-openspec-implement/README.md) takes each named OpenSpec change through apply, verify, review, archive, and commit. It rebases onto the remote's default branch first, and it stops after the commits without pushing or opening a pull request.
 - [`gs-openspec-review-change`](skills/gs-openspec-review-change/README.md) quick-reviews an OpenSpec change before you build it. It patches the findings with one obvious fix and answers design questions with a recorded recommendation, or asks you each one when you request it.
 - [`gs-openspec-qa-scenarios`](skills/gs-openspec-qa-scenarios/README.md) writes QA scenarios from an OpenSpec change's specs, before or after anyone builds it. Each Must scenario names the requirement it covers, and the output has the same shape as `gs-qa-scenarios`, so its run mode can run either set.
-- [`gs-openspec-to-tickets`](skills/gs-openspec-to-tickets/README.md) breaks OpenSpec changes into tickets that each cut through every layer. It publishes them to GitHub, Linear, Jira, or local markdown.
-- [`gs-openspec-ship-tickets`](skills/gs-openspec-ship-tickets/README.md) ships those tickets in blocking order, one pipeline per ticket. It archives each finished change and opens one draft pull request.
+- [`gs-openspec-to-tickets`](skills/gs-openspec-to-tickets/README.md) publishes one ticket per OpenSpec change to GitHub, Linear, Jira, or local markdown. A ticket is blocked only by a change it builds on, so the rest can run in parallel.
+- [`gs-openspec-implement-tickets`](skills/gs-openspec-implement-tickets/README.md) implements those tickets in blocking order, one pipeline per ticket. It archives each finished change and stops after the commits without opening a pull request.
 
 ### Understand code
 
@@ -69,7 +69,7 @@ Every skill name starts with `gs-`, so a skill from this repo never overwrites a
 
 ### Who starts a skill
 
-Fourteen skills run only when you type the command: `gs-arena`, `gs-why`, `gs-improve-codebase-architecture`, `gs-no-comments`, `gs-reflect`, `gs-openspec-ship`, `gs-openspec-to-tickets`, `gs-openspec-ship-tickets`, `gs-create-verification-skill`, `gs-maintain-verification-skill`, `gs-create-formal-verification-skill`, `gs-maintain-formal-verification-skill`, `gs-statechart`, and `gs-qa-scenarios`. The agent can also start the other skills when a request matches their description. Amp has no slash commands and ignores the `disable-model-invocation` flag that sets this, so these fourteen say in their descriptions to run only when you ask for them.
+Fourteen skills run only when you type the command: `gs-arena`, `gs-why`, `gs-improve-codebase-architecture`, `gs-no-comments`, `gs-reflect`, `gs-openspec-implement`, `gs-openspec-to-tickets`, `gs-openspec-implement-tickets`, `gs-create-verification-skill`, `gs-maintain-verification-skill`, `gs-create-formal-verification-skill`, `gs-maintain-formal-verification-skill`, `gs-statechart`, and `gs-qa-scenarios`. The agent can also start the other skills when a request matches their description. Amp has no slash commands and ignores the `disable-model-invocation` flag that sets this, so these fourteen say in their descriptions to run only when you ask for them.
 
 ## Install
 
@@ -105,7 +105,7 @@ Add `-g` to install into your user skill directory.
 
 ## Sources
 
-Twelve skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-change-request`, `gs-pr-show-me`, `gs-qa-scenarios`, `gs-scratch`, `gs-openspec-ship`, `gs-openspec-ship-tickets`, `gs-openspec-review-change`, and `gs-openspec-qa-scenarios`.
+Twelve skills are original to this repo: `gs-review`, `gs-review-pr-reply`, `gs-git-commit`, `gs-pull-request`, `gs-change-request`, `gs-pr-show-me`, `gs-qa-scenarios`, `gs-scratch`, `gs-openspec-implement`, `gs-openspec-implement-tickets`, `gs-openspec-review-change`, and `gs-openspec-qa-scenarios`.
 
 The other twenty-five come from skills that other people published. The originals have no `gs-` prefix. Each skill's own `README.md` gives the original's path and commit, and lists every change this repo made.
 

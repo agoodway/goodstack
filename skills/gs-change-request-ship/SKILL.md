@@ -1,6 +1,6 @@
 ---
-name: gs-change-request-workflow
-description: "Take a branch through a GoodFlows change request, the replacement for a pull request: open it, upload scenario sets and verify runs, sync features, read the verdict, answer the review, and report the merge. Use when a repo's work lands through goodflows change requests, when asked to open, update, or merge a change request, when a verdict is pending, blocked, or needs_review and you need to know what fixes it, before running any goodflows cr or features command, or names gs-change-request-workflow."
+name: gs-change-request-ship
+description: "Take a branch through a GoodFlows change request, the replacement for a pull request: open it, upload scenario sets and verify runs, sync features, read the verdict, answer the review, and report the merge. Use when a repo's work lands through goodflows change requests, when asked to open, update, ship, or merge a change request, when a verdict is pending, blocked, or needs_review and you need to know what fixes it, before running any goodflows cr or features command, or names gs-change-request-ship."
 ---
 
 # Work with GoodFlows change requests
