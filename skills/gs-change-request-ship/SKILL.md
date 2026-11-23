@@ -1,18 +1,18 @@
 ---
 name: gs-change-request-ship
-description: "Take a branch through a GoodFlows change request, the replacement for a pull request: open it, upload scenario sets and verify runs, sync features, read the verdict, answer the review, and report the merge. Use when a repo's work lands through goodflows change requests, when asked to open, update, ship, or merge a change request, when a verdict is pending, blocked, or needs_review and you need to know what fixes it, before running any goodflows cr or features command, or names gs-change-request-ship."
+description: "Take a branch through a GoodFlows change request, the replacement for a pull request: open it, upload scenario sets and verify runs, sync features, read the verdict, answer the review, and report the merge. Use when a repo's work lands through goodflows change requests, when asked to open, update, ship, or merge a change request, when a verdict is pending, blocked, or needs_review and you need to know what fixes it, when a defect turns up in merged work, before running any goodflows cr or features command, or names gs-change-request-ship."
 ---
 
 # Work with GoodFlows change requests
 
 A GoodFlows change request replaces a pull request on any Git host. The goodflows CLI reports facts from the local checkout, and the server grades them against the project's review policy. The server never talks to the Git host and never merges. You push, you merge, and you tell the server what you did.
 
-This skill is the order of the steps and what each verdict reason asks for. It does not repeat the CLI. Every `goodflows` command has `--help` with examples, and `--json` prints its result as one JSON event. For exit codes, error codes, and the JSON fields, run `goodflows agents`. Formats live in the CLI too: check a file with the validate commands below before you upload it, and fix every problem they list at once.
+This skill is the order of the steps and what each verdict reason asks for. It does not repeat the CLI. Every `goodflows` command has `--help` with examples, and `--json` prints its result as one JSON event. For exit codes, error codes, and the server conflicts the CLI turns into a next step, run `goodflows agents`; for a command's JSON fields, run it with `--json`. Formats live in the CLI too: check a file with the validate commands below before you upload it, and fix every problem they list at once.
 
 ## Before you start
 
 - `command -v goodflows` prints a path. Without one, stop and say the CLI is not installed. Do not call the server's API with `curl` in its place.
-- The repo's GoodFlows config has a `[reporting]` project, URL, and key. Writes need an `sk_` key. Never print the key.
+- The repo's GoodFlows config has a `[reporting]` block with a `project`. The server URL and the API key come from the environment variables its `url_env` and `token_env` name, `GOODFLOWS_URL` and `GOODFLOWS_API_KEY` by default, never from the file. Writes need an `sk_` key. Never print the key. `cr validate` and `features validate` need neither the config nor the key.
 - Work on a branch, not on the target branch. Commands find the change request of the current branch unless you pass `--number`.
 
 ## Who writes which file
@@ -42,7 +42,7 @@ Run the steps in this order. Skip a step the policy does not need; `cr verdict` 
 3. **Push.** `goodflows cr push -- <git push arguments>` pushes and reports Git facts for the new head. A plain `git push` leaves the server on the old head.
 4. **Drive.** Run the verify skill against the scenario set at HEAD. The run folder must hold the set as `scenarios.md`, byte for byte, and must come from a clean tree. Then `goodflows cr validate <folder>` and `goodflows cr runs upload <folder>`. Upload a failed run too: the verdict needs every result, and a person needs the evidence.
 5. **Features.** When the change touched the feature map, `goodflows features validate`, then `goodflows features sync`. A sync recomputes every open change request's verdict.
-6. **Describe.** Run `gs-change-request` for HEAD, then `goodflows cr validate`. While the file's `cr` is null, `goodflows cr open` creates the change request, or reuses the branch's one draft or open change request, and writes the number into the file. Once `cr` is set, `goodflows cr claims` updates it. Never run `cr open` for a file that has a number.
+6. **Describe.** Run `gs-change-request` for HEAD, then `goodflows cr validate`. A question or decision `id` must be a quoted string, such as `id: "1"`; `cr validate`, `cr open`, and `cr claims` refuse a bare number, so run `gs-change-request` again for a claims file an older version wrote. While the file's `cr` is null, `goodflows cr open` creates the change request, or reuses the branch's one draft or open change request, and writes the number into the file. Once `cr` is set, `goodflows cr claims` updates it. Never run `cr open` for a file that has a number.
 7. **Ready.** `goodflows cr ready` moves the draft to open.
 8. **Wait.** `goodflows cr wait --until mergeable,needs_review --timeout <seconds>`. Exit 75 means the timeout passed before the verdict reached one of those states; run it again or read `cr verdict`. It is not a failure.
 9. **Review.** On `needs_review`, `goodflows cr review` lists what a person must look at, with the answers each item allows. Hand the packet to the user. Answer an item with `cr answer` only when the user gave you that answer. A `request_change` or `reject` answer makes a task: `cr tasks` lists them, you fix the code, and `cr tasks done <id>` marks each one after the new head is pushed and graded.
@@ -52,7 +52,7 @@ Every new commit starts the head over: steps 2 (diff set), 3, 4, and 6 again. An
 
 ## Read the verdict
 
-`goodflows cr verdict` prints the state and one reason per rule that fired, each with a `rule` and a `subject`. The state is the strongest outcome among them: `pending` (an input is missing), then `blocked` (an input fails), then `needs_review` (a person must look), then `mergeable`. Fix pending reasons first; a pending verdict hides nothing, but its other reasons may change once the input arrives.
+`goodflows cr verdict` prints the state and one reason per rule that fired, each with a `rule` and a `subject`. The state is the strongest outcome among them: `pending` (an input is missing), then `blocked` (an input fails), then `needs_review` (a person must look), then `mergeable`. Fix pending reasons first; a pending verdict hides nothing, but its other reasons may change once the input arrives. When `cr verdict` says the local HEAD is not the reported head, the verdict grades an older commit: run `cr push` or `cr claims` first.
 
 The policy decides the outcome of most rules, so read the outcome from the verdict, not from this table. `goodflows policy get --effective` shows the settings in force.
 
@@ -76,11 +76,12 @@ The policy decides the outcome of most rules, so read the outcome from the verdi
 | `parent_not_merged`, `parent_closed` | A stacked change waits on its parent. Merge or reopen the parent, or `cr parent --clear`. |
 | `merge_result_ungraded`, `merge_result_failed` | The target moved since grading. Drive the set on the merge result, upload that run, and fix what fails. |
 
-A rule not in this table is newer than this skill. Read its `message`, then `goodflows cr verdict --help`.
+A rule not in this table is newer than this skill. Its `message` and `subject` say what it wants; `cr review` shows the item when a person must answer it.
 
 ## Rules
 
 - Do not lower the policy, weaken a scenario, drop a feature glob, or mark a scenario not run to make a verdict pass.
 - Do not approve, reject, or answer on a person's behalf unless they told you the answer in this conversation.
-- When a command fails, quote the command and its error. Run `cr validate` or `features validate` on the file it read. A refused upload stored nothing, so fix the file and run the same command again. After a failed `cr open`, read `cr` in the claims file first: when it holds a number, the change request exists, so use `cr claims`.
+- When a command fails, quote the command and its error. The CLI rewrites the server conflicts it knows, such as a taken merge slot, a stale head, or an expired lease, into the next step; take that step. With `--json`, every server error has `code` `runtime`, so read the `message`, not the `code`, and look the conflict up in `goodflows agents`. Run `cr validate` or `features validate` on the file it read. A refused upload stored nothing, so fix the file and run the same command again. A claims file that passes `cr validate` can still be refused, because the server checks more of it than the CLI does. After a failed `cr open`, read `cr` in the claims file first: when it holds a number, the change request exists, so use `cr claims`.
+- Record a defect with `goodflows cr defect` only when the user reports one in merged work, by change request number or the commit that shipped it. `goodflows policy calibration` shows defect rates by lane, policy version, rule, and path glob, with one line per defect; it is what a person reads before changing the policy.
 - Report the change request number, the verdict state and its reasons, and anything waiting on a person.
