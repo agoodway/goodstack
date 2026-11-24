@@ -66,7 +66,9 @@ A QA engineer tests behavior, not files. For each area of the diff, find where t
 
 Follow the code to the entry point. A route file, a controller, a template, or a job schedule usually names it. Take button labels, messages, and error text from the code as written, so the steps match the screen.
 
-Some changes have no visible effect, such as a refactor, a renamed function, or a new index. Do not invent a scenario for them. Find the screens and flows that call the changed code, and list those as regression checks. Use the `gs-blast-radius` skill's method when it is installed. Without it, search for every caller of each changed symbol, and follow data the search misses: a database column, an API response, a config key, or a feature flag.
+A change also reaches flows outside the diff. For every changed function, query, component, and setting, find the screens and flows that call it, whether or not the change has a visible effect of its own. Use the `gs-blast-radius` skill's method when it is installed. Without it, search for every caller of each changed symbol, and follow data the search misses: a database column, an API response, a config key, or a feature flag. Each flow you find becomes a regression scenario in step 3.
+
+Some changes have no visible effect, such as a refactor, a renamed function, or a new index. Do not invent a new-behavior scenario for them. They get only regression scenarios.
 
 ## 3. Choose the scenarios
 
@@ -77,11 +79,19 @@ Work from the diff. Each new branch in the code is a candidate scenario:
 - Each role or permission the code checks. Test one role that has access and one that does not.
 - Data states the code treats differently, such as empty, one item, many items, very long text, and records created before this change.
 - Feature flags and settings the change reads, tested in each state.
-- Regressions in flows that did not change but call changed code.
+- Regressions in flows that did not change but call changed code, from step 2. Each one is a full scenario with steps and Expect lines, so a run drives it like any other. Start its name with `Regression: `. Its Why line names the changed behavior the flow depends on, in product terms. Merge callers a tester reaches through the same flow into one scenario.
 
-Rank each scenario by what breaks if it fails and how many people it reaches. Mark it **Must**, **Should**, or **Could**. Drop a scenario that only repeats another with different data. Most branches need three to eight scenarios. Say what you left out.
+Rank each scenario, regression or not, by what breaks if it fails and how many people it reaches. Mark it **Must**, **Should**, or **Could**. Drop a scenario that only repeats another with different data. Cap the total number of scenarios, counting regression scenarios, by the size of the change. Count the areas from step 1 and the regression flows from step 2, and take the largest cap any row reaches:
 
-Name what a person cannot check by hand, such as a race between two requests or a log line no screen shows. Say whether an automated test in the diff covers it.
+| Cap | Areas a person can see | Changed code |
+|---|---|---|
+| 25 | One or two | Called by a handful of flows |
+| 50 | Three to five | Shared code that many flows call |
+| 100 | Six or more | Code nearly every flow depends on, such as sign-in, permissions, layout, routing, data access, or a migration on a central table |
+
+A cap the user names replaces the table. Name the cap and the reason for it in the line under the Checklist heading, such as "Cap 50: the change touches four areas." When there are more candidates than the cap, keep the ones ranked highest, and list each one you cut under "Not covered by these scenarios" with its flow and priority. Say what else you left out.
+
+Name what a person cannot check by hand, such as a race between two requests or a log line no screen shows. Say whether an automated test in the diff covers it. A regression flow no tester can reach goes there too, not under "Regression checks".
 
 ## 4. Find the setup
 
@@ -114,8 +124,11 @@ scenarios:
   - id: 2
     name: "[...]"
     priority: should
+  - id: 3
+    name: "Regression: [Flow that did not change but calls changed code]"
+    priority: should
 regressions:
-  - "[Flow that did not change but calls changed code]: [the check and its result]"
+  - "[Flow that did not change but calls changed code]: scenario 3"
 ---
 
 # QA: [pull request title or branch name]
@@ -139,6 +152,7 @@ regressions:
 
 - [ ] 1. [Short name of the behavior] (Must)
 - [ ] 2. [...] (Should)
+- [ ] 3. Regression: [Flow that did not change but calls changed code] (Should)
 
 ## Scenarios
 
@@ -152,7 +166,7 @@ Why: [One sentence. What a user hits if this is wrong.]
 
 ## Regression checks
 
-- [ ] [Flow that did not change but calls changed code]: [the one check to run, and the result to expect]
+- [Flow that did not change but calls changed code]: scenario 3
 
 ## Not covered by these scenarios
 
@@ -172,7 +186,7 @@ The front matter is the contract other tools read, such as goodflows change requ
 - `format` is `qa-scenarios/2`. A change to the fields that would break a reader gets a new number. Version 2 changed only the intent set's `coverage` rows, so a diff set reads the same in both.
 - `source` is `diff`. `branch` and `base` are 1 to 255 characters. `revision` is the short SHA of `<rev>` in lowercase hex, and nothing else. When the output includes uncommitted changes, the top of the output says so, as step 1 requires, and `revision` still holds only the SHA. `review` is optional and names the change under review on any Git host: a goodflows change request ID, a GitLab merge request URL, or a GitHub pull request URL, as the user or the host gives it. Use `null` when there is none. Never put a branch name or a commit in it.
 - `scenarios` has one entry per scenario in the body, in the same order, and holds 1 to 200 entries. `id` is the scenario's number, `name` is its heading without the number and priority, 1 to 200 characters, and `priority` is `must`, `should`, or `could`. An entry has no other keys. A scenario you walked in step 6 says so only in its checklist line.
-- `regressions` has one string per line under "Regression checks", 1 to 1,000 characters each and at most 200, or is `[]`.
+- `regressions` has one string per line under "Regression checks", 1 to 1,000 characters each and at most 200, or is `[]`. Each line names a flow that calls changed code and the scenario that checks it, such as `"Invoice export: scenario 5"`. Every line points to a scenario, so a run drives every regression check.
 - The body says the same things for the tester. When you change one, change the other.
 
 ### Checklist and grouping
@@ -213,7 +227,8 @@ Before you hand them over, read each scenario as the QA engineer:
 - Can a person who has not seen the code follow every step?
 - Does every label, URL, and message match the code?
 - Is every result something a person can observe?
-- Does every Must scenario trace to a real change in the diff?
+- Does every Must scenario trace to a real change in the diff, or, for a regression scenario, to a flow that calls changed code?
+- Does every line under "Regression checks" name a scenario that exists?
 
 When the harness can run the application or drive a browser, walk the Must scenarios yourself. First confirm that the running application is built from `<rev>`, for example by checking that `git rev-parse HEAD` in the checkout it runs from prints the same commit. When you cannot confirm the revision, say so plainly at the top of the output, and leave every box empty. Fix any step that did not match. In the checklist, tick each scenario you walked and end its line with ", walked". Leave the rest empty. Do not claim a scenario passes when you did not run it.
 
@@ -247,7 +262,7 @@ When you find no scenarios in any of these places, say so, and offer write and r
 
 Read the front matter first. In a file or the chat it opens the set. In a pull request comment it is the fenced block whose info string is `yaml qa-scenarios`. Its `source` says where the scenarios came from:
 
-- `diff`: the `branch`, `revision`, and `review` fields name what the scenarios cover. A set written before `review` existed has a `pr` key with a pull request URL in its place, and you read it as `review`. A set saved before front matter existed is a diff set, and the line under its title names the branch or pull request.
+- `diff`: the `branch`, `revision`, and `review` fields name what the scenarios cover. A set written before `review` existed has a `pr` key with a pull request URL in its place, and you read it as `review`. A set saved before front matter existed is a diff set, and the line under its title names the branch or pull request. A diff set whose regression checks name no scenario was written before regressions became scenarios. Run its scenarios, say under the Checklist heading that its regression checks were not driven, and offer write and run mode for a set that drives them.
 - `intent`: the `gs-openspec-qa-scenarios` skill wrote the set from the OpenSpec change in `change`. Run it against the branch or pull request the user names, or the current branch when they name none. A failed step means the implementation misses the requirement in that scenario's `covers`. A scenario without `covers` checks behavior from the proposal alone, as its `Covers:` line says. Keep `covers`, `coverage`, and each `Covers:` line in the results. In a `qa-scenarios/2` set, each `coverage` row has `capability`, `requirement`, `scenario`, `status` (`covered` or `no_check`), `scenarios`, and an optional `reason`. A `no_check` row has no scenario to run, so it gets no result. A `qa-scenarios/1` set has `delta`, `qa`, and `no_check` on its rows instead. Read it the same way, and keep its rows and its format number as written.
 
 Find the revision to run against, `<rev>`, as step 1 does.

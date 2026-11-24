@@ -540,6 +540,10 @@ for required in ("gs-pull-request", "gs-blast-radius", "gs-show-me", "gs-unslop"
         sys.exit(f"gs-qa-scenarios SKILL.md missing {required}")
 if "$ARGUMENTS" in qa_skill:
     sys.exit("gs-qa-scenarios SKILL.md takes arguments in prose")
+# Run mode drives only scenarios, so every regression check must be a scenario to get run.
+for required in ("Start its name with `Regression: `", "Cap the total number of scenarios, counting regression scenarios, by the size of the change.", "| 25 |", "| 50 |", "| 100 |", "Every line points to a scenario, so a run drives every regression check."):
+    if required not in qa_skill:
+        sys.exit(f"gs-qa-scenarios SKILL.md missing {required}")
 # The run modes drive the app only through a project verify-* skill and keep evidence in .verify/.
 for required in (
     "## Modes",
