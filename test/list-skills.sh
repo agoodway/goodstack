@@ -544,16 +544,16 @@ if "skills/gs-create-verification-skill" in qa_skill or "skills/gs-maintain-veri
     sys.exit("gs-qa-scenarios SKILL.md references a verification skill by path")
 
 # gs-openspec-qa-scenarios writes the gs-qa-scenarios shape from specs. Other tools parse both, so the markers stay fixed.
-# Goodflows parses the qa-scenarios/2 front matter both skills write, so its fields stay fixed.
+# Both skills write the gs-qa-scenarios/1 front matter, and other tools read it, so its fields stay fixed.
 def front_matter_keys(text, source):
-    block = re.search(rf"(?ms)^```markdown\n---\nformat: qa-scenarios/2\nsource: {source}\n(.*?)^---\n\n# QA: ", text)
+    block = re.search(rf"(?ms)^```markdown\n---\nformat: gs-qa-scenarios/1\nsource: {source}\n(.*?)^---\n\n# QA: ", text)
     if block is None:
         return None
     return re.findall(r"(?m)^[ -]*([a-z_]+):", block.group(1))
 diff_keys = front_matter_keys(qa_skill, "diff")
 if diff_keys is None:
-    sys.exit("gs-qa-scenarios SKILL.md has no qa-scenarios/2 front matter with source: diff before its # QA: heading")
-# Goodflows binds approval to the set's bytes and rejects sets with run results, so a run never edits the set.
+    sys.exit("gs-qa-scenarios SKILL.md has no gs-qa-scenarios/1 front matter with source: diff before its # QA: heading")
+# A reviewer approves the set as written, so a run never edits it and writes results only to run.md.
 if "run:\n  folder:" in qa_skill or "record the run in it" in qa_skill:
     sys.exit("gs-qa-scenarios run mode must not write results into the set")
 for required in ("`source: intent`", "info string is `yaml qa-scenarios`", "Never edit the set file.", "as `scenarios.md`", "`run.md` is the only place a run writes its results.", "Add no `run` key, and no `result`, `failed_step`, `evidence`, or `reason`"):
@@ -580,7 +580,7 @@ for required in (
         sys.exit(f"gs-openspec-qa-scenarios SKILL.md missing {required}")
 intent_keys = front_matter_keys(intent_skill, "intent")
 if intent_keys is None:
-    sys.exit("gs-openspec-qa-scenarios SKILL.md has no qa-scenarios/2 front matter with source: intent before its # QA: heading")
+    sys.exit("gs-openspec-qa-scenarios SKILL.md has no gs-qa-scenarios/1 front matter with source: intent before its # QA: heading")
 if diff_keys[:4] != ["branch", "base", "revision", "review"] or intent_keys[:3] != ["change", "specs", "review"]:
     sys.exit(f"front matter identity keys changed: diff {diff_keys[:4]}, intent {intent_keys[:3]}")
 # review names the change under review on any Git host. Sets written before it carry pr, which run mode still reads.
@@ -594,7 +594,7 @@ for shared in ("scenarios", "id", "name", "priority"):
 for intent_only in ("covers", "capability", "requirement", "scenario", "implied", "coverage", "status"):
     if intent_only not in intent_keys:
         sys.exit(f"gs-openspec-qa-scenarios front matter missing {intent_only}")
-# Goodflows matches a coverage row to a covers entry or a safe_because fact by its capability, requirement, and scenario.
+# A tool matches a coverage row to a covers entry by its capability, requirement, and scenario.
 coverage_block = re.search(r"(?ms)^coverage:\n(.*?)^---\n", intent_skill)
 coverage_rows = [re.findall(r"(?m)^ *([a-z_]+):", row) for row in re.split(r"(?m)^  - ", coverage_block.group(1))[1:]] if coverage_block else []
 if not coverage_rows:
@@ -602,14 +602,14 @@ if not coverage_rows:
 for row in coverage_rows:
     if row[:5] != ["capability", "requirement", "scenario", "status", "scenarios"] or not set(row) <= {"capability", "requirement", "scenario", "status", "scenarios", "reason"}:
         sys.exit(f"gs-openspec-qa-scenarios coverage row keys changed: {row}")
-# Goodflows accepts only {capability, requirement, scenario} or {capability, requirement, implied: true} in covers, 1 to 100 of them.
-# It refuses unknown scenario keys and a revision that is not lowercase hex.
+# A covers entry is {capability, requirement, scenario} or {capability, requirement, implied: true}, 1 to 100 of them.
+# A scenario entry has no other keys, and a revision is only lowercase hex.
 for banned in ("proposal: true", "covers: []"):
     if banned in intent_skill:
-        sys.exit(f"gs-openspec-qa-scenarios SKILL.md writes {banned}, which goodflows refuses")
+        sys.exit(f"gs-openspec-qa-scenarios SKILL.md writes {banned}, which the format does not allow")
 for banned in ("walked: true", "+dirty"):
     if banned in qa_skill:
-        sys.exit(f"gs-qa-scenarios SKILL.md writes {banned}, which goodflows refuses")
+        sys.exit(f"gs-qa-scenarios SKILL.md writes {banned}, which the format does not allow")
 if "has no `covers` key, never an empty list" not in intent_skill:
     sys.exit("gs-openspec-qa-scenarios SKILL.md must say a proposal-only scenario has no covers key")
 for required in ("`covered` or `no_check`", "Each of the three is 1 to 200 characters"):
@@ -620,22 +620,30 @@ if "A `qa-scenarios/1` set has `delta`, `qa`, and `no_check`" not in qa_skill:
 if "$ARGUMENTS" in intent_skill or "\u2014" in intent_skill:
     sys.exit("gs-openspec-qa-scenarios SKILL.md takes arguments in prose and has no em dashes")
 
-# The goodflows CLI parses run.md, so both skills carry the same verify-run-notes/1 block and rules.
+# Other tools read run.md, so both skills carry the same gs-verify-run-notes/1 block and rules.
 def run_notes(text):
-    match = re.search(r'(?ms)^```yaml\n---\nformat: "verify-run-notes/1"\n.*?^---\n```\n\n(?:- [^\n]*\n)+', text)
+    match = re.search(r'(?ms)^```yaml\n---\nformat: "gs-verify-run-notes/1"\n.*?^---\n```\n\n(?:- [^\n]*\n)+', text)
     return match.group(0) if match else None
 qa_notes = run_notes(qa_skill)
 verify_notes = run_notes(create_verify)
 if qa_notes is None or verify_notes is None:
-    sys.exit("gs-qa-scenarios and gs-create-verification-skill must both give run.md verify-run-notes/1 front matter")
+    sys.exit("gs-qa-scenarios and gs-create-verification-skill must both give run.md gs-verify-run-notes/1 front matter")
 if qa_notes != verify_notes:
-    sys.exit("the verify-run-notes/1 block differs between gs-qa-scenarios and gs-create-verification-skill")
+    sys.exit("the gs-verify-run-notes/1 block differs between gs-qa-scenarios and gs-create-verification-skill")
 notes_top = re.findall(r"(?m)^([a-z_]+):", qa_notes)
 if notes_top != ["format", "set", "commit", "branch", "dirty", "changed_files", "started_at", "finished_at", "results", "features", "drift"]:
-    sys.exit(f"verify-run-notes/1 keys changed: {notes_top}")
+    sys.exit(f"gs-verify-run-notes/1 keys changed: {notes_top}")
 for key in ("path", "sha256", "id", "result", "failed_step", "reason", "evidence", "entry_point"):
     if not re.search(rf"(?m)^ +-? *{key}:", qa_notes):
-        sys.exit(f"verify-run-notes/1 missing {key}")
+        sys.exit(f"gs-verify-run-notes/1 missing {key}")
+
+# Goodstack never depends on a tool that reads its files. A project names its own format, and the skills follow it.
+for name in ("gs-qa-scenarios", "gs-openspec-qa-scenarios", "gs-create-verification-skill"):
+    if "When the project's guidance names a format or a validator for" not in (root / "skills" / name / "SKILL.md").read_text():
+        sys.exit(f"{name} SKILL.md must follow a format the project's guidance names")
+for path in sorted((root / "skills").rglob("*")):
+    if path.is_file() and "goodflows" in path.read_text(errors="ignore").lower():
+        sys.exit(f"{path.relative_to(root)} names goodflows")
 
 all_installed = {p.parent.name for p in (tmp / "all").rglob("SKILL.md")}
 if all_installed != expected_set:

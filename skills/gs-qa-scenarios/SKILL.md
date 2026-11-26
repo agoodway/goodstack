@@ -111,7 +111,7 @@ Use this shape. The tester scans it and ticks scenarios off, so keep prose out o
 
 ```markdown
 ---
-format: qa-scenarios/2
+format: gs-qa-scenarios/1
 source: diff
 branch: "[branch]"
 base: "[base]"
@@ -179,15 +179,19 @@ Why: [One sentence. What a user hits if this is wrong.]
 
 ### Front matter
 
-The front matter is the contract other tools read, such as goodflows change requests and the run mode in step 7. The `gs-openspec-qa-scenarios` skill writes the same fields with `source: intent`, and adds `change`, `specs`, `covers`, and `coverage` in place of `branch`, `base`, `revision`, and `regressions`. Both write `review`. Keep the fields exactly as follows:
+The front matter is the contract other tools read, such as the run mode in step 7. The `gs-openspec-qa-scenarios` skill writes the same fields with `source: intent`, and adds `change`, `specs`, `covers`, and `coverage` in place of `branch`, `base`, `revision`, and `regressions`. Both write `review`. Keep the fields exactly as follows:
 
 - The set starts with a line that holds only `---`, and the front matter ends at the next such line. Nothing comes before it.
 - Write the keys in the order the shape shows. Quote every string value with double quotes, and escape a double quote inside one as `\"`. Numbers, `true`, `null`, and the lowercase values below stay bare.
-- `format` is `qa-scenarios/2`. A change to the fields that would break a reader gets a new number. Version 2 changed only the intent set's `coverage` rows, so a diff set reads the same in both.
-- `source` is `diff`. `branch` and `base` are 1 to 255 characters. `revision` is the short SHA of `<rev>` in lowercase hex, and nothing else. When the output includes uncommitted changes, the top of the output says so, as step 1 requires, and `revision` still holds only the SHA. `review` is optional and names the change under review on any Git host: a goodflows change request ID, a GitLab merge request URL, or a GitHub pull request URL, as the user or the host gives it. Use `null` when there is none. Never put a branch name or a commit in it.
+- `format` is `gs-qa-scenarios/1`. A change to the fields that would break a reader gets a new number. Version 1 has the same fields as the older `qa-scenarios/2`, which run mode still reads.
+- `source` is `diff`. `branch` and `base` are 1 to 255 characters. `revision` is the short SHA of `<rev>` in lowercase hex, and nothing else. When the output includes uncommitted changes, the top of the output says so, as step 1 requires, and `revision` still holds only the SHA. `review` is optional and names the change under review on any Git host: a change request ID, a GitLab merge request URL, or a GitHub pull request URL, as the user or the host gives it. Use `null` when there is none. Never put a branch name or a commit in it.
 - `scenarios` has one entry per scenario in the body, in the same order, and holds 1 to 200 entries. `id` is the scenario's number, `name` is its heading without the number and priority, 1 to 200 characters, and `priority` is `must`, `should`, or `could`. An entry has no other keys. A scenario you walked in step 6 says so only in its checklist line.
 - `regressions` has one string per line under "Regression checks", 1 to 1,000 characters each and at most 200, or is `[]`. Each line names a flow that calls changed code and the scenario that checks it, such as `"Invoice export: scenario 5"`. Every line points to a scenario, so a run drives every regression check.
 - The body says the same things for the tester. When you change one, change the other.
+
+### Project formats
+
+The project's guidance, such as `AGENTS.md`, may name its own formats. When the project's guidance names a format or a validator for scenario sets or run notes, follow that format in place of the front matter in this skill, and its body rules where they differ. Run the validator after you write each set or `run.md`, and fix every error it lists until it lists none. Never edit a run's `scenarios.md` to clear an error, because it must stay the set the run drove; tell the user about an error in it instead.
 
 ### Checklist and grouping
 
@@ -263,11 +267,11 @@ When you find no scenarios in any of these places, say so, and offer write and r
 Read the front matter first. In a file or the chat it opens the set. In a pull request comment it is the fenced block whose info string is `yaml qa-scenarios`. Its `source` says where the scenarios came from:
 
 - `diff`: the `branch`, `revision`, and `review` fields name what the scenarios cover. A set written before `review` existed has a `pr` key with a pull request URL in its place, and you read it as `review`. A set saved before front matter existed is a diff set, and the line under its title names the branch or pull request. A diff set whose regression checks name no scenario was written before regressions became scenarios. Run its scenarios, say under the Checklist heading that its regression checks were not driven, and offer write and run mode for a set that drives them.
-- `intent`: the `gs-openspec-qa-scenarios` skill wrote the set from the OpenSpec change in `change`. Run it against the branch or pull request the user names, or the current branch when they name none. A failed step means the implementation misses the requirement in that scenario's `covers`. A scenario without `covers` checks behavior from the proposal alone, as its `Covers:` line says. Keep `covers`, `coverage`, and each `Covers:` line in the results. In a `qa-scenarios/2` set, each `coverage` row has `capability`, `requirement`, `scenario`, `status` (`covered` or `no_check`), `scenarios`, and an optional `reason`. A `no_check` row has no scenario to run, so it gets no result. A `qa-scenarios/1` set has `delta`, `qa`, and `no_check` on its rows instead. Read it the same way, and keep its rows and its format number as written.
+- `intent`: the `gs-openspec-qa-scenarios` skill wrote the set from the OpenSpec change in `change`. Run it against the branch or pull request the user names, or the current branch when they name none. A failed step means the implementation misses the requirement in that scenario's `covers`. A scenario without `covers` checks behavior from the proposal alone, as its `Covers:` line says. Keep `covers`, `coverage`, and each `Covers:` line in the results. In a `gs-qa-scenarios/1` or `qa-scenarios/2` set, each `coverage` row has `capability`, `requirement`, `scenario`, `status` (`covered` or `no_check`), `scenarios`, and an optional `reason`. A `no_check` row has no scenario to run, so it gets no result. A `qa-scenarios/1` set has `delta`, `qa`, and `no_check` on its rows instead. Read it the same way, and keep its rows and its format number as written.
 
 Find the revision to run against, `<rev>`, as step 1 does.
 
-Never edit the set file. Goodflows ties a review's approval to the set's exact bytes, and rejects a set that holds run results, so a set must stay as it was written. A run records its results only in the run folder, as Results says. A `qa-scenarios/1` set runs here, but goodflows accepts only `qa-scenarios/2`, so it cannot be uploaded.
+Never edit the set file. A reviewer approved the set as it was written, and a run must check that same set, so the set stays byte for byte as it was written. A run records its results only in the run folder, as Results says.
 
 ### Check the revision
 
@@ -294,11 +298,11 @@ Give each scenario one result:
 
 Each passed or failed result names its evidence files under `.verify/<app>/<run-id>/`.
 
-Write `run.md` with this YAML front matter, which the goodflows CLI parses, even when the verify skill's Evidence section gives an older shape:
+Write `run.md` with this YAML front matter, even when the verify skill's Evidence section gives an older shape. When the project names its own run notes format, use that instead, as Project formats in step 5 says:
 
 ```yaml
 ---
-format: "verify-run-notes/1"
+format: "gs-verify-run-notes/1"
 set:
   path: "[path of the scenario set file from the repository root]"
   sha256: "[64 lowercase hex characters]"
@@ -324,16 +328,14 @@ drift: []
 ```
 
 - The file starts with a line that holds only `---`, and the front matter ends at the next such line. The free Markdown index follows it.
-- `format` is `"verify-run-notes/1"`. Quote every string with double quotes. Numbers, `true`, `false`, `null`, and the result values stay bare.
+- `format` is `"gs-verify-run-notes/1"`. Quote every string with double quotes. Numbers, `true`, `false`, `null`, and the result values stay bare.
 - `set` names the scenario set the run drove, when it came from a file: its `path` from the repository root, and `sha256`, the lowercase SHA-256 of the copy saved as `scenarios.md` in the run folder. Leave `set` out when the run drove no set from a file.
 - `commit` is the full SHA the app was built from. `dirty` is `true` when `git status --porcelain` printed anything, and `changed_files` then lists those files. Otherwise `dirty` is `false` and `changed_files` is `[]`.
 - `started_at` and `finished_at` are UTC times in RFC 3339, such as `2026-11-19T14:30:00Z`.
-- `results` has exactly one entry per scenario id in `scenarios.md`, or is `[]` when the run drove no scenario set. Goodflows accepts only a run that drove a scenario set stored on a change request, so a run with no set stays local and cannot be uploaded. `id` is the scenario's integer id. `result` is `passed`, `failed`, or `not_run`. `failed_step` is the step number as a quoted string, such as `"3"`, or `null`. A bare number would not parse as a step. `reason` says what failed or why the scenario did not run, or is `null` for a passed one. `evidence` lists the files that prove it, as paths relative to the run folder.
+- `results` has exactly one entry per scenario id in `scenarios.md`, or is `[]` when the run drove no scenario set. `id` is the scenario's integer id. `result` is `passed`, `failed`, or `not_run`. `failed_step` is the step number as a quoted string, such as `"3"`, or `null`. A bare number would not parse as a step. `reason` says what failed or why the scenario did not run, or is `null` for a passed one. `evidence` lists the files that prove it, as paths relative to the run folder.
 - `features` lists each feature driven, with its feature ID, entry point, and `passed` or `failed`, or is `[]`. `drift` lists each feature map problem the run found, as a string, or is `[]`.
 
 Take `sha256` from `sha256sum` or `shasum -a 256` run on the run folder's `scenarios.md`. Below the front matter, write the Markdown index in the shape the verify skill's Evidence section gives. Add a line that says the run came from `gs-qa-scenarios`, with the scenario source: the branch, the pull request, or the saved file. For an intent set, also name the OpenSpec change. Then list each scenario with its number, name, priority, result, the failed step or the reason it did not run, and its evidence files, so the `gs-pull-request` skill can pick the run up. The front matter and the list say the same things. `run.md` is the only place a run writes its results.
-
-When `goodflows cr validate --help` runs, run `goodflows cr validate .verify/<app>/<run-id>/` after writing `run.md`. It checks the folder as `goodflows cr runs upload` reads it. Fix every error it lists in `run.md` until it lists none. Never edit `scenarios.md` to clear an error, because it must stay the set the run drove; tell the user about an error in it instead.
 
 Print the results in chat in the same shape as the scenarios. Keep each scenario as written. The checklist carries the results, so a reader sees the whole run without scrolling. Tick a box only for a passed scenario, and end every line with its result:
 
@@ -360,11 +362,11 @@ Leave a blank line before and after each alert, and keep everything else, such a
 
 Under the Checklist heading, give the run folder, the commit the app was built from, and the count of passed, failed, and not run scenarios. At the end, list any feature map drift the run found.
 
-Keep the set's front matter exactly as it was. Add no `run` key, and no `result`, `failed_step`, `evidence`, or `reason` to any scenario entry, in the printed results or anywhere else. Goodflows rejects a set that carries them, because run results belong in a verify run, which the goodflows CLI builds from `.verify/<app>/<run-id>/`.
+Keep the set's front matter exactly as it was. Add no `run` key, and no `result`, `failed_step`, `evidence`, or `reason` to any scenario entry, in the printed results or anywhere else. Run results belong only in `run.md` in the run folder.
 
 ## Sharing
 
-Print the scenarios, or the results of a run, in chat. When the user asks to save them, write a Markdown file at the path they give, or outside the repository when they give none. When `goodflows cr validate --help` runs, run `goodflows cr validate <file>` on a saved set, and fix every error it lists until it lists none. It checks the set as `goodflows cr scenarios upload` reads it.
+Print the scenarios, or the results of a run, in chat. When the user asks to save them, write a Markdown file at the path they give, or outside the repository when they give none. When the project names its own format, run its validator on the saved set, as Project formats in step 5 says.
 
 When the user asks to post them on the pull request, move the front matter into a fenced block at the end of the body, as [Post a run with its evidence](#post-a-run-with-its-evidence) describes. Use the `gs-pr-comment` skill when it is installed. Without it, show the body first, wait for approval, write the body to a file outside the repository, and run `gh pr comment [pr] --body-file [file]`.
 

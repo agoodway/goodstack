@@ -31,11 +31,11 @@ Write `<skills>/verify-<app>/SKILL.md` with YAML frontmatter (`name: verify-<app
 - **Cleanup:** how to tear down instances the run created. Never kill by process name; kill what you started. Cleanup removes instances and scratch state, never the evidence: proof artifacts survive the teardown in `.verify/<app>/<run-id>/`, and cleanup never removes `.verify/`.
 - **Helpers:** any script the skill ships is executable and its invocation is shown in the skill body. A helper the reader has to reverse-engineer is not a helper.
 
-The Evidence section tells every run to open `run.md` with this YAML front matter, which the goodflows CLI parses, and to write the Markdown index below it. Copy the block and its rules into the generated skill:
+The Evidence section tells every run to open `run.md` with this YAML front matter, and to write the Markdown index below it. Read the project's guidance, such as `AGENTS.md`, first. When the project's guidance names a format or a validator for run notes, the Evidence section gives that format in place of this block, and tells every run to run the validator after writing `run.md` and fix every error it lists. Otherwise copy the block and its rules into the generated skill:
 
 ```yaml
 ---
-format: "verify-run-notes/1"
+format: "gs-verify-run-notes/1"
 set:
   path: "[path of the scenario set file from the repository root]"
   sha256: "[64 lowercase hex characters]"
@@ -61,11 +61,11 @@ drift: []
 ```
 
 - The file starts with a line that holds only `---`, and the front matter ends at the next such line. The free Markdown index follows it.
-- `format` is `"verify-run-notes/1"`. Quote every string with double quotes. Numbers, `true`, `false`, `null`, and the result values stay bare.
+- `format` is `"gs-verify-run-notes/1"`. Quote every string with double quotes. Numbers, `true`, `false`, `null`, and the result values stay bare.
 - `set` names the scenario set the run drove, when it came from a file: its `path` from the repository root, and `sha256`, the lowercase SHA-256 of the copy saved as `scenarios.md` in the run folder. Leave `set` out when the run drove no set from a file.
 - `commit` is the full SHA the app was built from. `dirty` is `true` when `git status --porcelain` printed anything, and `changed_files` then lists those files. Otherwise `dirty` is `false` and `changed_files` is `[]`.
 - `started_at` and `finished_at` are UTC times in RFC 3339, such as `2026-11-19T14:30:00Z`.
-- `results` has exactly one entry per scenario id in `scenarios.md`, or is `[]` when the run drove no scenario set. Goodflows accepts only a run that drove a scenario set stored on a change request, so a run with no set stays local and cannot be uploaded. `id` is the scenario's integer id. `result` is `passed`, `failed`, or `not_run`. `failed_step` is the step number as a quoted string, such as `"3"`, or `null`. A bare number would not parse as a step. `reason` says what failed or why the scenario did not run, or is `null` for a passed one. `evidence` lists the files that prove it, as paths relative to the run folder.
+- `results` has exactly one entry per scenario id in `scenarios.md`, or is `[]` when the run drove no scenario set. `id` is the scenario's integer id. `result` is `passed`, `failed`, or `not_run`. `failed_step` is the step number as a quoted string, such as `"3"`, or `null`. A bare number would not parse as a step. `reason` says what failed or why the scenario did not run, or is `null` for a passed one. `evidence` lists the files that prove it, as paths relative to the run folder.
 - `features` lists each feature driven, with its feature ID, entry point, and `passed` or `failed`, or is `[]`. `drift` lists each feature map problem the run found, as a string, or is `[]`.
 
 ## 3. Seed the feature map

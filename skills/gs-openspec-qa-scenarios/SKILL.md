@@ -89,7 +89,7 @@ Use this shape. It is the `gs-qa-scenarios` shape with three additions: `covers`
 
 ```markdown
 ---
-format: qa-scenarios/2
+format: gs-qa-scenarios/1
 source: intent
 change: "[change-id]"
 specs: "[short commit SHA, or uncommitted]"
@@ -181,17 +181,21 @@ Covers: [capability] · [Requirement]: [Scenario]; [capability] · [Requirement]
 
 ### Front matter
 
-The front matter is the contract other tools read, such as goodflows change requests and the `gs-qa-scenarios` run mode. An intent set and a diff set share its fields, except the ones marked intent only here. Keep them exactly as follows:
+The front matter is the contract other tools read, such as the `gs-qa-scenarios` run mode. An intent set and a diff set share its fields, except the ones marked intent only here. Keep them exactly as follows:
 
 - The set starts with a line that holds only `---`, and the front matter ends at the next such line. Nothing comes before it.
 - Write the keys in the order the shape shows. Quote every string value with double quotes, and escape a double quote inside one as `\"`. Numbers, `true`, `null`, and the lowercase values below stay bare.
-- `format` is `qa-scenarios/2`. A change to the fields that would break a reader gets a new number. Version 2 gave `coverage` rows the same `capability`, `requirement`, and `scenario` as `covers`, with `status` and `scenarios` in place of `delta`, `qa`, and `no_check`.
-- `source` is `intent`. `change` is the change id. `specs` is the short commit SHA of the change directory, or `uncommitted`. These two are intent only. `review` is optional and names the change under review on any Git host: a goodflows change request ID, a GitLab merge request URL, or a GitHub pull request URL, as the user or the host gives it. Before implementation there is usually none, so use `null`.
+- `format` is `gs-qa-scenarios/1`. A change to the fields that would break a reader gets a new number. Version 1 has the same fields as the older `qa-scenarios/2`, which gave `coverage` rows the same `capability`, `requirement`, and `scenario` as `covers`, with `status` and `scenarios` in place of `delta`, `qa`, and `no_check`.
+- `source` is `intent`. `change` is the change id. `specs` is the short commit SHA of the change directory, or `uncommitted`. These two are intent only. `review` is optional and names the change under review on any Git host: a change request ID, a GitLab merge request URL, or a GitHub pull request URL, as the user or the host gives it. Before implementation there is usually none, so use `null`.
 - `scenarios` has one entry per scenario in the body, in the same order, and holds 1 to 200 entries. `id` is the scenario's number, `name` is its heading without the number and priority, 1 to 200 characters, and `priority` is `must`, `should`, or `could`.
 - `covers` is intent only. Each entry names a spec scenario with `capability`, `requirement`, and `scenario`, copied exactly from the delta's `### Requirement:` and `#### Scenario:` headings. An implied case has `capability`, `requirement`, and `implied: true`, with no `scenario`. An entry has no other keys, each string is 1 to 200 characters, and a scenario has at most 100 entries. A scenario that covers no requirement, such as behavior from the proposal alone, has no `covers` key, never an empty list. Its `Covers:` line says `proposal (no requirement)`. A scenario that checks proposal behavior and a requirement lists only the requirement's entry.
-- `coverage` is intent only. It has one row for every spec scenario in the change. A row names its spec scenario with `capability`, `requirement`, and `scenario`, copied exactly as `covers` copies them, so a tool matches a row to a `covers` entry or a `safe_because` fact by comparing the three. For a REMOVED requirement, use the scenarios the canonical spec lists under it, and when it lists none, use `[Requirement] removed` as the scenario. Each of the three is 1 to 200 characters, and no two rows share all three. When a name is longer or two spec scenarios share a name, keep the name as written and ask the author to rename it in the delta under "Questions for the developer". Goodflows refuses the set until the delta and the set agree on a valid name, so tell the user it cannot be uploaded yet.
+- `coverage` is intent only. It has one row for every spec scenario in the change. A row names its spec scenario with `capability`, `requirement`, and `scenario`, copied exactly as `covers` copies them, so a tool matches a row to a `covers` entry by comparing the three. For a REMOVED requirement, use the scenarios the canonical spec lists under it, and when it lists none, use `[Requirement] removed` as the scenario. Each of the three is 1 to 200 characters, and no two rows share all three. When a name is longer or two spec scenarios share a name, keep the name as written and ask the author to rename it in the delta under "Questions for the developer". No tool can match the row until the delta and the set agree on a valid name, so tell the user.
 - `status` is `covered` or `no_check`. `scenarios` lists the ids of the QA scenarios that check the row: at least one for `covered`, and `[]` for `no_check`. `reason` is optional, at most 1,000 characters, and says why no person can check the row. Write it on every `no_check` row.
 - The body says the same things for the tester. When you change one, change the other.
+
+### Project formats
+
+The project's guidance, such as `AGENTS.md`, may name its own formats. When the project's guidance names a format or a validator for scenario sets, follow that format in place of the front matter in this skill, and its body rules where they differ. Run the validator after you save a set, and fix every error it lists until it lists none.
 
 ### Format rules
 
@@ -227,7 +231,7 @@ Remove secrets, tokens, absolute local paths, and private details before you pri
 
 ## Sharing
 
-Print the scenarios in chat. When the user asks to save them and gives no path, write `<change-dir>/qa-scenarios.md`, so the scenarios travel with the change and are archived with it. That is the only file this skill writes in the repo. When `goodflows cr validate --help` runs, run `goodflows cr validate <file>` on a saved set, and fix every error it lists until it lists none. It checks the set as `goodflows cr scenarios upload` reads it. When the user asks to post them on a pull request, start the body at the `# QA:` heading. Put the front matter, without its `---` lines, at the end of the body in a fenced block whose info string is `yaml qa-scenarios`, inside `<details><summary>Scenario data</summary>` and `</details>`. A comment cannot start with front matter, because GitHub renders it as a heading, and the `gs-pr-comment` skill puts its attribution first. Use the `gs-pr-comment` skill when it is installed. Without it, show the body first, wait for approval, write the body to a file outside the repository, and run `gh pr comment [pr] --body-file [file]`.
+Print the scenarios in chat. When the user asks to save them and gives no path, write `<change-dir>/qa-scenarios.md`, so the scenarios travel with the change and are archived with it. That is the only file this skill writes in the repo. When the project names its own format, run its validator on the saved set, as Project formats says. When the user asks to post them on a pull request, start the body at the `# QA:` heading. Put the front matter, without its `---` lines, at the end of the body in a fenced block whose info string is `yaml qa-scenarios`, inside `<details><summary>Scenario data</summary>` and `</details>`. A comment cannot start with front matter, because GitHub renders it as a heading, and the `gs-pr-comment` skill puts its attribution first. Use the `gs-pr-comment` skill when it is installed. Without it, show the body first, wait for approval, write the body to a file outside the repository, and run `gh pr comment [pr] --body-file [file]`.
 
 ## Run the scenarios
 

@@ -37,8 +37,9 @@ Amp shows the model only each skill's `name` and `description`, has no slash com
 - Reference skills, never another skill's files. Each skill installs into its own directory.
 - A skill that other skills call stays model-invocable. `disable-model-invocation: true` is for skills only the user starts. When a user-only skill must run inside another skill at the user's request, the caller finds the installed `SKILL.md` and reads it, as `gs-openspec-qa-scenarios` does with `gs-qa-scenarios`.
 - The recovery contract and the "Fix every verify issue" step are byte-identical in `gs-openspec-implement` and `gs-openspec-implement-tickets`. Edit both together.
-- `gs-qa-scenarios` and `gs-openspec-qa-scenarios` write the same `qa-scenarios/2` front matter, which goodflows parses. Edit its shared fields in both together, and give a breaking change a new format number.
-- `gs-qa-scenarios` and `gs-create-verification-skill` give `run.md` the same `verify-run-notes/1` front matter block and rules, byte for byte. Edit both together.
+- `gs-qa-scenarios` and `gs-openspec-qa-scenarios` write the same `gs-qa-scenarios/1` front matter. Edit its shared fields in both together, and give a breaking change a new format number.
+- `gs-qa-scenarios` and `gs-create-verification-skill` give `run.md` the same `gs-verify-run-notes/1` front matter block and rules, byte for byte. Edit both together.
+- No skill names goodflows or another tool that reads these files. A project that needs a different format names it, with its validator, in its own guidance, and `gs-qa-scenarios`, `gs-openspec-qa-scenarios`, and `gs-create-verification-skill` follow it through their project format rule.
 
 ## Skills derived from another repo
 
