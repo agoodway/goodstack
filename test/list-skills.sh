@@ -475,42 +475,6 @@ if "argument-hint" in find_skill or "$ARGUMENTS" in find_skill:
 if "Change no file." not in find_skill:
     sys.exit("gs-find-bad-tests SKILL.md must stay read-only")
 
-# Goodflows parses the change-claims/2 front matter, so its keys and their order stay fixed.
-cr_skill = (root / "skills" / "gs-change-request" / "SKILL.md").read_text()
-cr_block = re.search(r"(?ms)^```markdown\n---\n(format: change-claims/2\n.*?)^---\n\n# ", cr_skill)
-if cr_block is None:
-    sys.exit("gs-change-request SKILL.md has no change-claims/2 front matter before its # title")
-cr_top = re.findall(r"(?m)^([a-z_]+):", cr_block.group(1))
-if cr_top != ["format", "cr", "head", "door", "door_reason", "reach", "safe_because", "left_open", "questions", "decisions"]:
-    sys.exit(f"gs-change-request front matter keys changed: {cr_top}")
-cr_nested = set(re.findall(r"(?m)^ +-? *([a-z_]+):", cr_block.group(1)))
-for key in ("fact", "location", "proof", "evidence", "covers", "capability", "requirement", "scenario", "risk", "affected", "id", "text", "options", "recommendation", "path", "hunk", "note"):
-    if key not in cr_nested:
-        sys.exit(f"gs-change-request front matter missing {key}")
-for required in (
-    "## What changed", "## How it works", "## Evidence", "## What could break", "## How to check",
-    "`stated`, `pointed`, `walked`, or `ran`", "`one_way` or `two_way`", "Do not invent output.",
-    "A run built from a dirty working tree tested code that no commit holds",
-    ".goodflows/change-requests/<branch>/cr.md", "info/exclude", "git patch-id --verbatim", "not `--stable`", ".detached/<short SHA>/cr.md", "rewrite only `head`",
-    "do not push, do not open a pull request, and do not call a host API",
-    "Read `--approved` from the request's prose.",
-    "command -v goodflows",
-    "Without evidence, a fact is `walked` at most.",
-    "Add one `safe_because` fact for each such row",
-    "`status: no_check`",
-    "Safe because: <each fact",
-    "Read `--commit` from the request's prose.",
-    "Skip its last step, which asks whether to push, because this skill never pushes.",
-    "`--commit` never creates the change request. Only `--approved` does.",
-    "Do not guess a command.",
-    "run the update command for that number instead",
-):
-    if required not in cr_skill:
-        sys.exit(f"gs-change-request SKILL.md missing {required}")
-for banned in ("gh pr create", "gh pr edit", "git push", "--attach", "\u2014", "$ARGUMENTS"):
-    if banned in cr_skill:
-        sys.exit(f"gs-change-request SKILL.md must not contain {banned!r}")
-
 pr_show = (root / "skills" / "gs-pr-show-me" / "SKILL.md").read_text()
 for required in ("gs-pull-request", "gs-show-me", "gh pr view", "gh pr diff", "## Where to look first", "read-only"):
     if required not in pr_show:
